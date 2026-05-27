@@ -1,5 +1,13 @@
 .tech-section {
     --tech-accent-rgb: 168, 85, 247;
+    --status-color: 216, 180, 254;
+    --scan-progress: 0;
+    --row-opacity: 0.42;
+    --card-opacity: 0.44;
+    --card-blur: 1.35px;
+    --card-loader-opacity: 0;
+    --card-progress: 0;
+
     position: relative;
     min-height: 100vh;
     width: 100%;
@@ -30,7 +38,7 @@
     margin-bottom: 0.75rem;
 
     color: rgba(255, 255, 255, 0.42);
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.45em;
@@ -41,7 +49,7 @@
     margin: 0;
 
     color: rgba(255, 255, 255, 0.92);
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: clamp(3rem, 7vw, 7.5rem);
     font-weight: 800;
     line-height: 0.95;
@@ -69,7 +77,14 @@
 
 /* Terminal */
 
+.tech-terminal-shell {
+    min-height: 34rem;
+    perspective: 1200px;
+    display: flex;
+}
+
 .tech-terminal {
+    width: 100%;
     min-height: 34rem;
 
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -87,6 +102,71 @@
             inset 0 1px 0 rgba(255, 255, 255, 0.07);
 
     overflow: hidden;
+}
+
+.tech-tilt-card,
+.tech-card {
+    --tilt-rotate-x: 0deg;
+    --tilt-rotate-y: 0deg;
+    --tilt-scale: 1;
+    --tilt-glow-x: 50%;
+    --tilt-glow-y: 50%;
+
+    transform:
+            rotateX(var(--tilt-rotate-x))
+            rotateY(var(--tilt-rotate-y))
+            scale(var(--tilt-scale));
+
+    transform-style: preserve-3d;
+    will-change: transform;
+
+    transition:
+            transform 180ms ease,
+            border-color 220ms ease,
+            box-shadow 220ms ease,
+            background 220ms ease;
+}
+
+.tech-tilt-card {
+    position: relative;
+    flex: 1;
+}
+
+.tech-terminal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    background: radial-gradient(
+            circle at var(--tilt-glow-x) var(--tilt-glow-y),
+            rgba(216, 180, 254, 0.11),
+            transparent 34%
+    );
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+}
+
+.tech-terminal:hover {
+    --tilt-scale: 1.018;
+
+    border-color: rgba(216, 180, 254, 0.2);
+    box-shadow:
+            0 2.2rem 5.5rem rgba(0, 0, 0, 0.42),
+            0 0 2.2rem rgba(168, 85, 247, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.tech-terminal:hover::before {
+    opacity: 1;
+}
+
+.tech-window-top,
+.tech-terminal-body {
+    position: relative;
+    z-index: 1;
 }
 
 .tech-window-top {
@@ -129,14 +209,14 @@
     gap: 0.5rem;
 
     color: rgba(255, 255, 255, 0.58);
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.82rem;
     font-weight: 700;
 }
 
 .tech-terminal-body {
     padding: 1.4rem;
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .tech-command-line {
@@ -148,7 +228,8 @@
     white-space: pre-wrap;
 }
 
-.tech-cursor {
+.tech-cursor,
+.tech-status-cursor {
     display: inline-block;
     margin-left: 0.08em;
     animation: techCursorBlink 1s steps(1, end) infinite;
@@ -212,6 +293,7 @@
             rgba(236, 72, 153, 0.86)
     );
 
+    transform: scaleX(var(--scan-progress, 0));
     transform-origin: left;
 
     box-shadow:
@@ -237,27 +319,26 @@
     color: rgba(255, 255, 255, 0.72);
     font-size: 0.9rem;
     line-height: 1.5;
+
+    opacity: var(--row-opacity, 0.42);
 }
 
 .tech-status {
-    color: rgb(var(--tech-accent-rgb));
+    min-width: 5.5rem;
+    color: rgb(var(--status-color));
     font-weight: 800;
-    text-shadow: 0 0 0.9rem rgba(var(--tech-accent-rgb), 0.28);
+    text-shadow: 0 0 0.9rem rgba(var(--status-color), 0.28);
 }
 
 .tech-status--active {
-    color: rgb(var(--tech-accent-rgb));
-}
-
-.tech-status-cursor {
-    display: inline-block;
-    margin-left: 0.05em;
-    animation: techCursorBlink 1s steps(1, end) infinite;
+    color: rgb(var(--status-color));
 }
 
 /* Cards */
 
 .tech-grid {
+    perspective: 1200px;
+
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem;
@@ -270,6 +351,9 @@
 
     display: flex;
     flex-direction: column;
+
+    opacity: var(--card-opacity, 0.44);
+    filter: blur(var(--card-blur, 1.35px));
 
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 1.35rem;
@@ -286,26 +370,6 @@
             inset 0 1px 0 rgba(255, 255, 255, 0.07);
 
     overflow: hidden;
-
-    --tilt-rotate-x: 0deg;
-    --tilt-rotate-y: 0deg;
-    --tilt-scale: 1;
-    --tilt-glow-x: 50%;
-    --tilt-glow-y: 50%;
-
-    transform:
-            rotateX(var(--tilt-rotate-x))
-            rotateY(var(--tilt-rotate-y))
-            scale(var(--tilt-scale));
-
-    transform-style: preserve-3d;
-    will-change: transform;
-
-    transition:
-            transform 180ms ease,
-            border-color 220ms ease,
-            box-shadow 220ms ease,
-            background 220ms ease;
 }
 
 .tech-card::before {
@@ -347,6 +411,68 @@
 .tech-card > * {
     position: relative;
     z-index: 1;
+}
+
+.tech-card-loader {
+    position: absolute;
+    left: 1.25rem;
+    right: 1.25rem;
+    top: 0.9rem;
+    z-index: 2;
+
+    height: 0.18rem;
+
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+
+    opacity: var(--card-loader-opacity, 0);
+    overflow: hidden;
+
+    transition: opacity 260ms ease;
+}
+
+.tech-card-loader span {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    border-radius: inherit;
+    background: linear-gradient(
+            90deg,
+            rgba(var(--tech-accent-rgb), 0.25),
+            rgba(var(--tech-accent-rgb), 0.95),
+            rgba(var(--tech-accent-rgb), 0.25)
+    );
+
+    transform: scaleX(var(--card-progress, 0));
+    transform-origin: left;
+}
+
+.tech-card--loading .tech-card-loader span::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 35%;
+    left: 0;
+
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.7),
+            transparent
+    );
+
+    animation: techCardShine 1.35s ease-in-out infinite;
+}
+
+.tech-card--loading {
+    border-color: rgba(var(--tech-accent-rgb), 0.22);
+}
+
+.tech-card--ready {
+    border-color: rgba(var(--tech-accent-rgb), 0.18);
 }
 
 .tech-card-header {
@@ -402,7 +528,7 @@
     color: rgb(var(--tech-accent-rgb));
     background: rgba(var(--tech-accent-rgb), 0.075);
 
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.68rem;
     font-weight: 800;
     letter-spacing: 0.12em;
@@ -416,7 +542,7 @@
     margin: 0;
 
     color: rgba(255, 255, 255, 0.9);
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 1.2rem;
     letter-spacing: -0.04em;
 }
@@ -446,7 +572,7 @@
     color: rgba(255, 255, 255, 0.66);
     background: rgba(255, 255, 255, 0.04);
 
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.72rem;
     line-height: 1;
 }
@@ -508,10 +634,27 @@
     }
 
     50% {
-        filter: brightness(1.18);
+        filter: brightness(1.2);
         box-shadow:
-                0 0 1.7rem rgba(168, 85, 247, 0.56),
-                0 0 3rem rgba(124, 58, 237, 0.32);
+                0 0 1.7rem rgba(168, 85, 247, 0.58),
+                0 0 3rem rgba(124, 58, 237, 0.34),
+                0 0 4rem rgba(236, 72, 153, 0.14);
+    }
+}
+
+@keyframes techCardShine {
+    0% {
+        transform: translateX(-130%);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(330%);
+        opacity: 0;
     }
 }
 
@@ -520,6 +663,7 @@
         grid-template-columns: 1fr;
     }
 
+    .tech-terminal-shell,
     .tech-terminal {
         min-height: auto;
     }
@@ -559,10 +703,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .tech-tilt-card,
     .tech-card,
     .tech-window-dots span,
     .tech-cursor,
-    .tech-progress-bar {
+    .tech-status-cursor,
+    .tech-progress-bar,
+    .tech-card-loader span,
+    .tech-card-loader span::after {
         animation: none;
         transition: none;
         transform: none;
