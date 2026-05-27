@@ -1,144 +1,109 @@
-import {
-    FaDatabase,
-    FaLayerGroup,
-    FaMobileAlt,
-    FaNodeJs,
-    FaReact,
-    FaTools,
-} from "react-icons/fa";
+export const ALL_STACK_ID = "all";
 
-export const projects = [
+export const stackGroups = [
     {
-        id: "healthcare-interoperability-showcase",
-        title: "Healthcare Interoperability Showcase",
-        label: "Featured bachelor showcase",
-        year: "2026",
-        githubUrl: "https://github.com/usman-ghafoorzai/healthcare-interoperability-showcase",
-        icon: FaLayerGroup,
-        accentRgb: "192, 132, 252",
-        featured: true,
-        stacks: ["integration", "backend", "databases", "workflow"],
-        summary:
-            "A public-safe showcase of a bachelor-level healthcare interoperability proof-of-concept, focused on API-based exchange between an external application and a simulated EHR environment.",
-        evidence: [
-            "Designed around a clear integration boundary between application logic and interoperability concerns.",
-            "Uses synthetic data and high-level FHIR/openEHR-oriented architecture descriptions.",
-            "Documents privacy, publication boundaries, limitations and architecture tradeoffs honestly.",
-        ],
-        tech: ["FHIR", "openEHR", "API Design", "Docker", "PostgreSQL", "Architecture"],
-    },
-    {
-        id: "krisefikser",
-        title: "Krisefikser",
-        label: "Agile full-stack team project",
-        year: "2025",
-        githubUrl: "https://github.com/usman-ghafoorzai/idatt2106-2025-team10-prosjekt",
-        icon: FaTools,
-        accentRgb: "104, 211, 145",
-        featured: false,
-        stacks: ["frontend", "backend", "databases", "integration", "workflow"],
-        summary:
-            "A full-stack crisis-preparedness web application for Norwegian households, built as an NTNU agile team delivery with backend/frontend separation.",
-        evidence: [
-            "Includes authentication, household coordination, emergency storage and map-based situational awareness.",
-            "Combines REST workflows with real-time WebSocket/STOMP-based features.",
-            "Demonstrates team-based agile development, testing, CI and formal project handover artifacts.",
-        ],
-        tech: ["Java", "Spring Boot", "Vue 3", "TypeScript", "MySQL", "WebSocket", "Swagger"],
-    },
-    {
-        id: "marketplace-fullstack",
-        title: "Marketplace Full-Stack Project",
-        label: "Full-stack application",
-        year: "2025",
-        githubUrl: "https://github.com/usman-ghafoorzai/idatt2105-full-stack-project",
-        icon: FaReact,
+        id: "frontend",
+        status: "OK",
+        label: "Frontend",
+        description: "Interfaces, layouts and interactive user experiences.",
+        iconKey: "react",
         accentRgb: "97, 218, 251",
-        featured: false,
-        stacks: ["frontend", "backend", "databases", "workflow"],
-        summary:
-            "A university full-stack marketplace application with user authentication, listings, images, bookmarks, reservations and API documentation.",
-        evidence: [
-            "Implements JWT-based login, item browsing, listing creation and reservation flows.",
-            "Uses a separated frontend/backend structure with documented run and test commands.",
-            "Includes Swagger UI and a concise security/privacy review for portfolio presentation.",
+        items: [
+            { label: "React", iconKey: "react" },
+            { label: "JavaScript", iconKey: "javascript" },
+            { label: "TypeScript", iconKey: "typescript" },
+            { label: "HTML", iconKey: "html" },
+            { label: "CSS", iconKey: "css" },
+            { label: "Vite", iconKey: "vite" },
         ],
-        tech: ["Vue 3", "Vite", "Java 21", "Spring Boot", "JWT", "MySQL", "Swagger"],
     },
     {
-        id: "mobile-development",
-        title: "Mobile Application Development",
-        label: "Mobile course portfolio",
-        year: "2025",
-        githubUrl: "https://github.com/usman-ghafoorzai/idatt2506-applikasjonsutvikling-for-mobile-enheter",
-        icon: FaMobileAlt,
-        accentRgb: "45, 212, 191",
-        featured: false,
-        stacks: ["frontend", "systems-mobile", "workflow"],
-        summary:
-            "A collection of Android/Kotlin assignments and a main Ionic React + TypeScript + Capacitor mobile app for todo/shopping-list workflows.",
-        evidence: [
-            "Main project includes multiple lists, item completion and local persistence through Capacitor Filesystem.",
-            "Coursework covers Jetpack Compose, Room, DataStore, navigation, sockets and Android app structure.",
-            "Shows practical experience across both native Android and hybrid mobile development.",
-        ],
-        tech: ["Kotlin", "Android SDK", "Jetpack Compose", "Ionic React", "TypeScript", "Capacitor"],
-    },
-    {
-        id: "network-programming",
-        title: "Network Programming Coursework",
-        label: "Backend and networking",
-        year: "2025",
-        githubUrl: "https://github.com/usman-ghafoorzai/idatt2104-nettverksprogrammering",
-        icon: FaNodeJs,
+        id: "backend",
+        status: "OK",
+        label: "Backend",
+        description: "APIs, server-side logic and structured application development.",
+        iconKey: "node",
         accentRgb: "104, 211, 145",
-        featured: false,
-        stacks: ["backend", "integration", "systems-mobile"],
-        summary:
-            "Coursework archive covering Java networking assignments, socket/server exercises, a Spring Boot backend, a small frontend and WebSocket work.",
-        evidence: [
-            "Covers TCP, UDP, HTTPS, worker/event-loop patterns and WebSocket protocol handling.",
-            "Includes a Spring Boot REST backend exercise and simple browser frontend using Fetch API.",
-            "Useful as supporting evidence for backend, protocol and systems understanding.",
+        items: [
+            { label: "Node.js", iconKey: "node" },
+            { label: "NestJS", iconKey: "nestjs" },
+            { label: "Java", iconKey: "java" },
+            { label: "REST APIs", iconKey: "api" },
         ],
-        tech: ["Java", "Sockets", "UDP", "HTTPS", "Spring Boot", "WebSocket"],
     },
     {
-        id: "algorithms-data-structures",
-        title: "Algorithms and Data Structures",
-        label: "Core computer science",
-        year: "2025",
-        githubUrl: "https://github.com/usman-ghafoorzai/idatt2101-algoritmer-datastrukturer",
-        icon: FaDatabase,
+        id: "databases",
+        status: "OK",
+        label: "Databases",
+        description: "Data modeling, persistence and practical querying.",
+        iconKey: "database",
         accentRgb: "96, 165, 250",
-        featured: false,
-        stacks: ["backend", "systems-mobile", "workflow"],
-        summary:
-            "Java coursework covering algorithms, data structures, reports and assignment implementations from IDATT2101 at NTNU.",
-        evidence: [
-            "Includes sorting, hashing, graph traversal, strongly connected components and Dijkstra shortest path.",
-            "Contains LZW compression/decompression and runtime measurement/benchmarking exercises.",
-            "Supports the practical problem-solving side behind backend and systems development.",
+        items: [
+            { label: "PostgreSQL", iconKey: "postgresql" },
+            { label: "Prisma", iconKey: "prisma" },
+            { label: "SQL", iconKey: "database" },
         ],
-        tech: ["Java", "Algorithms", "Graphs", "Hashing", "Dijkstra", "LZW"],
     },
     {
-        id: "cpp-coursework",
-        title: "C++ Coursework",
-        label: "Systems programming foundation",
-        year: "2025",
-        githubUrl: "https://github.com/usman-ghafoorzai/INFT2503-Cpp",
-        icon: FaTools,
-        accentRgb: "45, 212, 191",
-        featured: false,
-        stacks: ["systems-mobile", "integration", "workflow"],
-        summary:
-            "A C++ coursework archive with practical exercises in language fundamentals, object-oriented programming, templates, GUI and networking.",
-        evidence: [
-            "Covers pointers, references, classes, operator overloading, templates and STL usage.",
-            "Includes basic GUI work with gtkmm and networking exercises with Boost.Asio.",
-            "Shows lower-level programming exposure beyond web application development.",
+        id: "integration",
+        status: "OK",
+        label: "Integration",
+        description: "Connecting systems through APIs, standards and structured data exchange.",
+        iconKey: "integration",
+        accentRgb: "192, 132, 252",
+        items: [
+            { label: "FHIR", iconKey: "healthcare" },
+            { label: "openEHR", iconKey: "healthcare" },
+            { label: "API Design", iconKey: "api" },
+            { label: "Docker", iconKey: "docker" },
         ],
-        tech: ["C++", "STL", "Templates", "CMake", "gtkmm", "Boost.Asio"],
+    },
+    {
+        id: "systems-mobile",
+        status: "OK",
+        label: "Systems & Mobile",
+        description: "Experience from study projects with lower-level and mobile development.",
+        iconKey: "mobile",
+        accentRgb: "45, 212, 191",
+        items: [
+            { label: "C++", iconKey: "cpp" },
+            { label: "Kotlin", iconKey: "kotlin" },
+            { label: "Mobile Apps", iconKey: "mobile" },
+            { label: "Java", iconKey: "java" },
+        ],
+    },
+    {
+        id: "workflow",
+        status: "ACTIVE",
+        label: "Workflow",
+        description: "How I build, test, document and collaborate on software projects.",
+        iconKey: "workflow",
+        accentRgb: "251, 146, 60",
+        items: [
+            { label: "Git", iconKey: "git" },
+            { label: "GitHub", iconKey: "github" },
+            { label: "Swagger", iconKey: "swagger" },
+            { label: "Jest", iconKey: "jest" },
+            { label: "Agile", iconKey: "agile" },
+        ],
     },
 ];
+
+export const stackFilters = [
+    {
+        id: ALL_STACK_ID,
+        label: "All",
+    },
+    ...stackGroups.map((stack) => ({
+        id: stack.id,
+        label: stack.label,
+    })),
+];
+
+export function getStackLabel(stackId) {
+    return stackFilters.find((stack) => stack.id === stackId)?.label ?? "All";
+}
+
+export function isValidStackId(stackId) {
+    return stackFilters.some((stack) => stack.id === stackId);
+}
