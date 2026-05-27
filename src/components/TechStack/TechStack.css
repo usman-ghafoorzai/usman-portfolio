@@ -97,11 +97,12 @@
 .tech-layout-blob-layer canvas {
     width: 100% !important;
     height: 100% !important;
-    opacity: 0.72;
+    opacity: 0.90;
     pointer-events: none;
 }
 
 /* Terminal */
+
 .tech-terminal,
 .tech-card {
     background:
@@ -628,6 +629,10 @@
 .tech-tags span {
     padding: 0.42rem 0.58rem;
 
+    display: inline-flex;
+    align-items: center;
+    gap: 0.36rem;
+
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 999px;
 
@@ -637,6 +642,15 @@
     font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.72rem;
     line-height: 1;
+}
+
+.tech-tag-icon {
+    flex: 0 0 auto;
+
+    color: rgba(var(--tech-accent-rgb), 0.88);
+    font-size: 0.82rem;
+
+    filter: drop-shadow(0 0 0.35rem rgba(var(--tech-accent-rgb), 0.22));
 }
 
 .tech-card-action {
@@ -791,6 +805,14 @@
 
     .tech-scan-row {
         font-size: 0.8rem;
+    }
+
+    .tech-tags span {
+        font-size: 0.68rem;
+    }
+
+    .tech-tag-icon {
+        font-size: 0.78rem;
     }
 }
 

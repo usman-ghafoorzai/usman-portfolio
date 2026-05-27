@@ -2,15 +2,34 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
     FaCode,
+    FaCss3Alt,
     FaDatabase,
     FaDocker,
     FaGitAlt,
+    FaGithub,
+    FaHtml5,
+    FaJava,
+    FaJs,
     FaLayerGroup,
     FaMobileAlt,
     FaNodeJs,
     FaReact,
+    FaServer,
     FaTerminal,
 } from "react-icons/fa";
+import {
+    SiDocker,
+    SiGit,
+    SiJest,
+    SiKotlin,
+    SiNestjs,
+    SiPostgresql,
+    SiPrisma,
+    SiSwagger,
+    SiTypescript,
+    SiVite,
+} from "react-icons/si";
+import { TbBrandCpp } from "react-icons/tb";
 import { stackGroups } from "../../data/stacks";
 import TechStackBackground3D from "./TechStackBackground3D";
 import "./TechStack.css";
@@ -25,6 +44,37 @@ const stackIconMap = {
     integration: FaLayerGroup,
     mobile: FaMobileAlt,
     workflow: FaGitAlt,
+};
+
+const techItemIconMap = {
+    react: FaReact,
+    javascript: FaJs,
+    typescript: SiTypescript,
+    html: FaHtml5,
+    css: FaCss3Alt,
+    vite: SiVite,
+
+    node: FaNodeJs,
+    nestjs: SiNestjs,
+    java: FaJava,
+    api: FaServer,
+
+    postgresql: SiPostgresql,
+    prisma: SiPrisma,
+    database: FaDatabase,
+
+    healthcare: FaLayerGroup,
+    docker: SiDocker,
+
+    cpp: TbBrandCpp,
+    kotlin: SiKotlin,
+    mobile: FaMobileAlt,
+
+    git: SiGit,
+    github: FaGithub,
+    swagger: SiSwagger,
+    jest: SiJest,
+    agile: FaGitAlt,
 };
 
 const MAX_TILT = 7;
@@ -400,9 +450,20 @@ export default function TechStack({ onStackSelect }) {
                                     <p>{group.description}</p>
 
                                     <div className="tech-tags">
-                                        {group.items.map((item) => (
-                                            <span key={item}>{item}</span>
-                                        ))}
+                                        {group.items.map((item) => {
+                                            const ItemIcon =
+                                                techItemIconMap[item.iconKey] ?? FaCode;
+
+                                            return (
+                                                <span key={item.label}>
+                                                    <ItemIcon
+                                                        className="tech-tag-icon"
+                                                        aria-hidden="true"
+                                                    />
+                                                    {item.label}
+                                                </span>
+                                            );
+                                        })}
                                     </div>
 
                                     <span className="tech-card-action">
