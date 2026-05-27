@@ -70,8 +70,11 @@ const stackGroups = [
 const MAX_TILT = 7;
 const COMMAND_TYPE_SPEED = 28;
 const STATUS_TYPE_SPEED = 58;
+const SELECT_PROMPT_TYPE_SPEED = 32;
 const SCAN_DURATION_MS = 9200;
 const STATUS_START_THRESHOLD = 0.1;
+
+const selectPrompt = "> pick one stack to inspect project evidence";
 
 function clamp(value, min = 0, max = 1) {
     return Math.min(Math.max(value, min), max);
@@ -137,16 +140,17 @@ function TypedStatus({ text, isActive }) {
     );
 }
 
-export default function TechStack() {
+export default function TechStack({ onStackSelect }) {
     const sectionRef = useRef(null);
 
     const [hasStarted, setHasStarted] = useState(false);
     const [typedCommand, setTypedCommand] = useState("");
+    const [typedSelectPrompt, setTypedSelectPrompt] = useState("");
     const [scanProgress, setScanProgress] = useState(0);
 
     const commandComplete = typedCommand.length === scanCommand.length;
     const scanProgressPercent = Math.round(scanProgress * 100);
-
+    const selectionReady = scanProgress >= 1;
     const isThreeJSDisabled = import.meta.env.VITE_DISABLE_THREEJS === "true";
 
     function getCardProgress(index) {
@@ -191,6 +195,18 @@ export default function TechStack() {
         };
     }
 
+    function handleStackSelect(stackTitle) {
+        if (!selectionReady) return;
+        onStackSelect?.(stackTitle);
+    }
+
+    function handleStackKeyDown(event, stackTitle) {
+        if (event.key !== "Enter" && event.key !== " ") return;
+
+        event.preventDefault();
+        handleStackSelect(stackTitle);
+    }
+
     useEffect(() => {
         const sectionElement = sectionRef.current;
 
@@ -203,7 +219,7 @@ export default function TechStack() {
                     observer.disconnect();
                 }
             },
-            { threshold: 0.28 },
+            { threshold: 0.28 }
         );
 
         observer.observe(sectionElement);
@@ -244,6 +260,21 @@ export default function TechStack() {
 
         return () => cancelAnimationFrame(animationFrameId);
     }, [commandComplete]);
+
+    useEffect(() => {
+        if (!selectionReady) {
+            setTypedSelectPrompt("");
+            return;
+        }
+
+        if (typedSelectPrompt.length >= selectPrompt.length) return;
+
+        const timeoutId = setTimeout(() => {
+            setTypedSelectPrompt(selectPrompt.slice(0, typedSelectPrompt.length + 1));
+        }, SELECT_PROMPT_TYPE_SPEED);
+
+        return () => clearTimeout(timeoutId);
+    }, [selectionReady, typedSelectPrompt]);
 
     return (
         <section ref={sectionRef} id="skills" className="tech-section">
@@ -332,10 +363,13 @@ export default function TechStack() {
                                             cardState === "ready";
 
                                         return (
-                                            <div
+                                            <button
                                                 key={group.title}
+                                                type="button"
                                                 className={`tech-scan-row tech-scan-row--${cardState}`}
                                                 style={getRowStyle(index)}
+                                                disabled={!selectionReady}
+                                                onClick={() => handleStackSelect(group.title)}
                                             >
                                                 <span
                                                     className={
@@ -351,10 +385,24 @@ export default function TechStack() {
                                                 </span>
 
                                                 <span>{group.title}</span>
-                                            </div>
+                                            </button>
                                         );
                                     })}
                                 </div>
+
+                                <motion.div
+                                    className="tech-select-line"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={
+                                        selectionReady
+                                            ? { opacity: 1, y: 0 }
+                                            : { opacity: 0, y: 8 }
+                                    }
+                                    transition={{ duration: 0.35 }}
+                                >
+                                    {typedSelectPrompt}
+                                    {selectionReady && <span className="tech-cursor">|</span>}
+                                </motion.div>
                             </div>
                         </div>
                     </motion.div>
@@ -367,8 +415,16 @@ export default function TechStack() {
                             return (
                                 <article
                                     key={group.title}
-                                    className={`tech-card tech-card--${cardState}`}
+                                    className={`tech-card tech-card--${cardState} ${
+                                        selectionReady ? "tech-card--selectable" : ""
+                                    }`}
                                     style={getCardStyle(group, index)}
+                                    role="button"
+                                    tabIndex={selectionReady ? 0 : -1}
+                                    aria-disabled={!selectionReady}
+                                    aria-label={`View projects related to ${group.title}`}
+                                    onClick={() => handleStackSelect(group.title)}
+                                    onKeyDown={(event) => handleStackKeyDown(event, group.title)}
                                     onMouseMove={handleTiltMove}
                                     onMouseLeave={handleTiltLeave}
                                 >
@@ -390,6 +446,10 @@ export default function TechStack() {
                                             <span key={item}>{item}</span>
                                         ))}
                                     </div>
+
+                                    <span className="tech-card-action">
+                                        View related projects
+                                    </span>
                                 </article>
                             );
                         })}
