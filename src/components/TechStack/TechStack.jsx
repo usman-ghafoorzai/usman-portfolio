@@ -7,6 +7,7 @@ import {
     FaGitAlt,
     FaHeartbeat,
     FaLayerGroup,
+    FaMobileAlt,
     FaNodeJs,
     FaReact,
     FaTerminal,
