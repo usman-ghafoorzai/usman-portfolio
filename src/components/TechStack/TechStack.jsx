@@ -1,3 +1,4 @@
+import TechStackBackground3D from "./TechStackBackground3D";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
@@ -146,6 +147,9 @@ export default function TechStack() {
     const commandComplete = typedCommand.length === scanCommand.length;
     const scanProgressPercent = Math.round(scanProgress * 100);
 
+    const isThreeJSDisabled =
+        import.meta.env.VITE_DISABLE_THREEJS === "true";
+
     function getCardProgress(index) {
         if (!commandComplete) return 0;
 
@@ -175,7 +179,8 @@ export default function TechStack() {
             "--card-progress": cardProgress.toFixed(4),
             "--card-opacity": (0.44 + easedProgress * 0.56).toFixed(4),
             "--card-blur": `${(1 - easedProgress) * 1.35}px`,
-            "--card-loader-opacity": cardProgress > 0 && cardProgress < 1 ? "1" : "0",
+            "--card-loader-opacity":
+                cardProgress > 0 && cardProgress < 1 ? "1" : "0",
         };
     }
 
@@ -244,150 +249,161 @@ export default function TechStack() {
 
     return (
         <section ref={sectionRef} id="skills" className="tech-section">
-            <motion.div
-                className="tech-header"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.45 }}
-                transition={{ duration: 0.55, ease: "easeOut" }}
-            >
-                <span className="tech-kicker">Tech stack</span>
-                <h2 className="tech-title">Systems I can build with.</h2>
-                <p className="tech-intro">
-                    A practical stack shaped by NTNU projects, health-tech bachelor work
-                    and hands-on development — from frontend interfaces and mobile apps
-                    to backend APIs, databases and integration work.
-                </p>
-            </motion.div>
+            {!isThreeJSDisabled && (
+                <div className="tech-bg-3d" aria-hidden="true">
+                    <TechStackBackground3D />
+                </div>
+            )}
 
-            <div className="tech-layout">
+            <div className="tech-content">
                 <motion.div
-                    className="tech-terminal-shell"
-                    initial={{ opacity: 0, x: -28 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, amount: 0.35 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="tech-header"
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.45 }}
+                    transition={{ duration: 0.55, ease: "easeOut" }}
                 >
-                    <div
-                        className="tech-terminal tech-tilt-card"
-                        onMouseMove={handleTiltMove}
-                        onMouseLeave={handleTiltLeave}
-                    >
-                        <div className="tech-window-top">
-                            <div className="tech-window-dots">
-                                <span />
-                                <span />
-                                <span />
-                            </div>
-
-                            <div className="tech-window-title">
-                                <FaTerminal />
-                                <span>stack-scan.sh</span>
-                            </div>
-                        </div>
-
-                        <div className="tech-terminal-body">
-                            <div className="tech-command-line">
-                                {typedCommand}
-                                {hasStarted && typedCommand.length < scanCommand.length && (
-                                    <span className="tech-cursor">|</span>
-                                )}
-                            </div>
-
-                            <motion.div
-                                className="tech-progress-shell"
-                                initial={{ opacity: 0 }}
-                                animate={commandComplete ? { opacity: 1 } : { opacity: 0 }}
-                                transition={{ duration: 0.35 }}
-                            >
-                                <div className="tech-progress-label">
-                                    <span>Technical profile scan</span>
-                                    <span>{scanProgressPercent}%</span>
-                                </div>
-
-                                <div
-                                    className="tech-progress-bar"
-                                    style={{
-                                        "--scan-progress": scanProgress.toFixed(4),
-                                    }}
-                                />
-                            </motion.div>
-
-                            <div className="tech-scan-list">
-                                {stackGroups.map((group, index) => {
-                                    const cardProgress = getCardProgress(index);
-                                    const cardState = getCardState(index);
-                                    const statusIsActive =
-                                        cardProgress > STATUS_START_THRESHOLD ||
-                                        cardState === "ready";
-
-                                    return (
-                                        <div
-                                            key={group.title}
-                                            className={`tech-scan-row tech-scan-row--${cardState}`}
-                                            style={getRowStyle(index)}
-                                        >
-                                            <span
-                                                className={
-                                                    group.status === "ACTIVE"
-                                                        ? "tech-status tech-status--active"
-                                                        : "tech-status"
-                                                }
-                                            >
-                                                <TypedStatus
-                                                    text={`[${group.status}]`}
-                                                    isActive={statusIsActive}
-                                                />
-                                            </span>
-
-                                            <span>{group.title}</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </div>
+                    <span className="tech-kicker">Tech stack</span>
+                    <h2 className="tech-title">Systems I can build with.</h2>
+                    <p className="tech-intro">
+                        A practical stack shaped by NTNU projects, health-tech bachelor work
+                        and hands-on development — from frontend interfaces and mobile apps
+                        to backend APIs, databases and integration work.
+                    </p>
                 </motion.div>
 
-                <div className="tech-grid">
-                    {stackGroups.map((group, index) => {
-                        const Icon = group.icon;
-                        const cardState = getCardState(index);
-
-                        return (
-                            <article
-                                key={group.title}
-                                className={`tech-card tech-card--${cardState}`}
-                                style={getCardStyle(group, index)}
-                                onMouseMove={handleTiltMove}
-                                onMouseLeave={handleTiltLeave}
-                            >
-                                <div className="tech-card-loader" aria-hidden="true">
+                <div className="tech-layout">
+                    <motion.div
+                        className="tech-terminal-shell"
+                        initial={{ opacity: 0, x: -28 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.35 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                    >
+                        <div
+                            className="tech-terminal tech-tilt-card"
+                            onMouseMove={handleTiltMove}
+                            onMouseLeave={handleTiltLeave}
+                        >
+                            <div className="tech-window-top">
+                                <div className="tech-window-dots">
+                                    <span />
+                                    <span />
                                     <span />
                                 </div>
 
-                                <div className="tech-card-header">
-                                    <div className="tech-card-icon">
-                                        <Icon />
+                                <div className="tech-window-title">
+                                    <FaTerminal />
+                                    <span>stack-scan.sh</span>
+                                </div>
+                            </div>
+
+                            <div className="tech-terminal-body">
+                                <div className="tech-command-line">
+                                    {typedCommand}
+                                    {hasStarted &&
+                                        typedCommand.length < scanCommand.length && (
+                                            <span className="tech-cursor">|</span>
+                                        )}
+                                </div>
+
+                                <motion.div
+                                    className="tech-progress-shell"
+                                    initial={{ opacity: 0 }}
+                                    animate={
+                                        commandComplete ? { opacity: 1 } : { opacity: 0 }
+                                    }
+                                    transition={{ duration: 0.35 }}
+                                >
+                                    <div className="tech-progress-label">
+                                        <span>Technical profile scan</span>
+                                        <span>{scanProgressPercent}%</span>
                                     </div>
-                                </div>
 
-                                <h3>{group.title}</h3>
-                                <p>{group.description}</p>
+                                    <div
+                                        className="tech-progress-bar"
+                                        style={{
+                                            "--scan-progress": scanProgress.toFixed(4),
+                                        }}
+                                    />
+                                </motion.div>
 
-                                <div className="tech-tags">
-                                    {group.items.map((item) => (
-                                        <span key={item}>{item}</span>
-                                    ))}
+                                <div className="tech-scan-list">
+                                    {stackGroups.map((group, index) => {
+                                        const cardProgress = getCardProgress(index);
+                                        const cardState = getCardState(index);
+                                        const statusIsActive =
+                                            cardProgress > STATUS_START_THRESHOLD ||
+                                            cardState === "ready";
+
+                                        return (
+                                            <div
+                                                key={group.title}
+                                                className={`tech-scan-row tech-scan-row--${cardState}`}
+                                                style={getRowStyle(index)}
+                                            >
+                                                <span
+                                                    className={
+                                                        group.status === "ACTIVE"
+                                                            ? "tech-status tech-status--active"
+                                                            : "tech-status"
+                                                    }
+                                                >
+                                                    <TypedStatus
+                                                        text={`[${group.status}]`}
+                                                        isActive={statusIsActive}
+                                                    />
+                                                </span>
+
+                                                <span>{group.title}</span>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            </article>
-                        );
-                    })}
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    <div className="tech-grid">
+                        {stackGroups.map((group, index) => {
+                            const Icon = group.icon;
+                            const cardState = getCardState(index);
+
+                            return (
+                                <article
+                                    key={group.title}
+                                    className={`tech-card tech-card--${cardState}`}
+                                    style={getCardStyle(group, index)}
+                                    onMouseMove={handleTiltMove}
+                                    onMouseLeave={handleTiltLeave}
+                                >
+                                    <div className="tech-card-loader" aria-hidden="true">
+                                        <span />
+                                    </div>
+
+                                    <div className="tech-card-header">
+                                        <div className="tech-card-icon">
+                                            <Icon />
+                                        </div>
+                                    </div>
+
+                                    <h3>{group.title}</h3>
+                                    <p>{group.description}</p>
+
+                                    <div className="tech-tags">
+                                        {group.items.map((item) => (
+                                            <span key={item}>{item}</span>
+                                        ))}
+                                    </div>
+                                </article>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
 
-            <FaDocker className="tech-background-icon tech-background-icon--one" />
-            <FaCode className="tech-background-icon tech-background-icon--two" />
+                <FaDocker className="tech-background-icon tech-background-icon--one" />
+                <FaCode className="tech-background-icon tech-background-icon--two" />
+            </div>
         </section>
     );
 }
