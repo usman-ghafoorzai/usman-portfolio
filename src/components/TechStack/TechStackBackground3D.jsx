@@ -48,9 +48,11 @@ float blobSdf(vec3 p, vec3 center, float radius, float seed) {
 vec3 applyPointerInfluence(vec3 basePos, vec3 pointerPos, float strength) {
     vec3 delta = pointerPos - basePos;
     float dist = length(delta.xy);
-    float falloff = smoothstep(1.2, 0.18, dist);
 
-    return basePos + delta * falloff * strength;
+    float falloff = smoothstep(1.15, 0.08, dist);
+    float breathing = 0.92 + sin(uTime * 1.55 + basePos.x * 2.0 + basePos.y) * 0.08;
+
+    return basePos + delta * falloff * strength * breathing;
 }
 
 float sceneMap(vec3 p) {
@@ -61,30 +63,30 @@ float sceneMap(vec3 p) {
     vec3 pointerPos = normalizedPosition(uPointer.x, uPointer.y, 0.0);
 
     vec3 p1 = normalizedPosition(
-        0.18 + sin(t * 0.16) * 0.035,
-        0.52 + cos(t * 0.13) * 0.045,
-        0.0
-    );
-
-    vec3 p2 = normalizedPosition(
-        0.48 + cos(t * 0.12) * 0.035,
+        0.46 + cos(t * 0.12) * 0.035,
         0.63 + sin(t * 0.17) * 0.035,
         0.02
     );
 
-    vec3 p3 = normalizedPosition(
-        0.78 + sin(t * 0.14) * 0.04,
-        0.36 + cos(t * 0.16) * 0.04,
+    vec3 p2 = normalizedPosition(
+        0.72 + sin(t * 0.14) * 0.04,
+        0.38 + cos(t * 0.16) * 0.04,
         -0.01
     );
 
-    p1 = applyPointerInfluence(p1, pointerPos, 0.045);
-    p2 = applyPointerInfluence(p2, pointerPos, 0.055);
-    p3 = applyPointerInfluence(p3, pointerPos, 0.05);
+    vec3 p3 = normalizedPosition(
+        0.86 + cos(t * 0.15) * 0.035,
+        0.68 + sin(t * 0.18) * 0.04,
+        0.01
+    );
 
-    d = smoothMin(d, blobSdf(p, p1, 0.27 + sin(t * 0.28) * 0.012, 1.2), blend);
-    d = smoothMin(d, blobSdf(p, p2, 0.18 + cos(t * 0.24) * 0.01, 2.4), blend);
-    d = smoothMin(d, blobSdf(p, p3, 0.22 + sin(t * 0.22) * 0.01, 3.6), blend);
+    p1 = applyPointerInfluence(p1, pointerPos, 0.105);
+    p2 = applyPointerInfluence(p2, pointerPos, 0.13);
+    p3 = applyPointerInfluence(p3, pointerPos, 0.12);
+
+    d = smoothMin(d, blobSdf(p, p1, 0.20 + cos(t * 0.24) * 0.01, 2.4), blend);
+    d = smoothMin(d, blobSdf(p, p2, 0.24 + sin(t * 0.22) * 0.012, 3.6), blend);
+    d = smoothMin(d, blobSdf(p, p3, 0.18 + sin(t * 0.28) * 0.01, 4.8), blend);
 
     return d;
 }
@@ -152,12 +154,12 @@ void main() {
 
     vec3 color = deepPurple;
     color += violet * diffuse * 0.48;
-    color += violet * pointerLight * 0.12;
+    color += violet * pointerLight * 0.2;
     color += pink * fresnel * 0.72;
     color += whiteRim * highlight * 0.9;
     color += violet * innerFlow * 0.075;
 
-    float alpha = 0.5 + fresnel * 0.22 + highlight * 0.12;
+    float alpha = 0.5 + fresnel * 0.22 + highlight * 0.12 + pointerLight * 0.06;
 
     gl_FragColor = vec4(color, alpha);
 }
@@ -205,7 +207,7 @@ function MetaballPlane() {
 
         currentPointer.current.lerp(
             targetPointer.current,
-            1 - Math.exp(-delta * 2.0)
+            1 - Math.exp(-delta * 4.0)
         );
 
         uniforms.uPointer.value.copy(currentPointer.current);
