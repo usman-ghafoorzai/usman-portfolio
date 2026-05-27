@@ -11,61 +11,21 @@ import {
     FaReact,
     FaTerminal,
 } from "react-icons/fa";
+import { stackGroups } from "../../data/stacks";
 import TechStackBackground3D from "./TechStackBackground3D";
 import "./TechStack.css";
 
 const scanCommand = "> run stack-scan --source cv --profile usman";
+const selectPrompt = "> pick one stack to inspect project evidence";
 
-const stackGroups = [
-    {
-        status: "OK",
-        title: "Frontend",
-        description: "Interfaces, layouts and interactive user experiences.",
-        icon: FaReact,
-        accentRgb: "97, 218, 251",
-        items: ["React", "JavaScript", "TypeScript", "HTML", "CSS", "Vite"],
-    },
-    {
-        status: "OK",
-        title: "Backend",
-        description: "APIs, server-side logic and structured application development.",
-        icon: FaNodeJs,
-        accentRgb: "104, 211, 145",
-        items: ["Node.js", "NestJS", "Java", "REST APIs"],
-    },
-    {
-        status: "OK",
-        title: "Databases",
-        description: "Data modeling, persistence and practical querying.",
-        icon: FaDatabase,
-        accentRgb: "96, 165, 250",
-        items: ["PostgreSQL", "Prisma", "SQL"],
-    },
-    {
-        status: "OK",
-        title: "Integration",
-        description: "Connecting systems through APIs, standards and structured data exchange.",
-        icon: FaLayerGroup,
-        accentRgb: "192, 132, 252",
-        items: ["FHIR", "openEHR", "API Design", "Docker"],
-    },
-    {
-        status: "OK",
-        title: "Systems & Mobile",
-        description: "Experience from study projects with lower-level and mobile development.",
-        icon: FaMobileAlt,
-        accentRgb: "45, 212, 191",
-        items: ["C++", "Kotlin", "Mobile Apps", "Java"],
-    },
-    {
-        status: "ACTIVE",
-        title: "Workflow",
-        description: "How I build, test, document and collaborate on software projects.",
-        icon: FaGitAlt,
-        accentRgb: "251, 146, 60",
-        items: ["Git", "GitHub", "Swagger", "Jest", "Agile"],
-    },
-];
+const stackIconMap = {
+    react: FaReact,
+    node: FaNodeJs,
+    database: FaDatabase,
+    integration: FaLayerGroup,
+    mobile: FaMobileAlt,
+    workflow: FaGitAlt,
+};
 
 const MAX_TILT = 7;
 const COMMAND_TYPE_SPEED = 28;
@@ -73,8 +33,6 @@ const STATUS_TYPE_SPEED = 58;
 const SELECT_PROMPT_TYPE_SPEED = 32;
 const SCAN_DURATION_MS = 9200;
 const STATUS_START_THRESHOLD = 0.1;
-
-const selectPrompt = "> pick one stack to inspect project evidence";
 
 function clamp(value, min = 0, max = 1) {
     return Math.min(Math.max(value, min), max);
@@ -195,16 +153,16 @@ export default function TechStack({ onStackSelect }) {
         };
     }
 
-    function handleStackSelect(stackTitle) {
+    function handleStackSelect(stackId) {
         if (!selectionReady) return;
-        onStackSelect?.(stackTitle);
+        onStackSelect?.(stackId);
     }
 
-    function handleStackKeyDown(event, stackTitle) {
+    function handleStackKeyDown(event, stackId) {
         if (event.key !== "Enter" && event.key !== " ") return;
 
         event.preventDefault();
-        handleStackSelect(stackTitle);
+        handleStackSelect(stackId);
     }
 
     useEffect(() => {
@@ -364,12 +322,12 @@ export default function TechStack({ onStackSelect }) {
 
                                         return (
                                             <button
-                                                key={group.title}
+                                                key={group.id}
                                                 type="button"
                                                 className={`tech-scan-row tech-scan-row--${cardState}`}
                                                 style={getRowStyle(index)}
                                                 disabled={!selectionReady}
-                                                onClick={() => handleStackSelect(group.title)}
+                                                onClick={() => handleStackSelect(group.id)}
                                             >
                                                 <span
                                                     className={
@@ -384,7 +342,7 @@ export default function TechStack({ onStackSelect }) {
                                                     />
                                                 </span>
 
-                                                <span>{group.title}</span>
+                                                <span>{group.label}</span>
                                             </button>
                                         );
                                     })}
@@ -409,12 +367,12 @@ export default function TechStack({ onStackSelect }) {
 
                     <div className="tech-grid">
                         {stackGroups.map((group, index) => {
-                            const Icon = group.icon;
+                            const Icon = stackIconMap[group.iconKey] ?? FaCode;
                             const cardState = getCardState(index);
 
                             return (
                                 <article
-                                    key={group.title}
+                                    key={group.id}
                                     className={`tech-card tech-card--${cardState} ${
                                         selectionReady ? "tech-card--selectable" : ""
                                     }`}
@@ -422,9 +380,9 @@ export default function TechStack({ onStackSelect }) {
                                     role="button"
                                     tabIndex={selectionReady ? 0 : -1}
                                     aria-disabled={!selectionReady}
-                                    aria-label={`View projects related to ${group.title}`}
-                                    onClick={() => handleStackSelect(group.title)}
-                                    onKeyDown={(event) => handleStackKeyDown(event, group.title)}
+                                    aria-label={`View projects related to ${group.label}`}
+                                    onClick={() => handleStackSelect(group.id)}
+                                    onKeyDown={(event) => handleStackKeyDown(event, group.id)}
                                     onMouseMove={handleTiltMove}
                                     onMouseLeave={handleTiltLeave}
                                 >
@@ -438,7 +396,7 @@ export default function TechStack({ onStackSelect }) {
                                         </div>
                                     </div>
 
-                                    <h3>{group.title}</h3>
+                                    <h3>{group.label}</h3>
                                     <p>{group.description}</p>
 
                                     <div className="tech-tags">
