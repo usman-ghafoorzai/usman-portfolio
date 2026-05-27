@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import "./TechStack.css";
 
-const scanCommand = "> run stack-scan --profile usman";
+const scanCommand = "> run stack-scan --source cv --profile usman";
 
 const stackGroups = [
     {
@@ -22,13 +22,15 @@ const stackGroups = [
         title: "Frontend",
         description: "Interfaces, layouts and interactive user experiences.",
         icon: FaReact,
-        items: ["React", "JavaScript", "CSS", "Vite"],
+        accentRgb: "97, 218, 251",
+        items: ["React", "JavaScript", "HTML", "CSS", "Vite"],
     },
     {
         status: "OK",
         title: "Backend",
-        description: "APIs, business logic and server-side structure.",
+        description: "APIs, server-side logic and structured application development.",
         icon: FaNodeJs,
+        accentRgb: "104, 211, 145",
         items: ["Node.js", "NestJS", "Java", "REST APIs"],
     },
     {
@@ -36,28 +38,32 @@ const stackGroups = [
         title: "Databases",
         description: "Data modeling, persistence and practical querying.",
         icon: FaDatabase,
+        accentRgb: "96, 165, 250",
         items: ["PostgreSQL", "Prisma", "SQL"],
     },
     {
         status: "OK",
         title: "Integration",
-        description: "Connecting systems through APIs and healthcare standards.",
+        description: "Connecting systems through APIs, standards and structured data exchange.",
         icon: FaLayerGroup,
+        accentRgb: "192, 132, 252",
         items: ["FHIR", "openEHR", "API Design", "Docker"],
     },
     {
         status: "OK",
-        title: "Workflow",
-        description: "Tools for building, testing and collaborating.",
-        icon: FaGitAlt,
-        items: ["Git", "GitHub", "Jest", "Swagger"],
+        title: "Systems & Mobile",
+        description: "Experience from study projects with lower-level and mobile development.",
+        icon: FaMobileAlt,
+        accentRgb: "45, 212, 191",
+        items: ["C++", "Kotlin", "Mobile Apps", "Java"],
     },
     {
         status: "ACTIVE",
-        title: "Currently learning",
-        description: "Growing from student projects into production-minded work.",
-        icon: FaHeartbeat,
-        items: ["System Design", "Cloud Basics", "Architecture"],
+        title: "Workflow",
+        description: "How I build, test, document and collaborate on software projects.",
+        icon: FaGitAlt,
+        accentRgb: "251, 146, 60",
+        items: ["Git", "GitHub", "Swagger", "Jest", "Agile"],
     },
 ];
 
@@ -111,6 +117,7 @@ export default function TechStack() {
 
     const [hasStarted, setHasStarted] = useState(false);
     const [typedCommand, setTypedCommand] = useState("");
+    const scanComplete = typedCommand.length === scanCommand.length;
 
     useEffect(() => {
         const sectionElement = sectionRef.current;
@@ -192,7 +199,7 @@ export default function TechStack() {
                         <motion.div
                             className="tech-progress-shell"
                             initial={{ opacity: 0 }}
-                            animate={hasStarted ? { opacity: 1 } : { opacity: 0 }}
+                            animate={scanComplete ? { opacity: 1 } : { opacity: 0 }}
                             transition={{ duration: 0.3, delay: 0.75 }}
                         >
                             <div className="tech-progress-label">
@@ -203,7 +210,7 @@ export default function TechStack() {
                             <motion.div
                                 className="tech-progress-bar"
                                 initial={{ scaleX: 0 }}
-                                animate={hasStarted ? { scaleX: 1 } : { scaleX: 0 }}
+                                animate={scanComplete ? { scaleX: 1 } : { scaleX: 0 }}
                                 transition={{ duration: 1.1, ease: "easeOut", delay: 0.85 }}
                             />
                         </motion.div>
@@ -215,7 +222,7 @@ export default function TechStack() {
                                     className="tech-scan-row"
                                     initial={{ opacity: 0, x: -12 }}
                                     animate={
-                                        hasStarted
+                                        scanComplete
                                             ? { opacity: 1, x: 0 }
                                             : { opacity: 0, x: -12 }
                                     }
@@ -252,7 +259,7 @@ export default function TechStack() {
                                 custom={index}
                                 variants={cardVariants}
                                 initial="hidden"
-                                animate={hasStarted ? "visible" : "hidden"}
+                                animate={scanComplete ? "visible" : "hidden"}
                                 onMouseMove={handleTiltMove}
                                 onMouseLeave={handleTiltLeave}
                             >
