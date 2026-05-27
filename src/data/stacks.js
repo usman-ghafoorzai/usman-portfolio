@@ -107,3 +107,7 @@ export function getStackLabel(stackId) {
 export function isValidStackId(stackId) {
     return stackFilters.some((stack) => stack.id === stackId);
 }
+
+export function getStackAccentRgb(stackId) {
+    return stackGroups.find((stack) => stack.id === stackId)?.accentRgb ?? "255, 255, 255";
+}

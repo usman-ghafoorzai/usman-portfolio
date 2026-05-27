@@ -1,9 +1,14 @@
 import { ALL_STACK_ID } from "../data/stacks";
+import { projectStackMap } from "../data/projectStackMap";
 
 export function getProjectsForStack(projects, stackId) {
     if (stackId === ALL_STACK_ID) return projects;
 
-    return projects.filter((project) => project.stacks.includes(stackId));
+    const selectedProjectIds = projectStackMap[stackId] ?? [];
+
+    return selectedProjectIds
+        .map((projectId) => projects.find((project) => project.id === projectId))
+        .filter(Boolean);
 }
 
 export function splitFeaturedProject(projects) {

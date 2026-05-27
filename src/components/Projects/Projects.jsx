@@ -12,9 +12,9 @@ import {
 } from "react-icons/fa";
 import {
     ALL_STACK_ID,
+    getStackAccentRgb,
     getStackLabel,
     isValidStackId,
-    stackFilters,
 } from "../../data/stacks";
 import { projects } from "../../data/projects";
 import {
@@ -32,7 +32,7 @@ const projectIconMap = {
     database: FaDatabase,
 };
 
-const MAX_TILT = 6;
+const MAX_TILT = 9;
 
 function handleTiltMove(event) {
     const card = event.currentTarget;
@@ -65,7 +65,7 @@ function ProjectCard({ project, activeStackLabel, featured = false }) {
     return (
         <article
             className={featured ? "project-card project-card--featured" : "project-card"}
-            style={{ "--project-accent-rgb": project.accentRgb }}
+            style={{ "--project-accent-rgb": "var(--projects-active-rgb)" }}
             onMouseMove={handleTiltMove}
             onMouseLeave={handleTiltLeave}
         >
@@ -126,6 +126,11 @@ function ProjectCard({ project, activeStackLabel, featured = false }) {
 export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) {
     const selectedStack = isValidStackId(activeStack) ? activeStack : ALL_STACK_ID;
     const selectedStackLabel = getStackLabel(selectedStack);
+    const isShowingAll = selectedStack === ALL_STACK_ID;
+
+    const activeAccentRgb = isShowingAll
+        ? "255, 255, 255"
+        : getStackAccentRgb(selectedStack);
 
     const visibleProjects = useMemo(() => {
         return getProjectsForStack(projects, selectedStack);
@@ -135,12 +140,20 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
         return splitFeaturedProject(visibleProjects);
     }, [visibleProjects]);
 
-    function handleFilterClick(stackId) {
-        onStackChange?.(stackId);
+    function handleShowAllClick() {
+        onStackChange?.(ALL_STACK_ID);
     }
 
     return (
-        <section id="projects" className="projects-section">
+        <section
+            id="projects"
+            className={
+                isShowingAll
+                    ? "projects-section"
+                    : "projects-section projects-section--stack-active"
+            }
+            style={{ "--projects-active-rgb": activeAccentRgb }}
+        >
             <div className="projects-content">
                 <motion.div
                     className="projects-header"
@@ -155,34 +168,27 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
                         <div>
                             <h2 className="projects-title">Project evidence.</h2>
                             <p className="projects-intro">
-                                Filtered by the stack selected above. Each project connects
-                                technical skills to concrete work from NTNU projects, health-tech
-                                integration, full-stack development, mobile work and systems-oriented
-                                coursework.
+                                Curated project evidence connected to the stack selected above.
+                                Each project links technical skills to concrete work from NTNU
+                                projects, health-tech integration, full-stack development, mobile
+                                work and systems-oriented coursework.
                             </p>
                         </div>
 
-                        <div className="projects-terminal-status" aria-hidden="true">
+                        <div className="projects-terminal-status">
                             <span>&gt; showing</span>
                             <strong>{selectedStackLabel}</strong>
-                        </div>
-                    </div>
 
-                    <div className="projects-filters" aria-label="Project filters">
-                        {stackFilters.map((stack) => (
-                            <button
-                                key={stack.id}
-                                type="button"
-                                className={
-                                    selectedStack === stack.id
-                                        ? "projects-filter projects-filter--active"
-                                        : "projects-filter"
-                                }
-                                onClick={() => handleFilterClick(stack.id)}
-                            >
-                                {stack.label}
-                            </button>
-                        ))}
+                            {!isShowingAll && (
+                                <button
+                                    type="button"
+                                    className="projects-show-all-button"
+                                    onClick={handleShowAllClick}
+                                >
+                                    Show all
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </motion.div>
 
