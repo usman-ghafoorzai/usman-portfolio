@@ -1,23 +1,35 @@
+import { useState } from "react";
 import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero";
 import About from "./components/About/About";
 import TechStack from "./components/TechStack/TechStack";
+import Projects from "./components/Projects/Projects";
 import "./index.css";
 
 export default function App() {
-  return (
-      <main className="page">
-        <Navbar />
-        <Hero />
-          <About />
-          <TechStack />
+    const [activeProjectStack, setActiveProjectStack] = useState("All");
 
-        <section id="about" className="section">
-          <div className="container">
-            <p className="eyebrow">About me</p>
-            <h2 className="heading-lg">More content coming here.</h2>
-          </div>
-        </section>
-      </main>
-  );
+    function handleStackSelect(stackName) {
+        setActiveProjectStack(stackName);
+
+        window.requestAnimationFrame(() => {
+            document.getElementById("projects")?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        });
+    }
+
+    return (
+        <main className="page">
+            <Navbar />
+            <Hero />
+            <About />
+            <TechStack onStackSelect={handleStackSelect} />
+            <Projects
+                activeStack={activeProjectStack}
+                onStackChange={setActiveProjectStack}
+            />
+        </main>
+    );
 }
