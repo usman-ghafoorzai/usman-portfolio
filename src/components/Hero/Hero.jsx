@@ -6,7 +6,7 @@ import "./Hero.css";
 const ROTATION_INTERVAL = 2200;
 const TYPE_SPEED = 80;
 const DELETE_SPEED = 25;
-const HOLD_DELAY = 1200;
+const HOLD_DELAY = 1500;
 
 const rotatingWords = [
     "Backend Developer",
@@ -84,7 +84,9 @@ export default function Hero() {
                     transition={{ duration: 0.45, ease: "easeOut" }}
                 >
                     {typedText}
-                    <span aria-hidden="true">|</span>
+                    <span className="hero-type-cursor" aria-hidden="true">
+    |
+</span>
                 </motion.span>
             </div>
 
