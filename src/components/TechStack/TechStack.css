@@ -347,15 +347,43 @@
 }
 
 .tech-scan-row {
+    width: 100%;
+    padding: 0;
+
     display: flex;
     align-items: center;
     gap: 0.7rem;
 
+    border: 0;
+    background: transparent;
+    appearance: none;
+
     color: rgba(255, 255, 255, 0.72);
+    font-family: inherit;
     font-size: 0.9rem;
     line-height: 1.5;
+    text-align: left;
 
     opacity: var(--row-opacity, 0.42);
+    cursor: default;
+
+    transition:
+            opacity 180ms ease,
+            color 180ms ease,
+            transform 180ms ease;
+}
+
+.tech-scan-row:not(:disabled) {
+    cursor: pointer;
+}
+
+.tech-scan-row:not(:disabled):hover {
+    color: rgba(255, 255, 255, 0.95);
+    transform: translateX(0.18rem);
+}
+
+.tech-scan-row:disabled {
+    cursor: default;
 }
 
 .tech-status {
@@ -367,6 +395,18 @@
 
 .tech-status--active {
     color: rgb(var(--status-color));
+}
+
+.tech-select-line {
+    margin-top: 1.35rem;
+    padding-top: 1.1rem;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+    color: rgba(255, 255, 255, 0.56);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.78rem;
+    line-height: 1.6;
 }
 
 /* Cards */
@@ -407,6 +447,10 @@
             inset 0 1px 0 rgba(255, 255, 255, 0.07);
 
     overflow: hidden;
+}
+
+.tech-card--selectable {
+    cursor: pointer;
 }
 
 .tech-card::before {
@@ -595,6 +639,32 @@
     line-height: 1;
 }
 
+.tech-card-action {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+
+    color: rgba(var(--tech-accent-rgb), 0.86);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+
+    opacity: 0.72;
+
+    transition:
+            opacity 180ms ease,
+            transform 180ms ease;
+}
+
+.tech-card--selectable:hover .tech-card-action {
+    opacity: 1;
+    transform: translateX(0.18rem);
+}
+
 .tech-background-icon {
     position: absolute;
     z-index: 0;
@@ -736,7 +806,9 @@
     .tech-status-cursor,
     .tech-progress-bar,
     .tech-card-loader span,
-    .tech-card-loader span::after {
+    .tech-card-loader span::after,
+    .tech-scan-row,
+    .tech-card-action {
         animation: none;
         transition: none;
         transform: none;
