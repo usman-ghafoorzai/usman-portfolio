@@ -5,7 +5,6 @@ import {
     FaDatabase,
     FaDocker,
     FaGitAlt,
-    FaHeartbeat,
     FaLayerGroup,
     FaMobileAlt,
     FaNodeJs,
@@ -23,7 +22,7 @@ const stackGroups = [
         description: "Interfaces, layouts and interactive user experiences.",
         icon: FaReact,
         accentRgb: "97, 218, 251",
-        items: ["React", "JavaScript", "HTML", "CSS", "Vite"],
+        items: ["React", "JavaScript", "TypeScript", "HTML", "CSS", "Vite"],
     },
     {
         status: "OK",
@@ -68,24 +67,19 @@ const stackGroups = [
 ];
 
 const MAX_TILT = 7;
+const COMMAND_TYPE_SPEED = 28;
+const STATUS_TYPE_SPEED = 58;
+const SCAN_DURATION_MS = 9200;
+const STATUS_START_THRESHOLD = 0.1;
 
-const cardVariants = {
-    hidden: {
-        opacity: 0,
-        y: 24,
-        filter: "blur(8px)",
-    },
-    visible: (index) => ({
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        transition: {
-            duration: 0.45,
-            ease: "easeOut",
-            delay: 0.16 + index * 0.1,
-        },
-    }),
-};
+function clamp(value, min = 0, max = 1) {
+    return Math.min(Math.max(value, min), max);
+}
+
+function easeOutCubic(value) {
+    const clampedValue = clamp(value);
+    return 1 - Math.pow(1 - clampedValue, 3);
+}
 
 function handleTiltMove(event) {
     const card = event.currentTarget;
@@ -112,12 +106,87 @@ function handleTiltLeave(event) {
     card.style.setProperty("--tilt-glow-y", "50%");
 }
 
+function TypedStatus({ text, isActive }) {
+    const [typedText, setTypedText] = useState("");
+
+    useEffect(() => {
+        if (!isActive) {
+            setTypedText("");
+        }
+    }, [isActive, text]);
+
+    useEffect(() => {
+        if (!isActive) return;
+        if (typedText.length >= text.length) return;
+
+        const timeoutId = setTimeout(() => {
+            setTypedText(text.slice(0, typedText.length + 1));
+        }, STATUS_TYPE_SPEED);
+
+        return () => clearTimeout(timeoutId);
+    }, [isActive, text, typedText]);
+
+    return (
+        <>
+            {typedText}
+            {isActive && typedText.length < text.length && (
+                <span className="tech-status-cursor">|</span>
+            )}
+        </>
+    );
+}
+
 export default function TechStack() {
     const sectionRef = useRef(null);
 
     const [hasStarted, setHasStarted] = useState(false);
     const [typedCommand, setTypedCommand] = useState("");
-    const scanComplete = typedCommand.length === scanCommand.length;
+    const [scanProgress, setScanProgress] = useState(0);
+
+    const commandComplete = typedCommand.length === scanCommand.length;
+    const scanProgressPercent = Math.round(scanProgress * 100);
+
+    function getCardProgress(index) {
+        if (!commandComplete) return 0;
+
+        const totalCards = stackGroups.length;
+        const start = index / totalCards;
+        const end = (index + 1) / totalCards;
+        const localProgress = (scanProgress - start) / (end - start);
+
+        return clamp(localProgress);
+    }
+
+    function getCardState(index) {
+        const cardProgress = getCardProgress(index);
+
+        if (!commandComplete || cardProgress <= 0) return "pending";
+        if (cardProgress >= 1) return "ready";
+
+        return "loading";
+    }
+
+    function getCardStyle(group, index) {
+        const cardProgress = getCardProgress(index);
+        const easedProgress = easeOutCubic(cardProgress);
+
+        return {
+            "--tech-accent-rgb": group.accentRgb,
+            "--card-progress": cardProgress.toFixed(4),
+            "--card-opacity": (0.44 + easedProgress * 0.56).toFixed(4),
+            "--card-blur": `${(1 - easedProgress) * 1.35}px`,
+            "--card-loader-opacity": cardProgress > 0 && cardProgress < 1 ? "1" : "0",
+        };
+    }
+
+    function getRowStyle(index) {
+        const cardProgress = getCardProgress(index);
+        const easedProgress = easeOutCubic(cardProgress);
+
+        return {
+            "--row-opacity": (0.42 + easedProgress * 0.58).toFixed(4),
+        };
+    }
 
     useEffect(() => {
         const sectionElement = sectionRef.current;
@@ -145,10 +214,33 @@ export default function TechStack() {
 
         const timeoutId = setTimeout(() => {
             setTypedCommand(scanCommand.slice(0, typedCommand.length + 1));
-        }, 28);
+        }, COMMAND_TYPE_SPEED);
 
         return () => clearTimeout(timeoutId);
     }, [hasStarted, typedCommand]);
+
+    useEffect(() => {
+        if (!commandComplete) return;
+
+        let animationFrameId;
+        const startTime = performance.now();
+
+        function updateProgress(currentTime) {
+            const elapsedTime = currentTime - startTime;
+            const nextProgress = clamp(elapsedTime / SCAN_DURATION_MS);
+
+            setScanProgress(nextProgress);
+
+            if (nextProgress < 1) {
+                animationFrameId = requestAnimationFrame(updateProgress);
+            }
+        }
+
+        setScanProgress(0);
+        animationFrameId = requestAnimationFrame(updateProgress);
+
+        return () => cancelAnimationFrame(animationFrameId);
+    }, [commandComplete]);
 
     return (
         <section ref={sectionRef} id="skills" className="tech-section">
@@ -162,90 +254,97 @@ export default function TechStack() {
                 <span className="tech-kicker">Tech stack</span>
                 <h2 className="tech-title">Systems I can build with.</h2>
                 <p className="tech-intro">
-                    A practical stack shaped by NTNU projects, health-tech bachelor work and
-                    hands-on development — from frontend interfaces and mobile apps to backend
-                    APIs, databases and integration work.
+                    A practical stack shaped by NTNU projects, health-tech bachelor work
+                    and hands-on development — from frontend interfaces and mobile apps
+                    to backend APIs, databases and integration work.
                 </p>
             </motion.div>
 
             <div className="tech-layout">
                 <motion.div
-                    className="tech-terminal"
+                    className="tech-terminal-shell"
                     initial={{ opacity: 0, x: -28 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, amount: 0.35 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
                 >
-                    <div className="tech-window-top">
-                        <div className="tech-window-dots">
-                            <span />
-                            <span />
-                            <span />
+                    <div
+                        className="tech-terminal tech-tilt-card"
+                        onMouseMove={handleTiltMove}
+                        onMouseLeave={handleTiltLeave}
+                    >
+                        <div className="tech-window-top">
+                            <div className="tech-window-dots">
+                                <span />
+                                <span />
+                                <span />
+                            </div>
+
+                            <div className="tech-window-title">
+                                <FaTerminal />
+                                <span>stack-scan.sh</span>
+                            </div>
                         </div>
 
-                        <div className="tech-window-title">
-                            <FaTerminal />
-                            <span>stack-scan.sh</span>
-                        </div>
-                    </div>
-
-                    <div className="tech-terminal-body">
-                        <div className="tech-command-line">
-                            {typedCommand}
-                            {hasStarted && typedCommand.length < scanCommand.length && (
-                                <span className="tech-cursor">|</span>
-                            )}
-                        </div>
-
-                        <motion.div
-                            className="tech-progress-shell"
-                            initial={{ opacity: 0 }}
-                            animate={scanComplete ? { opacity: 1 } : { opacity: 0 }}
-                            transition={{ duration: 0.3, delay: 0.75 }}
-                        >
-                            <div className="tech-progress-label">
-                                <span>Technical profile scan</span>
-                                <span>100%</span>
+                        <div className="tech-terminal-body">
+                            <div className="tech-command-line">
+                                {typedCommand}
+                                {hasStarted && typedCommand.length < scanCommand.length && (
+                                    <span className="tech-cursor">|</span>
+                                )}
                             </div>
 
                             <motion.div
-                                className="tech-progress-bar"
-                                initial={{ scaleX: 0 }}
-                                animate={scanComplete ? { scaleX: 1 } : { scaleX: 0 }}
-                                transition={{ duration: 1.1, ease: "easeOut", delay: 0.85 }}
-                            />
-                        </motion.div>
+                                className="tech-progress-shell"
+                                initial={{ opacity: 0 }}
+                                animate={commandComplete ? { opacity: 1 } : { opacity: 0 }}
+                                transition={{ duration: 0.35 }}
+                            >
+                                <div className="tech-progress-label">
+                                    <span>Technical profile scan</span>
+                                    <span>{scanProgressPercent}%</span>
+                                </div>
 
-                        <div className="tech-scan-list">
-                            {stackGroups.map((group, index) => (
-                                <motion.div
-                                    key={group.title}
-                                    className="tech-scan-row"
-                                    style={{ "--tech-accent-rgb": group.accentRgb }}
-                                    initial={{ opacity: 0, x: -12 }}
-                                    animate={
-                                        scanComplete
-                                            ? { opacity: 1, x: 0 }
-                                            : { opacity: 0, x: -12 }
-                                    }
-                                    transition={{
-                                        duration: 0.35,
-                                        ease: "easeOut",
-                                        delay: 1 + index * 0.14,
+                                <div
+                                    className="tech-progress-bar"
+                                    style={{
+                                        "--scan-progress": scanProgress.toFixed(4),
                                     }}
-                                >
-                                    <span
-                                        className={
-                                            group.status === "ACTIVE"
-                                                ? "tech-status tech-status--active"
-                                                : "tech-status"
-                                        }
-                                    >
-                                        [{group.status}]
-                                    </span>
-                                    <span>{group.title}</span>
-                                </motion.div>
-                            ))}
+                                />
+                            </motion.div>
+
+                            <div className="tech-scan-list">
+                                {stackGroups.map((group, index) => {
+                                    const cardProgress = getCardProgress(index);
+                                    const cardState = getCardState(index);
+                                    const statusIsActive =
+                                        cardProgress > STATUS_START_THRESHOLD ||
+                                        cardState === "ready";
+
+                                    return (
+                                        <div
+                                            key={group.title}
+                                            className={`tech-scan-row tech-scan-row--${cardState}`}
+                                            style={getRowStyle(index)}
+                                        >
+                                            <span
+                                                className={
+                                                    group.status === "ACTIVE"
+                                                        ? "tech-status tech-status--active"
+                                                        : "tech-status"
+                                                }
+                                            >
+                                                <TypedStatus
+                                                    text={`[${group.status}]`}
+                                                    isActive={statusIsActive}
+                                                />
+                                            </span>
+
+                                            <span>{group.title}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
                 </motion.div>
@@ -253,20 +352,19 @@ export default function TechStack() {
                 <div className="tech-grid">
                     {stackGroups.map((group, index) => {
                         const Icon = group.icon;
+                        const cardState = getCardState(index);
 
                         return (
-                            <motion.article
+                            <article
                                 key={group.title}
-                                className="tech-card"
-                                style={{ "--tech-accent-rgb": group.accentRgb }}
-                                custom={index}
-                                variants={cardVariants}
-                                initial="hidden"
-                                animate={scanComplete ? "visible" : "hidden"}
+                                className={`tech-card tech-card--${cardState}`}
+                                style={getCardStyle(group, index)}
                                 onMouseMove={handleTiltMove}
                                 onMouseLeave={handleTiltLeave}
                             >
-                                <div className="tech-card-glow" />
+                                <div className="tech-card-loader" aria-hidden="true">
+                                    <span />
+                                </div>
 
                                 <div className="tech-card-header">
                                     <div className="tech-card-icon">
@@ -292,7 +390,7 @@ export default function TechStack() {
                                         <span key={item}>{item}</span>
                                     ))}
                                 </div>
-                            </motion.article>
+                            </article>
                         );
                     })}
                 </div>
