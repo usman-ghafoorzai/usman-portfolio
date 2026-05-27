@@ -249,6 +249,12 @@
     color: rgb(var(--tech-accent-rgb));
 }
 
+.tech-status-cursor {
+    display: inline-block;
+    margin-left: 0.05em;
+    animation: techCursorBlink 1s steps(1, end) infinite;
+}
+
 /* Cards */
 
 .tech-grid {
