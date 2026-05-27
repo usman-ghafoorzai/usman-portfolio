@@ -1,32 +1,58 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { IoChevronDown } from "react-icons/io5";
 import "./Hero.css";
 
 const ROTATION_INTERVAL = 2200;
+const TYPE_SPEED = 75;
+const DELETE_SPEED = 35;
+const HOLD_DELAY = 1200;
 
 const rotatingWords = [
     "Backend Developer",
-    "API Builder",
-    "System Integrator",
+    "Frontend Developer",
+    "Computer Engineer",
     "Full-Stack Developer",
-    "FHIR / openEHR Explorer",
-    "Runtime Debugger",
-    "It works at runtime. Suspicious.",
+    "Software Graduate"
 ];
 
 export default function Hero() {
     const [wordIndex, setWordIndex] = useState(0);
+    const [typedText, setTypedText] = useState("");
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
+        const currentWord = rotatingWords[wordIndex];
+
+        let timeoutId;
+
+        if (!isDeleting && typedText.length < currentWord.length) {
+            timeoutId = setTimeout(() => {
+                setTypedText(currentWord.slice(0, typedText.length + 1));
+            }, TYPE_SPEED);
+        }
+
+        if (!isDeleting && typedText.length === currentWord.length) {
+            timeoutId = setTimeout(() => {
+                setIsDeleting(true);
+            }, HOLD_DELAY);
+        }
+
+        if (isDeleting && typedText.length > 0) {
+            timeoutId = setTimeout(() => {
+                setTypedText(currentWord.slice(0, typedText.length - 1));
+            }, DELETE_SPEED);
+        }
+
+        if (isDeleting && typedText.length === 0) {
+            setIsDeleting(false);
             setWordIndex((currentIndex) => {
                 return (currentIndex + 1) % rotatingWords.length;
             });
-        }, ROTATION_INTERVAL);
+        }
 
-        return () => clearInterval(intervalId);
-    }, []);
+        return () => clearTimeout(timeoutId);
+    }, [typedText, isDeleting, wordIndex]);
 
     function scrollToNextSection() {
         const aboutSection = document.getElementById("about");
@@ -50,18 +76,15 @@ export default function Hero() {
             <div className="hero-background" />
 
             <div className="hero-content">
-                <AnimatePresence mode="wait">
-                    <motion.span
-                        key={rotatingWords[wordIndex]}
-                        className="hero-rotating-word"
-                        initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
-                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, y: -18, filter: "blur(8px)" }}
-                        transition={{ duration: 0.45, ease: "easeOut" }}
-                    >
-                        {rotatingWords[wordIndex]}
-                    </motion.span>
-                </AnimatePresence>
+                <motion.span
+                    className="hero-rotating-word"
+                    initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    transition={{ duration: 0.45, ease: "easeOut" }}
+                >
+                    {typedText}
+                    <span aria-hidden="true">|</span>
+                </motion.span>
             </div>
 
             <motion.button
