@@ -4,8 +4,8 @@ import { IoChevronDown } from "react-icons/io5";
 import "./Hero.css";
 
 const ROTATION_INTERVAL = 2200;
-const TYPE_SPEED = 75;
-const DELETE_SPEED = 35;
+const TYPE_SPEED = 80;
+const DELETE_SPEED = 25;
 const HOLD_DELAY = 1200;
 
 const rotatingWords = [
@@ -13,7 +13,8 @@ const rotatingWords = [
     "Frontend Developer",
     "Computer Engineer",
     "Full-Stack Developer",
-    "Software Graduate"
+    "Software Graduate",
+    "Open for Contract Work",
 ];
 
 export default function Hero() {
