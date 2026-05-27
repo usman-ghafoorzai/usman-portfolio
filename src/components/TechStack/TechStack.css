@@ -21,15 +21,23 @@
     position: absolute;
     top: 18%;
     right: 8%;
+    z-index: 0;
+
     width: 36rem;
     height: 36rem;
+
     background: radial-gradient(circle, rgba(255, 255, 255, 0.055), transparent 68%);
     pointer-events: none;
 }
 
-.tech-header {
+.tech-content {
     position: relative;
     z-index: 1;
+}
+
+.tech-header {
+    position: relative;
+    z-index: 2;
     max-width: 66rem;
     margin-bottom: 3.5rem;
 }
@@ -69,6 +77,7 @@
 .tech-layout {
     position: relative;
     z-index: 1;
+    isolation: isolate;
 
     display: grid;
     grid-template-columns: minmax(22rem, 0.78fr) minmax(0, 1.22fr);
@@ -76,9 +85,34 @@
     align-items: stretch;
 }
 
+.tech-layout-blob-layer {
+    position: absolute;
+    inset: -6%;
+    z-index: 0;
+
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.tech-layout-blob-layer canvas {
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0.72;
+    pointer-events: none;
+}
+
 /* Terminal */
+.tech-terminal,
+.tech-card {
+    background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025)),
+            rgba(8, 8, 8, 0.7);
+}
 
 .tech-terminal-shell {
+    position: relative;
+    z-index: 2;
+
     min-height: 34rem;
     perspective: 1200px;
     display: flex;
@@ -338,6 +372,8 @@
 /* Cards */
 
 .tech-grid {
+    position: relative;
+    z-index: 2;
     perspective: 1200px;
 
     display: grid;
@@ -520,25 +556,6 @@
             inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.tech-card-status {
-    padding: 0.35rem 0.55rem;
-
-    border: 1px solid rgba(var(--tech-accent-rgb), 0.24);
-    border-radius: 999px;
-
-    color: rgb(var(--tech-accent-rgb));
-    background: rgba(var(--tech-accent-rgb), 0.075);
-
-    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-}
-
-.tech-card-status--active {
-    color: rgb(var(--tech-accent-rgb));
-}
-
 .tech-card h3 {
     margin: 0;
 
@@ -682,6 +699,10 @@
     .tech-title {
         letter-spacing: -0.06em;
     }
+
+    .tech-layout-blob-layer {
+        inset: -8%;
+    }
 }
 
 @media (max-width: 520px) {
@@ -704,6 +725,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .tech-layout-blob-layer {
+        display: none;
+    }
+
     .tech-tilt-card,
     .tech-card,
     .tech-window-dots span,
@@ -716,18 +741,4 @@
         transition: none;
         transform: none;
     }
-}
-
-.tech-bg-3d {
-    position: absolute;
-    inset: -8%;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.78;
-    filter: blur(16px) saturate(1.05);
-}
-
-.tech-content {
-    position: relative;
-    z-index: 1;
 }

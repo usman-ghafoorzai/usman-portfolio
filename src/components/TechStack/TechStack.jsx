@@ -1,4 +1,3 @@
-import TechStackBackground3D from "./TechStackBackground3D";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
@@ -12,6 +11,7 @@ import {
     FaReact,
     FaTerminal,
 } from "react-icons/fa";
+import TechStackBackground3D from "./TechStackBackground3D";
 import "./TechStack.css";
 
 const scanCommand = "> run stack-scan --source cv --profile usman";
@@ -147,8 +147,7 @@ export default function TechStack() {
     const commandComplete = typedCommand.length === scanCommand.length;
     const scanProgressPercent = Math.round(scanProgress * 100);
 
-    const isThreeJSDisabled =
-        import.meta.env.VITE_DISABLE_THREEJS === "true";
+    const isThreeJSDisabled = import.meta.env.VITE_DISABLE_THREEJS === "true";
 
     function getCardProgress(index) {
         if (!commandComplete) return 0;
@@ -179,8 +178,7 @@ export default function TechStack() {
             "--card-progress": cardProgress.toFixed(4),
             "--card-opacity": (0.44 + easedProgress * 0.56).toFixed(4),
             "--card-blur": `${(1 - easedProgress) * 1.35}px`,
-            "--card-loader-opacity":
-                cardProgress > 0 && cardProgress < 1 ? "1" : "0",
+            "--card-loader-opacity": cardProgress > 0 && cardProgress < 1 ? "1" : "0",
         };
     }
 
@@ -249,12 +247,6 @@ export default function TechStack() {
 
     return (
         <section ref={sectionRef} id="skills" className="tech-section">
-            {!isThreeJSDisabled && (
-                <div className="tech-bg-3d" aria-hidden="true">
-                    <TechStackBackground3D />
-                </div>
-            )}
-
             <div className="tech-content">
                 <motion.div
                     className="tech-header"
@@ -273,6 +265,12 @@ export default function TechStack() {
                 </motion.div>
 
                 <div className="tech-layout">
+                    {!isThreeJSDisabled && (
+                        <div className="tech-layout-blob-layer" aria-hidden="true">
+                            <TechStackBackground3D />
+                        </div>
+                    )}
+
                     <motion.div
                         className="tech-terminal-shell"
                         initial={{ opacity: 0, x: -28 }}
@@ -301,18 +299,15 @@ export default function TechStack() {
                             <div className="tech-terminal-body">
                                 <div className="tech-command-line">
                                     {typedCommand}
-                                    {hasStarted &&
-                                        typedCommand.length < scanCommand.length && (
-                                            <span className="tech-cursor">|</span>
-                                        )}
+                                    {hasStarted && typedCommand.length < scanCommand.length && (
+                                        <span className="tech-cursor">|</span>
+                                    )}
                                 </div>
 
                                 <motion.div
                                     className="tech-progress-shell"
                                     initial={{ opacity: 0 }}
-                                    animate={
-                                        commandComplete ? { opacity: 1 } : { opacity: 0 }
-                                    }
+                                    animate={commandComplete ? { opacity: 1 } : { opacity: 0 }}
                                     transition={{ duration: 0.35 }}
                                 >
                                     <div className="tech-progress-label">
