@@ -1,6 +1,7 @@
 import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero";
 import About from "./components/About/About";
+import TechStack from "./components/TechStack/TechStack";
 import "./index.css";
 
 export default function App() {
@@ -9,6 +10,7 @@ export default function App() {
         <Navbar />
         <Hero />
           <About />
+          <TechStack />
 
         <section id="about" className="section">
           <div className="container">
