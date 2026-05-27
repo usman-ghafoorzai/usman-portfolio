@@ -1,23 +1,26 @@
+import Navbar from "./components/Navbar/Navbar.jsx";
 import "./index.css";
 
 export default function App() {
   return (
       <main className="page">
-        <section className="section">
+        <Navbar />
+
+        <section id="home" className="section">
           <div className="container">
             <p className="eyebrow">Portfolio</p>
 
             <h1 className="heading-xl">
-              Your go-to engineer for Next.js projects
+              Building clean backend systems, APIs and full-stack applications
             </h1>
 
             <p className="body-text">
-              Bringing ideas to life with clean, efficient and scalable code.
-              Whether it is building web apps, optimizing performance, or solving
-              technical challenges.
+              Computer engineering graduate focused on practical software
+              development, system integration, REST APIs, databases and scalable
+              application architecture.
             </p>
 
-            <div className="mt-6 flex gap-3">
+            <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
               <a href="#contact" className="button">
                 Contact me
               </a>
