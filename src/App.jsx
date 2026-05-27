@@ -4,13 +4,14 @@ import Hero from "./components/Hero/Hero";
 import About from "./components/About/About";
 import TechStack from "./components/TechStack/TechStack";
 import Projects from "./components/Projects/Projects";
+import { ALL_STACK_ID } from "./data/stacks";
 import "./index.css";
 
 export default function App() {
-    const [activeProjectStack, setActiveProjectStack] = useState("All");
+    const [activeProjectStack, setActiveProjectStack] = useState(ALL_STACK_ID);
 
-    function handleStackSelect(stackName) {
-        setActiveProjectStack(stackName);
+    function handleStackSelect(stackId) {
+        setActiveProjectStack(stackId);
 
         window.requestAnimationFrame(() => {
             document.getElementById("projects")?.scrollIntoView({
