@@ -7,21 +7,26 @@ const terminalLines = [
     "> whoami",
     "Usman Ghafoorzai",
     "",
-    "> cat profile.txt",
-    "Computer Engineering student from NTNU.",
-    "Focused on backend, fullstack, APIs and system integration.",
+    "> cat story.txt",
+    "Newly Computer Engineering graduate from NTNU.",
+    "I enjoy turning messy problems into structured, working systems.",
+    "",
+    "> beyond_code",
+    "Curious by nature. Practical by mindset.",
+    "I like collaborating, learning fast and building things people can actually use.",
     "",
     "> current_focus",
-    "Building practical systems that connect users, data and workflows.",
+    "Backend, fullstack and integration work — especially where data, APIs and real workflows meet.",
 ];
 
 const codeLines = [
     "const developer = {",
     '  name: "Usman Ghafoorzai",',
-    '  role: "Computer Engineer",',
-    '  focus: ["Backend", "Fullstack", "APIs"],',
-    '  tools: ["React", "Node.js", "Docker", "PostgreSQL"],',
-    '  mindset: "Build clean, useful and practical systems."',
+    '  profile: "Curious, hard-working and practical",',
+    '  strengths: ["Fast learner", "Structured thinker", "Reliable teammate"],',
+    '  workStyle: "Comfortable working solo, but I enjoy building with a team",',
+    '  availability: "Open to junior roles, projects and contract work",',
+    '  mindset: "Think clearly, ship consistently, improve relentlessly."',
     "};",
 ];
 
@@ -161,8 +166,9 @@ export default function About() {
                 <span className="about-kicker">About me</span>
                 <h2 className="about-title">More than just code.</h2>
                 <p className="about-intro">
-                    I like building systems that are structured, practical and useful —
-                    from APIs and databases to fullstack applications and integrations.
+                    I care about understanding the problem behind the code — how people work,
+                    how systems connect, and how small technical decisions can make a product
+                    easier to use, maintain and trust.
                 </p>
             </motion.div>
 
