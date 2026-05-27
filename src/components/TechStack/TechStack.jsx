@@ -370,16 +370,6 @@ export default function TechStack() {
                                     <div className="tech-card-icon">
                                         <Icon />
                                     </div>
-
-                                    <span
-                                        className={
-                                            group.status === "ACTIVE"
-                                                ? "tech-card-status tech-card-status--active"
-                                                : "tech-card-status"
-                                        }
-                                    >
-                                        {group.status}
-                                    </span>
                                 </div>
 
                                 <h3>{group.title}</h3>
