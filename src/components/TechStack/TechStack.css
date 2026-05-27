@@ -1,6 +1,6 @@
 .tech-section {
     --tech-accent-rgb: 168, 85, 247;
-    --status-color: 216, 180, 254;
+    --status-color: 255, 255, 255;
     --scan-progress: 0;
     --row-opacity: 0.42;
     --card-opacity: 0.44;
