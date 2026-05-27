@@ -162,8 +162,9 @@ export default function TechStack() {
                 <span className="tech-kicker">Tech stack</span>
                 <h2 className="tech-title">Systems I can build with.</h2>
                 <p className="tech-intro">
-                    A practical stack shaped by studies, projects and hands-on development —
-                    from frontend interfaces to backend APIs, databases and integration work.
+                    A practical stack shaped by NTNU projects, health-tech bachelor work and
+                    hands-on development — from frontend interfaces and mobile apps to backend
+                    APIs, databases and integration work.
                 </p>
             </motion.div>
 
@@ -220,6 +221,7 @@ export default function TechStack() {
                                 <motion.div
                                     key={group.title}
                                     className="tech-scan-row"
+                                    style={{ "--tech-accent-rgb": group.accentRgb }}
                                     initial={{ opacity: 0, x: -12 }}
                                     animate={
                                         scanComplete
@@ -256,6 +258,7 @@ export default function TechStack() {
                             <motion.article
                                 key={group.title}
                                 className="tech-card"
+                                style={{ "--tech-accent-rgb": group.accentRgb }}
                                 custom={index}
                                 variants={cardVariants}
                                 initial="hidden"
