@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa";
 import "./Navbar.css";
+
+const SCROLL_THRESHOLD = 40;
 
 const navItems = [
     { label: "Portfolio", href: "#home" },
@@ -23,10 +26,26 @@ const socialLinks = [
 ];
 
 export default function Navbar() {
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        function handleScroll() {
+            setIsScrolled(window.scrollY > SCROLL_THRESHOLD);
+        }
+
+        handleScroll();
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+
     return (
         <header className="navbar-wrapper">
             <motion.nav
-                className="navbar"
+                className={`navbar ${isScrolled ? "navbar--compact" : ""}`}
                 initial={{ opacity: 0, y: -18 }}
                 animate={{
                     opacity: 1,
@@ -34,7 +53,7 @@ export default function Navbar() {
                 }}
                 transition={{
                     opacity: {
-                        duration: 1.5,
+                        duration: 0.45,
                         ease: "easeOut",
                     },
                     y: {
@@ -45,8 +64,9 @@ export default function Navbar() {
                 }}
                 aria-label="Main navigation"
             >
-                <a href="#home" className="navbar-logo">
-                    Usman G.
+                <a href="#home" className="navbar-brand" aria-label="Go to home">
+                    <span className="navbar-logo-mark">UG</span>
+                    <span className="navbar-logo-text">Usman Ghafoorzai</span>
                 </a>
 
                 <div className="navbar-links">
