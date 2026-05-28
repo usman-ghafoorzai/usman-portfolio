@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { motion } from "motion/react";
 import { FaExternalLinkAlt, FaGithub } from "react-icons/fa";
+import ExternalLink from "../common/ExternalLink";
 import {
     ALL_STACK_ID,
     getStackLabel,
@@ -65,16 +66,14 @@ function ProjectCard({
 
             <p className="project-summary">{project.summary}</p>
 
-            <a
+            <ExternalLink
                 href={project.githubUrl}
-                target="_blank"
-                rel="noreferrer"
                 aria-label={`Open ${project.title} on GitHub`}
             >
                 <FaGithub />
                 <span>GitHub</span>
                 <FaExternalLinkAlt className="project-link-arrow" />
-            </a>
+            </ExternalLink>
         </article>
     );
 }

@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { FaEnvelope, FaGithub, FaLinkedinIn } from "react-icons/fa";
 import { profile } from "../../data/profile";
+import ExternalLink from "../common/ExternalLink";
 import "./Footer.css";
 
 const footerLinks = [
@@ -40,19 +41,23 @@ export default function Footer() {
                         <div className="footer-links">
                             {footerLinks.map((link) => {
                                 const Icon = link.icon;
+                                const isExternal = link.href.startsWith("http");
+
+                                if (isExternal) {
+                                    return (
+                                        <ExternalLink
+                                            key={link.label}
+                                            href={link.href}
+                                            className="footer-link"
+                                        >
+                                            <Icon />
+                                            <span>{link.label}</span>
+                                        </ExternalLink>
+                                    );
+                                }
 
                                 return (
-                                    <a
-                                        key={link.label}
-                                        href={link.href}
-                                        className="footer-link"
-                                        target={link.href.startsWith("http") ? "_blank" : undefined}
-                                        rel={
-                                            link.href.startsWith("http")
-                                                ? "noopener noreferrer"
-                                                : undefined
-                                        }
-                                    >
+                                    <a key={link.label} href={link.href} className="footer-link">
                                         <Icon />
                                         <span>{link.label}</span>
                                     </a>

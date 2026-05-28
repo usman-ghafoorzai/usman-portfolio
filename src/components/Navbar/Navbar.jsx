@@ -7,6 +7,7 @@ import {
     FaLinkedinIn,
     FaUser,
 } from "react-icons/fa";
+import ExternalLink from "../common/ExternalLink";
 import { profile } from "../../data/profile";
 import "./Navbar.css";
 
@@ -59,25 +60,21 @@ export default function Navbar() {
                     </div>
 
                     <div className="navbar-socials">
-                        <a
+                        <ExternalLink
                             href={profile.links.github}
                             className="navbar-icon-link"
-                            target="_blank"
-                            rel="noopener noreferrer"
                             aria-label="GitHub"
                         >
                             <FaGithub />
-                        </a>
+                        </ExternalLink>
 
-                        <a
+                        <ExternalLink
                             href={profile.links.linkedin}
                             className="navbar-icon-link"
-                            target="_blank"
-                            rel="noopener noreferrer"
                             aria-label="LinkedIn"
                         >
                             <FaLinkedinIn />
-                        </a>
+                        </ExternalLink>
                     </div>
                 </div>
             </motion.nav>

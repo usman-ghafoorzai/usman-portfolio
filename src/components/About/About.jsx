@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { FaCode, FaTerminal } from "react-icons/fa";
 import { profile } from "../../data/profile";
+import { useInViewOnce } from "../../hooks/useInViewOnce";
+import { useTiltCard } from "../../hooks/useTiltCard";
 import "./About.css";
 
 const terminalLines = [
@@ -62,60 +64,14 @@ const codeLineVariants = {
     },
 };
 
-function handleTiltMove(event) {
-    const card = event.currentTarget;
-    const rect = card.getBoundingClientRect();
-
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    const rotateY = ((x / rect.width) - 0.5) * MAX_TILT * 2;
-    const rotateX = -((y / rect.height) - 0.5) * MAX_TILT * 2;
-
-    card.style.setProperty("--tilt-rotate-x", `${rotateX}deg`);
-    card.style.setProperty("--tilt-rotate-y", `${rotateY}deg`);
-    card.style.setProperty("--tilt-glow-x", `${x}px`);
-    card.style.setProperty("--tilt-glow-y", `${y}px`);
-}
-
-function handleTiltLeave(event) {
-    const card = event.currentTarget;
-
-    card.style.setProperty("--tilt-rotate-x", "0deg");
-    card.style.setProperty("--tilt-rotate-y", "0deg");
-    card.style.setProperty("--tilt-glow-x", "50%");
-    card.style.setProperty("--tilt-glow-y", "50%");
-}
-
 export default function About() {
-    const sectionRef = useRef(null);
-
-    const [hasStarted, setHasStarted] = useState(false);
+    const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
+        threshold: 0.28,
+    });
+    const { handleTiltMove, handleTiltLeave } = useTiltCard({ maxTilt: MAX_TILT });
     const [lineIndex, setLineIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
     const [typedLines, setTypedLines] = useState([]);
-
-    useEffect(() => {
-        const sectionElement = sectionRef.current;
-
-        if (!sectionElement) return;
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setHasStarted(true);
-                    observer.disconnect();
-                }
-            },
-            {
-                threshold: 0.28,
-            },
-        );
-
-        observer.observe(sectionElement);
-
-        return () => observer.disconnect();
-    }, []);
 
     useEffect(() => {
         if (hasStarted && typedLines.length === 0) {
@@ -127,7 +83,6 @@ export default function About() {
         if (!hasStarted) return;
         if (typedLines.length === 0) return;
         if (lineIndex >= terminalLines.length) return;
-
         const currentLine = terminalLines[lineIndex];
         let timeoutId;
 

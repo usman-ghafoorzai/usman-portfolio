@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { FaTerminal } from "react-icons/fa";
 import { profile } from "../../data/profile";
+import { useInViewOnce } from "../../hooks/useInViewOnce";
 import "./CurrentWork.css";
 
 const terminalLines = [
@@ -46,34 +47,12 @@ function handleTiltLeave(event) {
 }
 
 export default function CurrentWork() {
-    const sectionRef = useRef(null);
-
-    const [hasStarted, setHasStarted] = useState(false);
+    const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
+        threshold: 0.35,
+    });
     const [lineIndex, setLineIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
     const [typedLines, setTypedLines] = useState([]);
-
-    useEffect(() => {
-        const sectionElement = sectionRef.current;
-
-        if (!sectionElement) return;
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setHasStarted(true);
-                    observer.disconnect();
-                }
-            },
-            {
-                threshold: 0.35,
-            },
-        );
-
-        observer.observe(sectionElement);
-
-        return () => observer.disconnect();
-    }, []);
 
     useEffect(() => {
         if (hasStarted && typedLines.length === 0) {
@@ -85,7 +64,6 @@ export default function CurrentWork() {
         if (!hasStarted) return;
         if (typedLines.length === 0) return;
         if (lineIndex >= terminalLines.length) return;
-
         const currentLine = terminalLines[lineIndex];
         let timeoutId;
 

@@ -20,6 +20,7 @@ import {
 } from "react-icons/fa";
 import { stackGroups } from "../../data/stacks";
 import { clamp, easeOutCubic } from "../../utils/math";
+import { useTypewriter } from "../../hooks/useTypewriter";
 import TechStackBackground3D from "./TechStackBackground3D";
 import { floatingTechPlacements } from "./techStackVisualConfig";
 import "./TechStack.css";
@@ -113,24 +114,11 @@ function handleTiltLeave(event) {
 }
 
 function TypedStatus({ text, isActive }) {
-    const [typedText, setTypedText] = useState("");
-
-    useEffect(() => {
-        if (!isActive) {
-            setTypedText("");
-        }
-    }, [isActive, text]);
-
-    useEffect(() => {
-        if (!isActive) return;
-        if (typedText.length >= text.length) return;
-
-        const timeoutId = setTimeout(() => {
-            setTypedText(text.slice(0, typedText.length + 1));
-        }, STATUS_TYPE_SPEED);
-
-        return () => clearTimeout(timeoutId);
-    }, [isActive, text, typedText]);
+    const typedText = useTypewriter({
+        text,
+        isActive,
+        speed: STATUS_TYPE_SPEED,
+    });
 
     return (
         <>
