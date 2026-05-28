@@ -3,7 +3,6 @@ import { motion } from "motion/react";
 import { IoChevronDown } from "react-icons/io5";
 import "./Hero.css";
 
-const ROTATION_INTERVAL = 2200;
 const TYPE_SPEED = 80;
 const DELETE_SPEED = 25;
 const HOLD_DELAY = 1500;

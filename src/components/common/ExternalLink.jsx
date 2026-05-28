@@ -1,6 +1,11 @@
-export default function ExternalLink({ children, ...props }) {
+export default function ExternalLink({
+    children,
+    target = "_blank",
+    rel = "noopener noreferrer",
+    ...props
+}) {
     return (
-        <a target="_blank" rel="noopener noreferrer" {...props}>
+        <a target={target} rel={rel} {...props}>
             {children}
         </a>
     );
