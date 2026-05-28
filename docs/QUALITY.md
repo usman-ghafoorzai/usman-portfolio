@@ -25,6 +25,12 @@ npm run test
 
 Current automated tests cover pure project filtering logic in `src/utils/projectFilters.js`.
 
+## Deployment Readiness
+- Production build should pass with `npm run build`.
+- Lightweight automated tests should pass with `npm run test`.
+- Basic security headers are configured for deployment.
+- CSP is intentionally left for a later, separately tested hardening pass.
+
 ## Manual QA Checklist
 - Hero typing works.
 - About terminal starts in viewport.
