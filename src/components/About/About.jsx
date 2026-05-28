@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { FaCode, FaTerminal } from "react-icons/fa";
+import { profile } from "../../data/profile";
 import "./About.css";
 
 const terminalLines = [
     "> whoami",
-    "Usman Ghafoorzai",
+    profile.name,
     "",
     "> cat story.txt",
     "Newly Computer Engineering graduate from NTNU.",
@@ -21,11 +22,11 @@ const terminalLines = [
 
 const codeLines = [
     "const developer = {",
-    '  name: "Usman Ghafoorzai",',
+    `  name: "${profile.name}",`,
     '  profile: "Curious, hard-working and practical",',
     '  strengths: ["Fast learner", "Structured thinker", "Reliable teammate"],',
     '  workStyle: "Comfortable working solo, but I enjoy building with a team",',
-    '  availability: "Open to junior roles, projects and contract work",',
+    `  availability: "${profile.availabilityStatus}",`,
     '  mindset: "Think clearly, ship consistently, improve relentlessly."',
     "};",
 ];

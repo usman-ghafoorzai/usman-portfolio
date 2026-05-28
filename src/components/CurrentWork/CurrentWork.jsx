@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { FaTerminal } from "react-icons/fa";
+import { profile } from "../../data/profile";
 import "./CurrentWork.css";
 
 const terminalLines = [
@@ -12,7 +13,7 @@ const terminalLines = [
     "smooth technical UI and a clearer link between skills, projects and real work.",
     "",
     "> status",
-    "Open to junior roles, projects and contract work.",
+    `${profile.availabilityStatus}.`,
 ];
 
 const TYPE_SPEED = 22;

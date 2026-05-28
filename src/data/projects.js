@@ -125,7 +125,6 @@ export const projects = [
         accentRgb: "96, 165, 250",
         featured: false,
         stacks: ["backend", "systems-mobile", "workflow"],
-        stackEvidencePriority: {},
         summary:
             "Java coursework covering algorithms, data structures, reports and assignment implementations from IDATT2101 at NTNU.",
         evidence: [

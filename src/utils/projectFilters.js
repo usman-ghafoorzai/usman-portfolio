@@ -16,15 +16,3 @@ export function getProjectsForStack(projects, stackId) {
         })
         .slice(0, 2);
 }
-
-export function splitFeaturedProject(projects) {
-    const featuredProject =
-        projects.find((project) => project.featured) ?? projects[0] ?? null;
-
-    return {
-        featuredProject,
-        secondaryProjects: featuredProject
-            ? projects.filter((project) => project.id !== featuredProject.id)
-            : [],
-    };
-}

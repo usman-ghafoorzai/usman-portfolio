@@ -1,21 +1,22 @@
 import { motion } from "motion/react";
 import { FaEnvelope, FaGithub, FaLinkedinIn } from "react-icons/fa";
+import { profile } from "../../data/profile";
 import "./Footer.css";
 
 const footerLinks = [
     {
         label: "GitHub",
-        href: "https://github.com/usman-ghafoorzai",
+        href: profile.links.github,
         icon: FaGithub,
     },
     {
         label: "LinkedIn",
-        href: "https://www.linkedin.com/in/usman-ghafoorzai/",
+        href: profile.links.linkedin,
         icon: FaLinkedinIn,
     },
     {
         label: "Email",
-        href: "mailto:usmangha@hotmail.com",
+        href: profile.links.email,
         icon: FaEnvelope,
     },
 ];
@@ -29,10 +30,10 @@ export default function Footer() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.6 }}
                 transition={{ duration: 0.45, ease: "easeOut" }}
-            >
+                >
                 <div className="footer-main">
                     <div className="footer-left">
-                        <p className="footer-name">Usman Ghafoorzai</p>
+                        <p className="footer-name">{profile.name}</p>
                     </div>
 
                     <div className="footer-right">
@@ -59,7 +60,7 @@ export default function Footer() {
                             })}
                         </div>
 
-                        <p className="footer-copy">(c) 2026 Usman Ghafoorzai. All rights reserved.</p>
+                        <p className="footer-copy">(c) 2026 {profile.name}. All rights reserved.</p>
                     </div>
                 </div>
             </motion.div>

@@ -7,6 +7,7 @@ import {
     FaLinkedinIn,
     FaUser,
 } from "react-icons/fa";
+import { profile } from "../../data/profile";
 import "./Navbar.css";
 
 const navItems = [
@@ -40,7 +41,7 @@ export default function Navbar() {
             >
                 <a href="#home" className="navbar-brand" aria-label="Go to home">
                     <span className="navbar-brand-mark">UG</span>
-                    <span className="navbar-brand-name">Usman Ghafoorzai</span>
+                    <span className="navbar-brand-name">{profile.name}</span>
                 </a>
 
                 <div className="navbar-actions">
@@ -59,7 +60,7 @@ export default function Navbar() {
 
                     <div className="navbar-socials">
                         <a
-                            href="https://github.com/usman-ghafoorzai"
+                            href={profile.links.github}
                             className="navbar-icon-link"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -69,7 +70,7 @@ export default function Navbar() {
                         </a>
 
                         <a
-                            href="https://www.linkedin.com/in/usman-ghafoorzai/"
+                            href={profile.links.linkedin}
                             className="navbar-icon-link"
                             target="_blank"
                             rel="noopener noreferrer"
