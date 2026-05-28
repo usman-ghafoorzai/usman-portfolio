@@ -31,6 +31,10 @@ Current automated tests cover pure project filtering logic in `src/utils/project
 - Basic security headers are configured for deployment.
 - CSP is intentionally left for a later, separately tested hardening pass.
 
+## Continuous Integration
+- GitHub Actions runs automated tests and production build on push and pull requests.
+- Lint is currently documented but not enforced in CI until animation-sensitive lint issues are cleaned up safely.
+
 ## Manual QA Checklist
 - Hero typing works.
 - About terminal starts in viewport.

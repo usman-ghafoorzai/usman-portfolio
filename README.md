@@ -50,6 +50,7 @@ npm run preview
 - `npm run build` passes.
 - Strict linting currently flags a few behavior-sensitive animation and Three.js patterns. These are documented in `docs/QUALITY.md` and intentionally kept stable until they can be refactored safely.
 - Pure project filtering logic is covered by lightweight automated tests.
+- GitHub Actions verifies tests and production build on pushes and pull requests.
 
 ## Links
 - GitHub: [https://github.com/usman-ghafoorzai](https://github.com/usman-ghafoorzai)
