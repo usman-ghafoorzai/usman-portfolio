@@ -9,6 +9,11 @@ export const projects = [
         accentRgb: "192, 132, 252",
         featured: true,
         stacks: ["integration", "backend", "databases", "workflow"],
+        stackEvidencePriority: {
+            integration: 1,
+            backend: 1,
+            databases: 1,
+        },
         summary:
             "A public-safe showcase of a bachelor-level healthcare interoperability proof-of-concept, focused on API-based exchange between an external application and a simulated EHR environment.",
         evidence: [
@@ -28,6 +33,11 @@ export const projects = [
         accentRgb: "104, 211, 145",
         featured: false,
         stacks: ["frontend", "backend", "databases", "integration", "workflow"],
+        stackEvidencePriority: {
+            frontend: 1,
+            backend: 2,
+            workflow: 1,
+        },
         summary:
             "A full-stack crisis-preparedness web application for Norwegian households, built as an NTNU agile team delivery with backend/frontend separation.",
         evidence: [
@@ -47,6 +57,11 @@ export const projects = [
         accentRgb: "97, 218, 251",
         featured: false,
         stacks: ["frontend", "backend", "databases", "workflow"],
+        stackEvidencePriority: {
+            frontend: 2,
+            databases: 2,
+            workflow: 2,
+        },
         summary:
             "A university full-stack marketplace application with user authentication, listings, images, bookmarks, reservations and API documentation.",
         evidence: [
@@ -66,6 +81,9 @@ export const projects = [
         accentRgb: "45, 212, 191",
         featured: false,
         stacks: ["frontend", "systems-mobile", "workflow"],
+        stackEvidencePriority: {
+            "systems-mobile": 1,
+        },
         summary:
             "A collection of Android/Kotlin assignments and a main Ionic React + TypeScript + Capacitor mobile app for todo/shopping-list workflows.",
         evidence: [
@@ -85,6 +103,9 @@ export const projects = [
         accentRgb: "104, 211, 145",
         featured: false,
         stacks: ["backend", "integration", "systems-mobile"],
+        stackEvidencePriority: {
+            integration: 2,
+        },
         summary:
             "Coursework archive covering Java networking assignments, socket/server exercises, a Spring Boot backend, a small frontend and WebSocket work.",
         evidence: [
@@ -104,6 +125,7 @@ export const projects = [
         accentRgb: "96, 165, 250",
         featured: false,
         stacks: ["backend", "systems-mobile", "workflow"],
+        stackEvidencePriority: {},
         summary:
             "Java coursework covering algorithms, data structures, reports and assignment implementations from IDATT2101 at NTNU.",
         evidence: [
@@ -123,6 +145,9 @@ export const projects = [
         accentRgb: "45, 212, 191",
         featured: false,
         stacks: ["systems-mobile", "integration", "workflow"],
+        stackEvidencePriority: {
+            "systems-mobile": 2,
+        },
         summary:
             "A C++ coursework archive with practical exercises in language fundamentals, object-oriented programming, templates, GUI and networking.",
         evidence: [
