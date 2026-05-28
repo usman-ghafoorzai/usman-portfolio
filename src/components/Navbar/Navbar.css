@@ -14,16 +14,18 @@
 
 .navbar {
     pointer-events: auto;
+    position: relative;
+    isolation: isolate;
 
     width: min(86vw, 108rem);
-    height: 4.65rem;
+    height: 4rem;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1.25rem;
 
-    padding: 0 1.35rem;
+    padding: 0 1.2rem;
 
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 1.35rem;
@@ -46,12 +48,59 @@
             background 420ms ease,
             border-color 420ms ease,
             box-shadow 420ms ease;
+
+    overflow: hidden;
+}
+
+.navbar::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 0;
+
+    height: 52%;
+
+    background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.2) 0%,
+            rgba(255, 255, 255, 0.09) 32%,
+            rgba(255, 255, 255, 0.02) 62%,
+            transparent 100%
+    );
+
+    opacity: 0.24;
+    pointer-events: none;
+}
+
+.navbar::after {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    top: 0;
+    z-index: 0;
+
+    height: 1px;
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.5),
+            transparent
+    );
+    pointer-events: none;
+}
+
+.navbar > * {
+    position: relative;
+    z-index: 1;
 }
 
 /* Tydelig collapse på scroll */
 .navbar--scrolled {
     width: min(56rem, calc(100% - 2rem));
-    height: 3.55rem;
+    height: 3.1rem;
 
     padding: 0 0.7rem;
 
@@ -79,8 +128,8 @@
 }
 
 .navbar-brand-mark {
-    width: 2.35rem;
-    height: 2.35rem;
+    width: 2rem;
+    height: 2rem;
 
     display: inline-flex;
     align-items: center;
@@ -122,8 +171,8 @@
 }
 
 .navbar--scrolled .navbar-brand-mark {
-    width: 2.05rem;
-    height: 2.05rem;
+    width: 1.8rem;
+    height: 1.8rem;
     border-radius: 0.6rem;
 }
 
@@ -151,7 +200,7 @@
 
 .navbar-link,
 .navbar-icon-link {
-    height: 2.75rem;
+    height: 2.3rem;
 
     display: inline-flex;
     align-items: center;
@@ -192,7 +241,7 @@
 }
 
 .navbar-icon-link {
-    width: 2.75rem;
+    width: 2.3rem;
     font-size: 1rem;
 }
 
@@ -206,7 +255,7 @@
 
 .navbar--scrolled .navbar-link,
 .navbar--scrolled .navbar-icon-link {
-    height: 2.25rem;
+    height: 1.9rem;
     border-radius: 0.45rem;
 }
 
@@ -220,7 +269,7 @@
 }
 
 .navbar--scrolled .navbar-icon-link {
-    width: 2.25rem;
+    width: 1.9rem;
     font-size: 0.86rem;
 }
 
@@ -262,7 +311,7 @@
 
     .navbar--scrolled {
         width: calc(100% - 1rem);
-        min-height: 3.3rem;
+        min-height: 3.1rem;
     }
 
     .navbar-brand-name {

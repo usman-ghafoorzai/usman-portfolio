@@ -2,21 +2,17 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import {
     FaBriefcase,
-    FaEnvelope,
     FaFolderOpen,
     FaGithub,
-    FaHome,
     FaLinkedinIn,
     FaUser,
 } from "react-icons/fa";
 import "./Navbar.css";
 
 const navItems = [
-    { label: "Home", href: "#home", icon: FaHome },
     { label: "About", href: "#about", icon: FaUser },
-    { label: "Projects", href: "#projects", icon: FaFolderOpen },
     { label: "Skills", href: "#skills", icon: FaBriefcase },
-    { label: "Contact", href: "#contact", icon: FaEnvelope },
+    { label: "Projects", href: "#projects", icon: FaFolderOpen },
 ];
 
 export default function Navbar() {

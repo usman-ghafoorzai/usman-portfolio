@@ -117,9 +117,20 @@
     text-transform: uppercase;
 }
 
+.projects-terminal-status-label {
+    margin-bottom: 0.25rem;
+}
+
 .projects-terminal-status strong {
     color: rgba(255, 255, 255, 0.92);
     font-size: 0.92rem;
+}
+
+.projects-terminal-status--all strong {
+    display: inline-flex;
+    width: max-content;
+    margin-top: 0.1rem;
+    color: rgba(255, 255, 255, 0.96);
 }
 
 .projects-filters {
@@ -182,6 +193,112 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem;
+}
+
+.projects-carousel-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.projects-carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.projects-carousel-hint {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
+}
+
+.projects-carousel-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.projects-carousel-button {
+    width: 2.05rem;
+    height: 2.05rem;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.62rem;
+
+    color: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.06);
+
+    cursor: pointer;
+
+    transition:
+            color 180ms ease,
+            background 180ms ease,
+            border-color 180ms ease,
+            transform 180ms ease;
+}
+
+.projects-carousel-button:hover:not(:disabled) {
+    color: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.11);
+    border-color: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
+}
+
+.projects-carousel-button:disabled {
+    opacity: 0.36;
+    cursor: default;
+}
+
+.projects-carousel-index {
+    min-width: 3.2rem;
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.projects-carousel-track {
+    display: flex;
+    gap: 1rem;
+
+    padding: 0.2rem 0.1rem 0.75rem;
+
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+}
+
+.projects-carousel-track::-webkit-scrollbar {
+    height: 0.5rem;
+}
+
+.projects-carousel-track::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+}
+
+.projects-carousel-track::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+}
+
+.projects-carousel-slide {
+    flex: 0 0 min(31rem, 72vw);
+    scroll-snap-align: start;
+}
+
+.projects-carousel-slide .project-card {
+    min-height: 100%;
 }
 
 .project-card {
@@ -520,6 +637,15 @@
     .projects-grid {
         grid-template-columns: 1fr;
     }
+
+    .projects-carousel-controls {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .projects-carousel-slide {
+        flex-basis: min(30rem, 86vw);
+    }
 }
 
 @media (max-width: 760px) {
@@ -539,14 +665,24 @@
         align-items: flex-start;
         flex-direction: column;
     }
+
+    .projects-carousel-slide {
+        flex-basis: 92vw;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .project-card,
     .projects-filter,
-    .project-card-footer a {
+    .project-card-footer a,
+    .projects-carousel-button,
+    .projects-carousel-track {
         transition: none;
         transform: none;
+    }
+
+    .projects-carousel-track {
+        scroll-behavior: auto;
     }
 }
 

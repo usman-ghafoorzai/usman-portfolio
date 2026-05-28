@@ -1,0 +1,306 @@
+.current-work-section {
+    position: relative;
+    width: 100%;
+    padding: 3rem 8vw 2.4rem;
+    overflow: hidden;
+}
+
+.current-work-section::before {
+    content: "";
+    position: absolute;
+    right: 15%;
+    top: -14rem;
+    z-index: 0;
+
+    width: 34rem;
+    height: 34rem;
+
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 70%);
+    pointer-events: none;
+}
+
+.current-work-content {
+    position: relative;
+    z-index: 1;
+    max-width: 72rem;
+    margin: 0 auto;
+}
+
+.current-work-card-shell {
+    perspective: 1200px;
+}
+
+.current-work-terminal {
+    --work-tilt-x: 0deg;
+    --work-tilt-y: 0deg;
+    --work-tilt-scale: 1;
+    --work-glow-x: 50%;
+    --work-glow-y: 50%;
+
+    position: relative;
+    transform-style: preserve-3d;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1.25rem;
+
+    background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.024)),
+            rgba(8, 8, 8, 0.62);
+
+    backdrop-filter: blur(18px) saturate(145%);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+
+    box-shadow:
+            0 1.5rem 4rem rgba(0, 0, 0, 0.32),
+            inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+    transform:
+            rotateX(var(--work-tilt-x))
+            rotateY(var(--work-tilt-y))
+            scale(var(--work-tilt-scale));
+
+    transition:
+            transform 180ms ease,
+            border-color 220ms ease,
+            box-shadow 220ms ease,
+            background 220ms ease;
+
+    overflow: hidden;
+}
+
+.current-work-terminal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    background: radial-gradient(
+            circle at var(--work-glow-x) var(--work-glow-y),
+            rgba(255, 255, 255, 0.11),
+            transparent 34%
+    );
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+}
+
+.current-work-terminal:hover {
+    --work-tilt-scale: 1.014;
+
+    border-color: rgba(255, 255, 255, 0.2);
+
+    background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03)),
+            rgba(8, 8, 8, 0.68);
+
+    box-shadow:
+            0 1.8rem 4.8rem rgba(0, 0, 0, 0.4),
+            0 0 1.8rem rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.current-work-terminal:hover::before {
+    opacity: 1;
+}
+
+.current-work-window-top,
+.current-work-terminal-body {
+    position: relative;
+    z-index: 1;
+}
+
+.current-work-window-top {
+    height: 3rem;
+    padding: 0 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.current-work-window-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.current-work-window-dots span {
+    width: 0.62rem;
+    height: 0.62rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    animation: currentWorkDotPulse 3.2s ease-in-out infinite;
+}
+
+.current-work-window-dots span:nth-child(2) {
+    animation-delay: 0.25s;
+}
+
+.current-work-window-dots span:nth-child(3) {
+    animation-delay: 0.5s;
+}
+
+.current-work-window-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    color: rgba(255, 255, 255, 0.58);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.current-work-terminal-body {
+    padding: 1.3rem;
+    font-family: var(--font-mono, monospace);
+}
+
+.current-work-command-line {
+    min-height: 1.7rem;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.current-work-cursor {
+    display: inline-block;
+    margin-left: 0.08em;
+    animation: currentWorkCursorBlink 1s steps(1, end) infinite;
+}
+
+.current-work-active-panel {
+    margin-top: 1rem;
+    padding: 1rem;
+
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 0.95rem;
+
+    background:
+            radial-gradient(circle at 15% 0%, rgba(255, 255, 255, 0.1), transparent 38%),
+            rgba(255, 255, 255, 0.03);
+}
+
+.current-work-active-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.current-work-badge {
+    padding: 0.28rem 0.54rem;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+
+    color: rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.08);
+
+    font-size: 0.67rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.current-work-active-row h3 {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.93);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+}
+
+.current-work-active-panel p {
+    margin: 0.85rem 0 0;
+
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.88rem;
+    line-height: 1.65;
+}
+
+.current-work-status-line {
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    font-size: 0.76rem;
+}
+
+.current-work-status-line span {
+    color: rgba(255, 255, 255, 0.46);
+    text-transform: lowercase;
+}
+
+.current-work-status-line strong {
+    color: rgba(255, 255, 255, 0.76);
+    font-weight: 600;
+}
+
+@keyframes currentWorkCursorBlink {
+    0%,
+    45% {
+        opacity: 1;
+    }
+
+    46%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes currentWorkDotPulse {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.75;
+        transform: scale(1.15);
+    }
+}
+
+@media (max-width: 760px) {
+    .current-work-section {
+        padding: 2.2rem 1rem 1.9rem;
+    }
+
+    .current-work-terminal-body {
+        padding: 1rem;
+    }
+
+    .current-work-active-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+
+    .current-work-active-row h3 {
+        font-size: 1.1rem;
+    }
+
+    .current-work-status-line {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .current-work-terminal,
+    .current-work-window-dots span,
+    .current-work-cursor {
+        animation: none;
+        transition: none;
+        transform: none;
+    }
+}

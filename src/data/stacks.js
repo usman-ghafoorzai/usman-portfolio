@@ -74,7 +74,7 @@ export const stackGroups = [
     },
     {
         id: "workflow",
-        status: "ACTIVE",
+        status: "OK",
         label: "Workflow",
         description: "How I build, test, document and collaborate on software projects.",
         iconKey: "workflow",

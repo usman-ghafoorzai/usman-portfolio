@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
+    FaChevronLeft,
+    FaChevronRight,
     FaDatabase,
     FaExternalLinkAlt,
     FaGithub,
@@ -33,6 +35,7 @@ const projectIconMap = {
 };
 
 const MAX_TILT = 9;
+const CAROUSEL_SCROLL_EPSILON = 4;
 
 function handleTiltMove(event) {
     const card = event.currentTarget;
@@ -127,6 +130,11 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
     const selectedStack = isValidStackId(activeStack) ? activeStack : ALL_STACK_ID;
     const selectedStackLabel = getStackLabel(selectedStack);
     const isShowingAll = selectedStack === ALL_STACK_ID;
+    const carouselTrackRef = useRef(null);
+
+    const [canScrollPrev, setCanScrollPrev] = useState(false);
+    const [canScrollNext, setCanScrollNext] = useState(false);
+    const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
     const activeAccentRgb = isShowingAll
         ? "255, 255, 255"
@@ -143,6 +151,88 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
     function handleShowAllClick() {
         onStackChange?.(ALL_STACK_ID);
     }
+
+    function syncCarouselState() {
+        const trackElement = carouselTrackRef.current;
+
+        if (!trackElement) {
+            setCanScrollPrev(false);
+            setCanScrollNext(false);
+            setActiveSlideIndex(0);
+            return;
+        }
+
+        const maxScroll = trackElement.scrollWidth - trackElement.clientWidth;
+        const scrollLeft = trackElement.scrollLeft;
+
+        setCanScrollPrev(scrollLeft > CAROUSEL_SCROLL_EPSILON);
+        setCanScrollNext(scrollLeft < maxScroll - CAROUSEL_SCROLL_EPSILON);
+
+        const slides = Array.from(trackElement.querySelectorAll(".projects-carousel-slide"));
+
+        if (slides.length === 0) {
+            setActiveSlideIndex(0);
+            return;
+        }
+
+        let closestIndex = 0;
+        let shortestDistance = Number.POSITIVE_INFINITY;
+
+        slides.forEach((slide, index) => {
+            const distance = Math.abs(slide.offsetLeft - scrollLeft);
+
+            if (distance < shortestDistance) {
+                shortestDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        setActiveSlideIndex(closestIndex);
+    }
+
+    function handleCarouselMove(direction) {
+        const trackElement = carouselTrackRef.current;
+
+        if (!trackElement) return;
+
+        const firstSlide = trackElement.querySelector(".projects-carousel-slide");
+        const gap = Number.parseFloat(getComputedStyle(trackElement).gap || "0");
+
+        const step = firstSlide
+            ? firstSlide.getBoundingClientRect().width + gap
+            : trackElement.clientWidth * 0.92;
+
+        trackElement.scrollBy({
+            left: direction * step,
+            behavior: "smooth",
+        });
+    }
+
+    useEffect(() => {
+        if (!isShowingAll) return;
+
+        const trackElement = carouselTrackRef.current;
+
+        if (!trackElement) return;
+
+        syncCarouselState();
+
+        function handleScroll() {
+            syncCarouselState();
+        }
+
+        function handleResize() {
+            syncCarouselState();
+        }
+
+        trackElement.addEventListener("scroll", handleScroll, { passive: true });
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            trackElement.removeEventListener("scroll", handleScroll);
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [isShowingAll, visibleProjects.length]);
 
     return (
         <section
@@ -175,8 +265,14 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
                             </p>
                         </div>
 
-                        <div className="projects-terminal-status">
-                            <span>&gt; showing</span>
+                        <div
+                            className={
+                                isShowingAll
+                                    ? "projects-terminal-status projects-terminal-status--all"
+                                    : "projects-terminal-status"
+                            }
+                        >
+                            <span className="projects-terminal-status-label">&gt; showing</span>
                             <strong>{selectedStackLabel}</strong>
 
                             {!isShowingAll && (
@@ -192,38 +288,95 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
                     </div>
                 </motion.div>
 
-                <div className="projects-layout">
-                    {featuredProject && (
-                        <motion.div
-                            initial={{ opacity: 0, x: -24 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true, amount: 0.25 }}
-                            transition={{ duration: 0.55, ease: "easeOut" }}
-                        >
-                            <ProjectCard
-                                project={featuredProject}
-                                activeStackLabel={selectedStackLabel}
-                                featured
-                            />
-                        </motion.div>
-                    )}
-
+                {isShowingAll ? (
                     <motion.div
-                        className="projects-grid"
-                        initial={{ opacity: 0, x: 24 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        className="projects-carousel-shell"
+                        initial={{ opacity: 0, y: 18 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, amount: 0.2 }}
-                        transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
                     >
-                        {secondaryProjects.map((project) => (
-                            <ProjectCard
-                                key={project.id}
-                                project={project}
-                                activeStackLabel={selectedStackLabel}
-                            />
-                        ))}
+                        <div className="projects-carousel-controls">
+                            <p className="projects-carousel-hint">
+                                Slide sideways to browse all project evidence.
+                            </p>
+
+                            <div className="projects-carousel-nav">
+                                <button
+                                    type="button"
+                                    className="projects-carousel-button"
+                                    onClick={() => handleCarouselMove(-1)}
+                                    disabled={!canScrollPrev}
+                                    aria-label="Show previous project"
+                                >
+                                    <FaChevronLeft />
+                                </button>
+
+                                <span className="projects-carousel-index">
+                                    {activeSlideIndex + 1} / {visibleProjects.length}
+                                </span>
+
+                                <button
+                                    type="button"
+                                    className="projects-carousel-button"
+                                    onClick={() => handleCarouselMove(1)}
+                                    disabled={!canScrollNext}
+                                    aria-label="Show next project"
+                                >
+                                    <FaChevronRight />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            ref={carouselTrackRef}
+                            className="projects-carousel-track"
+                            aria-label="All projects carousel"
+                        >
+                            {visibleProjects.map((project) => (
+                                <div key={project.id} className="projects-carousel-slide">
+                                    <ProjectCard
+                                        project={project}
+                                        activeStackLabel={selectedStackLabel}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </motion.div>
-                </div>
+                ) : (
+                    <div className="projects-layout">
+                        {featuredProject && (
+                            <motion.div
+                                initial={{ opacity: 0, x: -24 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true, amount: 0.25 }}
+                                transition={{ duration: 0.55, ease: "easeOut" }}
+                            >
+                                <ProjectCard
+                                    project={featuredProject}
+                                    activeStackLabel={selectedStackLabel}
+                                    featured
+                                />
+                            </motion.div>
+                        )}
+
+                        <motion.div
+                            className="projects-grid"
+                            initial={{ opacity: 0, x: 24 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
+                        >
+                            {secondaryProjects.map((project) => (
+                                <ProjectCard
+                                    key={project.id}
+                                    project={project}
+                                    activeStackLabel={selectedStackLabel}
+                                />
+                            ))}
+                        </motion.div>
+                    </div>
+                )}
             </div>
         </section>
     );

@@ -381,7 +381,7 @@ export default function TechStack({ onStackSelect }) {
                                             >
                                                 <span
                                                     className={
-                                                        group.status === "ACTIVE"
+                                                        group.status === "OK"
                                                             ? "tech-status tech-status--active"
                                                             : "tech-status"
                                                     }
@@ -440,35 +440,53 @@ export default function TechStack({ onStackSelect }) {
                                         <span />
                                     </div>
 
+                                    <div className="tech-card-window-top" aria-hidden="true">
+                                        <div className="tech-card-window-dots">
+                                            <span />
+                                            <span />
+                                            <span />
+                                        </div>
+
+                                        <span className="tech-card-window-title">
+                                            {group.id}.stack
+                                        </span>
+                                    </div>
+
                                     <div className="tech-card-header">
+                                        <div className="tech-card-command">
+                                            <span>&gt;</span>
+                                            <span>inspect {group.id}</span>
+                                        </div>
+
                                         <div className="tech-card-icon">
                                             <Icon />
                                         </div>
                                     </div>
 
                                     <h3>{group.label}</h3>
-                                    <p>{group.description}</p>
+                                    <p className="tech-card-output">{group.description}</p>
 
-                                    <div className="tech-tags">
-                                        {group.items.map((item) => {
-                                            const ItemIcon =
-                                                techItemIconMap[item.iconKey] ?? FaCode;
+                                    <div className="tech-tags-shell">
+                                        <span className="tech-tags-label">modules</span>
 
-                                            return (
-                                                <span key={item.label}>
-                                                    <ItemIcon
-                                                        className="tech-tag-icon"
-                                                        aria-hidden="true"
-                                                    />
-                                                    {item.label}
-                                                </span>
-                                            );
-                                        })}
+                                        <div className="tech-tags">
+                                            {group.items.map((item) => {
+                                                const ItemIcon =
+                                                    techItemIconMap[item.iconKey] ?? FaCode;
+
+                                                return (
+                                                    <span key={item.label}>
+                                                        <ItemIcon
+                                                            className="tech-tag-icon"
+                                                            aria-hidden="true"
+                                                        />
+                                                        {item.label}
+                                                    </span>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
 
-                                    <span className="tech-card-action">
-                                        View related projects
-                                    </span>
                                 </article>
                             );
                         })}
