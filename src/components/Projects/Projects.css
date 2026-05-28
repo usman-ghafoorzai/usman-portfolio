@@ -1,10 +1,9 @@
 .projects-section {
-    position: relative;
-    isolation: isolate;
+    --projects-active-rgb: 255, 255, 255;
 
+    position: relative;
     width: 100%;
-    min-height: 100vh;
-    padding: 9rem 8vw 7rem;
+    padding: 4.8rem 8vw 3.8rem;
     scroll-margin-top: 7rem;
     overflow: hidden;
 }
@@ -12,57 +11,42 @@
 .projects-section::before {
     content: "";
     position: absolute;
-    right: -10rem;
-    top: 12rem;
-    z-index: 0;
-
-    width: 38rem;
-    height: 38rem;
-
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.11), transparent 68%);
-    pointer-events: none;
-}
-
-.projects-section::after {
-    content: "";
-    position: absolute;
-    left: -14rem;
-    bottom: 6rem;
-    z-index: 0;
-
-    width: 34rem;
-    height: 34rem;
-
-    background: radial-gradient(circle, rgba(45, 212, 191, 0.08), transparent 70%);
+    right: -11rem;
+    top: 6.4rem;
+    width: 31rem;
+    height: 31rem;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 72%);
     pointer-events: none;
 }
 
 .projects-content {
     position: relative;
     z-index: 1;
+    width: min(100%, 86rem);
+    margin: 0 auto;
 }
 
 .projects-header {
-    margin-bottom: 3rem;
+    margin-bottom: 1.2rem;
 }
 
 .projects-kicker {
     display: inline-block;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.52rem;
 
-    color: rgba(255, 255, 255, 0.42);
+    color: rgba(255, 255, 255, 0.38);
     font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.45em;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.38em;
     text-transform: uppercase;
 }
 
 .projects-heading-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
     gap: 2rem;
-    align-items: end;
 }
 
 .projects-title {
@@ -70,760 +54,67 @@
 
     color: rgba(255, 255, 255, 0.92);
     font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: clamp(3rem, 7vw, 7.5rem);
-    font-weight: 800;
+    font-size: clamp(2rem, 4vw, 4.1rem);
+    font-weight: 850;
     line-height: 0.95;
-    letter-spacing: -0.08em;
+    letter-spacing: -0.07em;
 }
 
 .projects-intro {
-    max-width: 54rem;
-    margin-top: 1.4rem;
+    max-width: 40rem;
+    margin: 0.84rem 0 0;
 
-    color: rgba(255, 255, 255, 0.58);
-    font-size: clamp(1rem, 1.25vw, 1.2rem);
-    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.92rem;
+    line-height: 1.62;
 }
 
 .projects-terminal-status {
-    min-width: 13rem;
-    padding: 1rem;
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 1rem;
-
-    background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025)),
-            rgba(8, 8, 8, 0.64);
-
-    backdrop-filter: blur(16px) saturate(145%);
-    -webkit-backdrop-filter: blur(16px) saturate(145%);
-
-    box-shadow:
-            0 1rem 3rem rgba(0, 0, 0, 0.24),
-            inset 0 1px 0 rgba(255, 255, 255, 0.07);
-
-    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-.projects-terminal-status span {
-    display: block;
-    margin-bottom: 0.35rem;
-
-    color: rgba(255, 255, 255, 0.42);
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-}
-
-.projects-terminal-status-label {
-    margin-bottom: 0.25rem;
-}
-
-.projects-terminal-status strong {
-    color: rgba(255, 255, 255, 0.92);
-    font-size: 0.92rem;
-}
-
-.projects-terminal-status--all strong {
-    display: inline-flex;
-    width: max-content;
-    margin-top: 0.1rem;
-    color: rgba(255, 255, 255, 0.96);
-}
-
-.projects-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-
-    margin-top: 2rem;
-}
-
-.projects-filter {
-    min-height: 2.35rem;
-    padding: 0 0.9rem;
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 999px;
-
-    color: rgba(255, 255, 255, 0.66);
-    background: rgba(255, 255, 255, 0.045);
-
-    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-
-    cursor: pointer;
-
-    transition:
-            color 180ms ease,
-            background 180ms ease,
-            border-color 180ms ease,
-            transform 180ms ease,
-            box-shadow 180ms ease;
-}
-
-.projects-filter:hover,
-.projects-filter--active {
-    color: rgba(255, 255, 255, 0.96);
-    background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04)),
-            rgba(168, 85, 247, 0.08);
-
-    border-color: rgba(168, 85, 247, 0.3);
-
-    box-shadow:
-            0 0 1.6rem rgba(168, 85, 247, 0.12),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-
-    transform: translateY(-1px);
-}
-
-.projects-layout {
-    display: grid;
-    grid-template-columns: minmax(24rem, 0.95fr) minmax(0, 1.25fr);
-    gap: 1.25rem;
-    align-items: start;
-}
-
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
-}
-
-.projects-carousel-shell {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.projects-carousel-controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.projects-carousel-hint {
-    margin: 0;
-    color: rgba(255, 255, 255, 0.52);
-    font-size: 0.76rem;
-    letter-spacing: 0.04em;
-}
-
-.projects-carousel-nav {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.projects-carousel-button {
-    width: 2.05rem;
-    height: 2.05rem;
+    min-width: max-content;
+    padding: 0.72rem 0.9rem;
 
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 0.62rem;
-
-    color: rgba(255, 255, 255, 0.82);
-    background: rgba(255, 255, 255, 0.06);
-
-    cursor: pointer;
-
-    transition:
-            color 180ms ease,
-            background 180ms ease,
-            border-color 180ms ease,
-            transform 180ms ease;
-}
-
-.projects-carousel-button:hover:not(:disabled) {
-    color: rgba(255, 255, 255, 0.96);
-    background: rgba(255, 255, 255, 0.11);
-    border-color: rgba(255, 255, 255, 0.22);
-    transform: translateY(-1px);
-}
-
-.projects-carousel-button:disabled {
-    opacity: 0.36;
-    cursor: default;
-}
-
-.projects-carousel-index {
-    min-width: 3.2rem;
-    text-align: center;
-
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-}
-
-.projects-carousel-track {
-    display: flex;
-    gap: 1rem;
-
-    padding: 0.2rem 0.1rem 0.75rem;
-
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-}
-
-.projects-carousel-track::-webkit-scrollbar {
-    height: 0.5rem;
-}
-
-.projects-carousel-track::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 999px;
-}
-
-.projects-carousel-track::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 999px;
-}
-
-.projects-carousel-slide {
-    flex: 0 0 min(31rem, 72vw);
-    scroll-snap-align: start;
-}
-
-.projects-carousel-slide .project-card {
-    min-height: 100%;
-}
-
-.project-card {
-    --project-accent-rgb: 168, 85, 247;
-    --project-tilt-x: 0deg;
-    --project-tilt-y: 0deg;
-    --project-glow-x: 50%;
-    --project-glow-y: 50%;
-
-    position: relative;
-    min-height: 26rem;
-    padding: 1.25rem;
-
-    display: flex;
-    flex-direction: column;
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 1.35rem;
-
-    background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025)),
-            rgba(8, 8, 8, 0.64);
-
-    backdrop-filter: blur(18px) saturate(145%);
-    -webkit-backdrop-filter: blur(18px) saturate(145%);
-
-    box-shadow:
-            0 1.4rem 4rem rgba(0, 0, 0, 0.28),
-            inset 0 1px 0 rgba(255, 255, 255, 0.07);
-
-    overflow: hidden;
-
-    transform:
-            rotateX(var(--project-tilt-x))
-            rotateY(var(--project-tilt-y));
-
-    transform-style: preserve-3d;
-    will-change: transform;
-
-    transition:
-            transform 180ms ease,
-            border-color 220ms ease,
-            box-shadow 220ms ease,
-            background 220ms ease;
-}
-
-.project-card--featured {
-    min-height: 100%;
-}
-
-.project-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-
-    background:
-            radial-gradient(
-                    circle at var(--project-glow-x) var(--project-glow-y),
-                    rgba(var(--project-accent-rgb), 0.17),
-                    transparent 34%
-            );
-
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 180ms ease;
-}
-
-.project-card::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    z-index: 0;
-
-    height: 44%;
-
-    background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.08),
-            rgba(255, 255, 255, 0.025) 44%,
-            transparent
-    );
-
-    opacity: 0.55;
-    pointer-events: none;
-}
-
-.project-card:hover {
-    border-color: rgba(var(--project-accent-rgb), 0.28);
-
-    background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03)),
-            rgba(8, 8, 8, 0.7);
-
-    box-shadow:
-            0 2rem 5rem rgba(0, 0, 0, 0.4),
-            0 0 2.2rem rgba(var(--project-accent-rgb), 0.08),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.project-card:hover::before {
-    opacity: 1;
-}
-
-.project-card > * {
-    position: relative;
-    z-index: 1;
-}
-
-.project-card-loader {
-    position: absolute;
-    left: 1.25rem;
-    right: 1.25rem;
-    top: 0.9rem;
-    z-index: 2;
-
-    height: 0.18rem;
-
-    border-radius: 999px;
-    background: linear-gradient(
-            90deg,
-            rgba(var(--project-accent-rgb), 0.25),
-            rgba(var(--project-accent-rgb), 0.9),
-            rgba(var(--project-accent-rgb), 0.25)
-    );
-
-    opacity: 0.75;
-}
-
-.project-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-
-    margin-top: 0.45rem;
-    margin-bottom: 1.15rem;
-}
-
-.project-icon {
-    width: 2.75rem;
-    height: 2.75rem;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid rgba(var(--project-accent-rgb), 0.24);
-    border-radius: 0.8rem;
-
-    color: rgb(var(--project-accent-rgb));
-    background: rgba(var(--project-accent-rgb), 0.1);
-
-    font-size: 1.05rem;
-
-    box-shadow:
-            0 0 1.3rem rgba(var(--project-accent-rgb), 0.12),
-            inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.project-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.25rem;
-
-    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-.project-meta span {
-    color: rgba(255, 255, 255, 0.44);
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.project-meta strong {
-    color: rgba(255, 255, 255, 0.76);
-    font-size: 0.78rem;
-}
-
-.project-card h3 {
-    margin: 0;
-
-    color: rgba(255, 255, 255, 0.92);
-    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: clamp(1.35rem, 2vw, 2.15rem);
-    line-height: 1.1;
-    letter-spacing: -0.06em;
-}
-
-.project-card p {
-    margin: 0.85rem 0 1.15rem;
-
-    color: rgba(255, 255, 255, 0.58);
-    font-size: 0.92rem;
-    line-height: 1.65;
-}
-
-.project-evidence {
-    margin-top: 0.2rem;
-    padding: 1rem;
-
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 1rem;
-
-    background: rgba(255, 255, 255, 0.035);
-}
-
-.project-evidence-label {
-    display: block;
-    margin-bottom: 0.65rem;
-
-    color: rgba(255, 255, 255, 0.42);
-    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-}
-
-.project-evidence ul {
-    display: flex;
-    flex-direction: column;
     gap: 0.55rem;
 
-    margin: 0;
-    padding-left: 1rem;
-}
-
-.project-evidence li {
-    color: rgba(255, 255, 255, 0.62);
-    font-size: 0.82rem;
-    line-height: 1.55;
-}
-
-.project-tech-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-
-    margin-top: 1rem;
-}
-
-.project-tech-list span {
-    padding: 0.42rem 0.58rem;
-
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 999px;
 
-    color: rgba(255, 255, 255, 0.68);
-    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.46);
+    background: rgba(255, 255, 255, 0.035);
 
     font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.72rem;
-    line-height: 1;
-}
-
-.project-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-
-    margin-top: auto;
-    padding-top: 1.1rem;
-}
-
-.project-match-label {
-    color: rgba(var(--project-accent-rgb), 0.92);
-    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: 0.08em;
-}
-
-.project-card-footer a {
-    min-height: 2.25rem;
-    padding: 0 0.75rem;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.45rem;
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 999px;
-
-    color: rgba(255, 255, 255, 0.82);
-    background: rgba(255, 255, 255, 0.05);
-
-    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 0.74rem;
-    font-weight: 800;
-    text-decoration: none;
-
-    transition:
-            color 180ms ease,
-            background 180ms ease,
-            border-color 180ms ease,
-            transform 180ms ease;
-}
-
-.project-card-footer a:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.09);
-    border-color: rgba(255, 255, 255, 0.22);
-    transform: translateY(-1px);
-}
-
-.project-link-arrow {
-    font-size: 0.58rem;
-    opacity: 0.75;
-}
-
-@media (max-width: 1180px) {
-    .projects-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .project-card--featured {
-        min-height: 28rem;
-    }
-}
-
-@media (max-width: 920px) {
-    .projects-heading-row {
-        grid-template-columns: 1fr;
-    }
-
-    .projects-terminal-status {
-        width: max-content;
-    }
-
-    .projects-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .projects-carousel-controls {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .projects-carousel-slide {
-        flex-basis: min(30rem, 86vw);
-    }
-}
-
-@media (max-width: 760px) {
-    .projects-section {
-        padding: 8rem 1rem 5rem;
-    }
-
-    .projects-title {
-        letter-spacing: -0.06em;
-    }
-
-    .project-card {
-        min-height: auto;
-    }
-
-    .project-card-footer {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .projects-carousel-slide {
-        flex-basis: 92vw;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .project-card,
-    .projects-filter,
-    .project-card-footer a,
-    .projects-carousel-button,
-    .projects-carousel-track {
-        transition: none;
-        transform: none;
-    }
-
-    .projects-carousel-track {
-        scroll-behavior: auto;
-    }
-}
-
-.project-card {
-    --project-neutral-rgb: 255, 255, 255;
-}
-
-.project-card::before {
-    background: radial-gradient(
-            circle at var(--project-glow-x) var(--project-glow-y),
-            rgba(255, 255, 255, 0.11),
-            transparent 34%
-    );
-}
-
-.project-card:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow:
-            0 2rem 5rem rgba(0, 0, 0, 0.42),
-            0 0 2.2rem rgba(255, 255, 255, 0.055),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.project-icon {
-    color: rgba(255, 255, 255, 0.82);
-    border-color: rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.055);
-    box-shadow:
-            0 0 1.3rem rgba(255, 255, 255, 0.035),
-            inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.project-card:hover .project-icon {
-    color: rgba(255, 255, 255, 0.95);
-    background: rgba(255, 255, 255, 0.085);
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow:
-            0 0 1.8rem rgba(255, 255, 255, 0.06),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.project-card-loader {
-    background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.22),
-            transparent
-    );
-}
-
-.project-evidence-label,
-.project-match-label {
-    color: rgba(255, 255, 255, 0.54);
-}
-
-.project-tech-list span {
-    color: rgba(255, 255, 255, 0.64);
-    border-color: rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.04);
-}
-
-.project-card-footer a {
-    color: rgba(255, 255, 255, 0.76);
-    border-color: rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.045);
-}
-
-.project-card-footer a:hover {
-    color: rgba(255, 255, 255, 0.95);
-    border-color: rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.075);
-}
-
-.projects-filter--active {
-    color: rgba(255, 255, 255, 0.92);
-    border-color: rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.09);
-    box-shadow:
-            0 0 1.4rem rgba(255, 255, 255, 0.045),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .projects-terminal-status strong {
-    color: rgba(255, 255, 255, 0.86);
-}
-.projects-section {
-    --projects-active-rgb: 255, 255, 255;
-}
-
-.projects-section--stack-active .project-card::before {
-    background: radial-gradient(
-            circle at var(--project-glow-x) var(--project-glow-y),
-            rgba(var(--projects-active-rgb), 0.14),
-            transparent 34%
-    );
-}
-
-.projects-section--stack-active .project-card:hover {
-    border-color: rgba(var(--projects-active-rgb), 0.28);
-    box-shadow:
-            0 2rem 5rem rgba(0, 0, 0, 0.42),
-            0 0 2.2rem rgba(var(--projects-active-rgb), 0.08),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.projects-section--stack-active .project-icon {
     color: rgba(var(--projects-active-rgb), 0.9);
-    border-color: rgba(var(--projects-active-rgb), 0.24);
-    background: rgba(var(--projects-active-rgb), 0.09);
-    box-shadow:
-            0 0 1.3rem rgba(var(--projects-active-rgb), 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.projects-section--stack-active .projects-terminal-status strong {
-    color: rgba(var(--projects-active-rgb), 0.95);
 }
 
 .projects-show-all-button {
-    margin-left: 0.8rem;
-    padding: 0.42rem 0.62rem;
+    margin-left: 0.32rem;
+    padding: 0.34rem 0.55rem;
 
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 999px;
 
     color: rgba(255, 255, 255, 0.68);
-    background: rgba(255, 255, 255, 0.045);
+    background: rgba(255, 255, 255, 0.04);
 
     font-family: inherit;
-    font-size: 0.68rem;
-    font-weight: 800;
+    font-size: 0.66rem;
+    font-weight: 850;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 
     cursor: pointer;
 
     transition:
-            color 180ms ease,
-            background 180ms ease,
-            border-color 180ms ease,
-            transform 180ms ease;
+        color 180ms ease,
+        background 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
 }
 
 .projects-show-all-button:hover {
@@ -831,4 +122,241 @@
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.22);
     transform: translateY(-1px);
+}
+
+.projects-mosaic {
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    align-items: start;
+}
+
+.project-capsule {
+    position: relative;
+    min-height: 11.4rem;
+    padding: 0.88rem 0.95rem 0.9rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    border: 1px solid rgba(255, 255, 255, 0.088);
+    border-radius: 1rem;
+
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+        rgba(8, 8, 8, 0.42);
+
+    backdrop-filter: blur(14px) saturate(132%);
+    -webkit-backdrop-filter: blur(14px) saturate(132%);
+
+    box-shadow:
+        0 0.95rem 2.4rem rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.055);
+
+    transform:
+        translate3d(var(--capsule-shift-x, 0), var(--capsule-shift-y, 0), 0)
+        rotate(var(--capsule-rotate, 0deg));
+
+    transition:
+        opacity 260ms ease,
+        visibility 260ms ease,
+        transform 200ms ease,
+        border-color 180ms ease,
+        background 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.project-capsule--hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.project-capsule:hover {
+    border-color: rgba(var(--projects-active-rgb), 0.2);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.024)),
+        rgba(8, 8, 8, 0.5);
+    box-shadow:
+        0 1.25rem 3rem rgba(0, 0, 0, 0.28),
+        0 0 1.3rem rgba(var(--projects-active-rgb), 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.075);
+
+    transform:
+        translate3d(var(--capsule-shift-x, 0), calc(var(--capsule-shift-y, 0) - 0.12rem), 0)
+        rotate(var(--capsule-rotate, 0deg));
+}
+
+.project-capsule-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.project-index,
+.project-year {
+    color: rgba(255, 255, 255, 0.34);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.66rem;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.project-label {
+    display: block;
+    color: rgba(255, 255, 255, 0.42);
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.64rem;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.project-capsule h3 {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    line-height: 1.24;
+    letter-spacing: -0.03em;
+}
+
+.project-summary {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.84rem;
+    line-height: 1.5;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.project-tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.36rem;
+}
+
+.project-tech-list span {
+    padding: 0.3rem 0.44rem;
+
+    border: 1px solid rgba(255, 255, 255, 0.078);
+    border-radius: 999px;
+
+    color: rgba(255, 255, 255, 0.54);
+    background: rgba(255, 255, 255, 0.028);
+
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.62rem;
+    line-height: 1;
+}
+
+.project-capsule a {
+    margin-top: auto;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.34rem;
+
+    color: rgba(255, 255, 255, 0.66);
+    text-decoration: none;
+
+    font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.68rem;
+    font-weight: 850;
+
+    transition:
+        color 180ms ease,
+        transform 180ms ease;
+}
+
+.project-capsule a:hover {
+    color: rgba(255, 255, 255, 0.92);
+    transform: translateX(2px);
+}
+
+.project-link-arrow {
+    font-size: 0.56rem;
+}
+
+@media (max-width: 760px) {
+    .projects-section {
+        padding: 4.4rem 1rem 3rem;
+    }
+
+    .projects-heading-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .projects-mosaic {
+        grid-template-columns: 1fr;
+    }
+
+    .project-capsule {
+        min-height: unset;
+        transform: none;
+    }
+
+    .project-capsule:hover {
+        transform: translateY(-1px);
+    }
+}
+
+.projects-section {
+    --projects-active-rgb: 255, 255, 255;
+}
+
+.projects-terminal-status strong {
+    color: rgba(255, 255, 255, 0.72);
+    text-shadow: none;
+}
+
+.projects-show-all-button {
+    color: rgba(255, 255, 255, 0.68);
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.045);
+    box-shadow: none;
+}
+
+.projects-show-all-button:hover {
+    color: rgba(255, 255, 255, 0.92);
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.075);
+}
+
+.project-card,
+.project-capsule {
+    border-color: rgba(255, 255, 255, 0.085);
+    background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.018)),
+            rgba(8, 8, 8, 0.42);
+    box-shadow:
+            0 1rem 2.5rem rgba(0, 0, 0, 0.22),
+            inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.project-card:hover,
+.project-capsule:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.022)),
+            rgba(8, 8, 8, 0.5);
+    box-shadow:
+            0 1.4rem 3.2rem rgba(0, 0, 0, 0.3),
+            0 0 1.4rem rgba(255, 255, 255, 0.04),
+            inset 0 1px 0 rgba(255, 255, 255, 0.075);
+}
+
+.project-tech-list span {
+    color: rgba(255, 255, 255, 0.52);
+    border-color: rgba(255, 255, 255, 0.075);
+    background: rgba(255, 255, 255, 0.03);
 }

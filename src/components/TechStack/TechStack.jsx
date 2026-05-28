@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
+    FaBolt,
     FaCode,
     FaCss3Alt,
     FaDatabase,
@@ -17,19 +18,6 @@ import {
     FaServer,
     FaTerminal,
 } from "react-icons/fa";
-import {
-    SiDocker,
-    SiGit,
-    SiJest,
-    SiKotlin,
-    SiNestjs,
-    SiPostgresql,
-    SiPrisma,
-    SiSwagger,
-    SiTypescript,
-    SiVite,
-} from "react-icons/si";
-import { TbBrandCpp } from "react-icons/tb";
 import { stackGroups } from "../../data/stacks";
 import TechStackBackground3D from "./TechStackBackground3D";
 import "./TechStack.css";
@@ -37,45 +25,92 @@ import "./TechStack.css";
 const scanCommand = "> run stack-scan --source cv --profile usman";
 const selectPrompt = "> pick one stack to inspect project evidence";
 
-const stackIconMap = {
-    react: FaReact,
-    node: FaNodeJs,
-    database: FaDatabase,
-    integration: FaLayerGroup,
-    mobile: FaMobileAlt,
-    workflow: FaGitAlt,
-};
-
 const techItemIconMap = {
     react: FaReact,
     javascript: FaJs,
-    typescript: SiTypescript,
     html: FaHtml5,
     css: FaCss3Alt,
-    vite: SiVite,
+    vite: FaBolt,
 
     node: FaNodeJs,
-    nestjs: SiNestjs,
     java: FaJava,
     api: FaServer,
 
-    postgresql: SiPostgresql,
-    prisma: SiPrisma,
     database: FaDatabase,
-
     healthcare: FaLayerGroup,
-    docker: SiDocker,
+    docker: FaDocker,
 
-    cpp: TbBrandCpp,
-    kotlin: SiKotlin,
     mobile: FaMobileAlt,
 
-    git: SiGit,
+    git: FaGitAlt,
     github: FaGithub,
-    swagger: SiSwagger,
-    jest: SiJest,
     agile: FaGitAlt,
 };
+
+const techItemTextIconMap = {
+    typescript: "TS",
+    nestjs: "N",
+    postgresql: "PG",
+    prisma: "P",
+    cpp: "C++",
+    kotlin: "K",
+    swagger: "SW",
+    jest: "J",
+};
+
+const floatingTechPlacements = [
+    { x: "12%", y: "12%", rotate: "-5deg", delay: "-0.2s" },
+    { x: "34%", y: "8%", rotate: "3deg", delay: "-1.1s" },
+    { x: "56%", y: "13%", rotate: "-2deg", delay: "-2.4s" },
+    { x: "78%", y: "9%", rotate: "4deg", delay: "-0.8s" },
+    { x: "91%", y: "20%", rotate: "-3deg", delay: "-2.1s" },
+
+    { x: "21%", y: "26%", rotate: "2deg", delay: "-1.9s" },
+    { x: "45%", y: "25%", rotate: "-4deg", delay: "-0.5s" },
+    { x: "68%", y: "31%", rotate: "3deg", delay: "-2.9s" },
+    { x: "86%", y: "38%", rotate: "-2deg", delay: "-1.4s" },
+
+    { x: "10%", y: "45%", rotate: "4deg", delay: "-1.5s" },
+    { x: "31%", y: "44%", rotate: "-2deg", delay: "-2.1s" },
+    { x: "53%", y: "49%", rotate: "2deg", delay: "-0.9s" },
+    { x: "75%", y: "47%", rotate: "-4deg", delay: "-2.7s" },
+    { x: "92%", y: "55%", rotate: "3deg", delay: "-3.4s" },
+
+    { x: "18%", y: "63%", rotate: "-3deg", delay: "-0.7s" },
+    { x: "40%", y: "67%", rotate: "3deg", delay: "-2.2s" },
+    { x: "63%", y: "65%", rotate: "-2deg", delay: "-1.3s" },
+    { x: "83%", y: "70%", rotate: "4deg", delay: "-2.8s" },
+
+    { x: "11%", y: "82%", rotate: "2deg", delay: "-2.6s" },
+    { x: "30%", y: "88%", rotate: "-4deg", delay: "-1.0s" },
+    { x: "50%", y: "83%", rotate: "4deg", delay: "-1.8s" },
+    { x: "69%", y: "88%", rotate: "-2deg", delay: "-0.4s" },
+    { x: "89%", y: "82%", rotate: "3deg", delay: "-3.2s" },
+
+    { x: "48%", y: "16%", rotate: "2deg", delay: "-3.6s" },
+    { x: "24%", y: "55%", rotate: "-2deg", delay: "-3.1s" },
+    { x: "60%", y: "77%", rotate: "-3deg", delay: "-2.8s" },
+];
+
+const floatingTechItems = stackGroups.flatMap((group, groupIndex) =>
+    group.items.map((item, itemIndex) => {
+        const label = typeof item === "string" ? item : item.label;
+        const iconKey =
+            typeof item === "string"
+                ? label.toLowerCase().replaceAll(" ", "-")
+                : item.iconKey;
+
+        return {
+            label,
+            iconKey,
+            groupId: group.id,
+            groupLabel: group.label,
+            groupIndex,
+            itemIndex,
+            accentRgb: group.accentRgb,
+        };
+    })
+);
 
 const MAX_TILT = 7;
 const COMMAND_TYPE_SPEED = 28;
@@ -181,25 +216,35 @@ export default function TechStack({ onStackSelect }) {
         return "loading";
     }
 
-    function getCardStyle(group, index) {
-        const cardProgress = getCardProgress(index);
-        const easedProgress = easeOutCubic(cardProgress);
-
-        return {
-            "--tech-accent-rgb": group.accentRgb,
-            "--card-progress": cardProgress.toFixed(4),
-            "--card-opacity": (0.44 + easedProgress * 0.56).toFixed(4),
-            "--card-blur": `${(1 - easedProgress) * 1.35}px`,
-            "--card-loader-opacity": cardProgress > 0 && cardProgress < 1 ? "1" : "0",
-        };
-    }
-
     function getRowStyle(index) {
         const cardProgress = getCardProgress(index);
         const easedProgress = easeOutCubic(cardProgress);
 
         return {
             "--row-opacity": (0.42 + easedProgress * 0.58).toFixed(4),
+        };
+    }
+
+    function getTokenStyle(item, index) {
+        const placement =
+            floatingTechPlacements[index % floatingTechPlacements.length];
+
+        const groupProgress = getCardProgress(item.groupIndex);
+        const staggerOffset = item.itemIndex * 0.08;
+        const localProgress = clamp(
+            (groupProgress - staggerOffset) / (1 - Math.min(staggerOffset, 0.72))
+        );
+        const easedProgress = easeOutCubic(localProgress);
+
+        return {
+            "--tech-accent-rgb": item.accentRgb,
+            "--token-x": placement.x,
+            "--token-y": placement.y,
+            "--token-rotate": placement.rotate,
+            "--token-delay": placement.delay,
+            "--token-opacity": (0.12 + easedProgress * 0.74).toFixed(4),
+            "--token-blur": `${(1 - easedProgress) * 1.05}px`,
+            "--token-scale": (0.95 + easedProgress * 0.17).toFixed(4),
         };
     }
 
@@ -381,7 +426,7 @@ export default function TechStack({ onStackSelect }) {
                                             >
                                                 <span
                                                     className={
-                                                        group.status === "OK"
+                                                        group.status === "ACTIVE"
                                                             ? "tech-status tech-status--active"
                                                             : "tech-status"
                                                     }
@@ -415,79 +460,37 @@ export default function TechStack({ onStackSelect }) {
                         </div>
                     </motion.div>
 
-                    <div className="tech-grid">
-                        {stackGroups.map((group, index) => {
-                            const Icon = stackIconMap[group.iconKey] ?? FaCode;
-                            const cardState = getCardState(index);
+                    <div className="tech-cloud-field" aria-label="Technology cloud">
+                        {floatingTechItems.map((item, index) => {
+                            const ItemIcon = techItemIconMap[item.iconKey] ?? FaCode;
+                            const textIcon = techItemTextIconMap[item.iconKey];
 
                             return (
-                                <article
-                                    key={group.id}
-                                    className={`tech-card tech-card--${cardState} ${
-                                        selectionReady ? "tech-card--selectable" : ""
+                                <button
+                                    key={`${item.groupId}-${item.label}`}
+                                    type="button"
+                                    className={`tech-cloud-token ${
+                                        selectionReady ? "tech-cloud-token--selectable" : ""
                                     }`}
-                                    style={getCardStyle(group, index)}
-                                    role="button"
-                                    tabIndex={selectionReady ? 0 : -1}
-                                    aria-disabled={!selectionReady}
-                                    aria-label={`View projects related to ${group.label}`}
-                                    onClick={() => handleStackSelect(group.id)}
-                                    onKeyDown={(event) => handleStackKeyDown(event, group.id)}
-                                    onMouseMove={handleTiltMove}
-                                    onMouseLeave={handleTiltLeave}
+                                    style={getTokenStyle(item, index)}
+                                    disabled={!selectionReady}
+                                    onClick={() => handleStackSelect(item.groupId)}
+                                    onKeyDown={(event) => handleStackKeyDown(event, item.groupId)}
+                                    aria-label={`View projects related to ${item.groupLabel}`}
                                 >
-                                    <div className="tech-card-loader" aria-hidden="true">
-                                        <span />
-                                    </div>
-
-                                    <div className="tech-card-window-top" aria-hidden="true">
-                                        <div className="tech-card-window-dots">
-                                            <span />
-                                            <span />
-                                            <span />
-                                        </div>
-
-                                        <span className="tech-card-window-title">
-                                            {group.id}.stack
+                                    {textIcon ? (
+                                        <span className="tech-cloud-text-icon">
+                                            {textIcon}
                                         </span>
-                                    </div>
+                                    ) : (
+                                        <ItemIcon
+                                            className="tech-cloud-icon"
+                                            aria-hidden="true"
+                                        />
+                                    )}
 
-                                    <div className="tech-card-header">
-                                        <div className="tech-card-command">
-                                            <span>&gt;</span>
-                                            <span>inspect {group.id}</span>
-                                        </div>
-
-                                        <div className="tech-card-icon">
-                                            <Icon />
-                                        </div>
-                                    </div>
-
-                                    <h3>{group.label}</h3>
-                                    <p className="tech-card-output">{group.description}</p>
-
-                                    <div className="tech-tags-shell">
-                                        <span className="tech-tags-label">modules</span>
-
-                                        <div className="tech-tags">
-                                            {group.items.map((item) => {
-                                                const ItemIcon =
-                                                    techItemIconMap[item.iconKey] ?? FaCode;
-
-                                                return (
-                                                    <span key={item.label}>
-                                                        <ItemIcon
-                                                            className="tech-tag-icon"
-                                                            aria-hidden="true"
-                                                        />
-                                                        {item.label}
-                                                    </span>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-
-                                </article>
+                                    <span>{item.label}</span>
+                                </button>
                             );
                         })}
                     </div>
