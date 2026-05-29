@@ -101,6 +101,14 @@
     pointer-events: none;
 }
 
+.tech-layout-blob-layer--mobile {
+    inset: 34% -6% -12% -6%;
+}
+
+.tech-layout-blob-layer--mobile canvas {
+    opacity: 0.72;
+}
+
 /* Terminal */
 
 .tech-terminal {
@@ -625,6 +633,14 @@
 
     .tech-layout-blob-layer {
         inset: -8%;
+    }
+
+    .tech-layout-blob-layer--mobile {
+        inset: 48% -14% -18% -14%;
+    }
+
+    .tech-layout-blob-layer--mobile canvas {
+        opacity: 0.64;
     }
 
     .tech-cloud-field {

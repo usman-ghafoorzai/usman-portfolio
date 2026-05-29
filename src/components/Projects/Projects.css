@@ -305,6 +305,10 @@
         transform: none;
     }
 
+    .projects-mosaic--filtered .project-capsule--hidden {
+        display: none;
+    }
+
     .project-capsule:hover {
         transform: translateY(-1px);
     }
