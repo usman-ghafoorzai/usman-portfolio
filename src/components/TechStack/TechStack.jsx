@@ -85,7 +85,7 @@ const MAX_TILT = 7;
 const COMMAND_TYPE_SPEED = 28;
 const STATUS_TYPE_SPEED = 58;
 const SELECT_PROMPT_TYPE_SPEED = 32;
-const SCAN_DURATION_MS = 9200;
+const SCAN_DURATION_MS = 7200;
 const STATUS_START_THRESHOLD = 0.1;
 
 function handleTiltMove(event) {
@@ -137,6 +137,10 @@ export default function TechStack({ onStackSelect }) {
     const [typedCommand, setTypedCommand] = useState("");
     const [typedSelectPrompt, setTypedSelectPrompt] = useState("");
     const [scanProgress, setScanProgress] = useState(0);
+    const [isMobileBlobLayout, setIsMobileBlobLayout] = useState(() => {
+        if (typeof window === "undefined") return false;
+        return window.matchMedia("(max-width: 980px)").matches;
+    });
 
     const commandComplete = typedCommand.length === scanCommand.length;
     const scanProgressPercent = Math.round(scanProgress * 100);
@@ -228,6 +232,28 @@ export default function TechStack({ onStackSelect }) {
     }, []);
 
     useEffect(() => {
+        if (typeof window === "undefined") return undefined;
+
+        const mediaQuery = window.matchMedia("(max-width: 980px)");
+
+        const updateMobileState = () => {
+            setIsMobileBlobLayout(mediaQuery.matches);
+        };
+
+        updateMobileState();
+
+        if (mediaQuery.addEventListener) {
+            mediaQuery.addEventListener("change", updateMobileState);
+
+            return () => mediaQuery.removeEventListener("change", updateMobileState);
+        }
+
+        mediaQuery.addListener(updateMobileState);
+
+        return () => mediaQuery.removeListener(updateMobileState);
+    }, []);
+
+    useEffect(() => {
         if (!hasStarted) return;
         if (typedCommand.length >= scanCommand.length) return;
 
@@ -297,8 +323,13 @@ export default function TechStack({ onStackSelect }) {
 
                 <div className="tech-layout">
                     {!isThreeJSDisabled && (
-                        <div className="tech-layout-blob-layer" aria-hidden="true">
-                            <TechStackBackground3D />
+                        <div
+                            className={`tech-layout-blob-layer ${
+                                isMobileBlobLayout ? "tech-layout-blob-layer--mobile" : ""
+                            }`}
+                            aria-hidden="true"
+                        >
+                            <TechStackBackground3D mobileMode={isMobileBlobLayout} />
                         </div>
                     )}
 

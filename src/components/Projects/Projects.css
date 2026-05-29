@@ -154,9 +154,15 @@
         0 0.95rem 2.4rem rgba(0, 0, 0, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.055);
 
+    color: inherit;
+    text-decoration: none;
+
     transform:
+        perspective(960px)
         translate3d(var(--capsule-shift-x, 0), var(--capsule-shift-y, 0), 0)
-        rotate(var(--capsule-rotate, 0deg));
+        rotate(var(--capsule-rotate, 0deg))
+        rotateX(var(--tilt-rotate-x, 0deg))
+        rotateY(var(--tilt-rotate-y, 0deg));
 
     transition:
         opacity 260ms ease,
@@ -165,6 +171,21 @@
         border-color 180ms ease,
         background 180ms ease,
         box-shadow 180ms ease;
+}
+
+.project-capsule::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+        circle at var(--tilt-glow-x, 50%) var(--tilt-glow-y, 50%),
+        rgba(255, 255, 255, 0.12),
+        transparent 58%
+    );
+    opacity: 0;
+    transition: opacity 180ms ease;
 }
 
 .project-capsule--hidden {
@@ -184,8 +205,21 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.075);
 
     transform:
+        perspective(960px)
         translate3d(var(--capsule-shift-x, 0), calc(var(--capsule-shift-y, 0) - 0.12rem), 0)
-        rotate(var(--capsule-rotate, 0deg));
+        rotate(var(--capsule-rotate, 0deg))
+        rotateX(var(--tilt-rotate-x, 0deg))
+        rotateY(var(--tilt-rotate-y, 0deg));
+}
+
+.project-capsule:hover::after,
+.project-capsule:focus-visible::after {
+    opacity: 1;
+}
+
+.project-capsule:focus-visible {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .project-capsule-header {
@@ -257,7 +291,7 @@
     line-height: 1;
 }
 
-.project-capsule a {
+.project-link {
     margin-top: auto;
 
     display: inline-flex;
@@ -276,7 +310,8 @@
         transform 180ms ease;
 }
 
-.project-capsule a:hover {
+.project-capsule:hover .project-link,
+.project-capsule:focus-visible .project-link {
     color: rgba(255, 255, 255, 0.92);
     transform: translateX(2px);
 }
@@ -303,6 +338,10 @@
     .project-capsule {
         min-height: unset;
         transform: none;
+    }
+
+    .projects-mosaic--filtered .project-capsule--hidden {
+        display: none;
     }
 
     .project-capsule:hover {

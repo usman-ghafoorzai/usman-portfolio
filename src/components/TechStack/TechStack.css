@@ -101,6 +101,14 @@
     pointer-events: none;
 }
 
+.tech-layout-blob-layer--mobile {
+    inset: 34% -6% -12% -6%;
+}
+
+.tech-layout-blob-layer--mobile canvas {
+    opacity: 0.72;
+}
+
 /* Terminal */
 
 .tech-terminal {
@@ -599,6 +607,17 @@
     }
 }
 
+@keyframes techCloudFloatMobile {
+    0%,
+    100% {
+        margin-top: 0;
+    }
+
+    50% {
+        margin-top: -0.34rem;
+    }
+}
+
 @media (max-width: 1100px) {
     .tech-layout {
         grid-template-columns: 1fr;
@@ -627,14 +646,22 @@
         inset: -8%;
     }
 
+    .tech-layout-blob-layer--mobile {
+        inset: 62% -18% -10% -18%;
+    }
+
+    .tech-layout-blob-layer--mobile canvas {
+        opacity: 0.54;
+    }
+
     .tech-cloud-field {
         min-height: auto;
-
         display: flex;
         flex-wrap: wrap;
-        gap: 0.55rem;
-
-        padding: 0.4rem 0;
+        justify-content: flex-start;
+        align-content: flex-start;
+        gap: 0.72rem 0.62rem;
+        padding: 0.45rem 0.15rem 0.2rem;
     }
 
     .tech-cloud-token {
@@ -642,12 +669,43 @@
         left: auto;
         top: auto;
 
-        transform: none;
+        transform:
+                translate3d(var(--mobile-shift-x, 0), var(--mobile-shift-y, 0), 0)
+                rotate(var(--mobile-rotate, 0deg))
+                scale(calc(var(--token-scale) * 0.9));
+
         animation: none;
     }
 
     .tech-cloud-token--selectable:hover {
-        transform: translateY(-1px) scale(1.03);
+        transform:
+                translate3d(var(--mobile-shift-x, 0), calc(var(--mobile-shift-y, 0) - 1px), 0)
+                rotate(var(--mobile-rotate, 0deg))
+                scale(calc(var(--token-scale) * 0.96 + 0.04));
+    }
+
+    .tech-cloud-token:nth-child(4n + 1) {
+        --mobile-shift-x: -0.16rem;
+        --mobile-shift-y: 0.08rem;
+        --mobile-rotate: -1deg;
+    }
+
+    .tech-cloud-token:nth-child(4n + 2) {
+        --mobile-shift-x: 0.2rem;
+        --mobile-shift-y: -0.06rem;
+        --mobile-rotate: 1.1deg;
+    }
+
+    .tech-cloud-token:nth-child(4n + 3) {
+        --mobile-shift-x: -0.08rem;
+        --mobile-shift-y: 0.16rem;
+        --mobile-rotate: -0.7deg;
+    }
+
+    .tech-cloud-token:nth-child(4n + 4) {
+        --mobile-shift-x: 0.14rem;
+        --mobile-shift-y: -0.12rem;
+        --mobile-rotate: 0.9deg;
     }
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { FaCode, FaTerminal } from "react-icons/fa";
 import { profile } from "../../data/profile";
@@ -11,29 +11,51 @@ const terminalLines = [
     profile.name,
     "",
     "> cat story.txt",
-    "Newly Computer Engineering graduate from NTNU.",
-    "I enjoy turning messy problems into structured, working systems.",
+    "Newly graduated Computer Engineer from NTNU Trondheim.",
+    "I like understanding how things work, why they break and how they can be made easier to use.",
+    "For me, good software starts with understanding the problem, the workflow and the people around it.",
     "",
     "> beyond_code",
-    "Curious by nature. Practical by mindset.",
-    "I like collaborating, learning fast and building things people can actually use.",
+    "I care about building things people can actually use.",
+    "That usually means solutions that make everyday work a little easier, clearer or more reliable.",
+    "I like working close to real problems, not just isolated code.",
+    "",
+    "> background",
+    "Practical coursework at NTNU Trondheim gave me hands-on experience with full-stack development, APIs, databases, mobile apps and team-based software projects.",
+    "Working as a student host taught me communication, responsibility and how to create inclusive environments.",
+    "Fundraising for the Norwegian Red Cross taught me direct dialogue and how to represent meaningful work.",
+    "Technical lab work taught me structured data handling, quality assurance and careful process routines.",
     "",
     "> current_focus",
-    "Backend, fullstack and integration work — especially where data, APIs and real workflows meet.",
+    "Backend, fullstack and integration work.",
+    "I am especially interested in APIs, data flow and systems that connect real workflows.",
 ];
 
 const codeLines = [
     "const developer = {",
     `  name: "${profile.name}",`,
-    '  profile: "Curious, hard-working and practical",',
-    '  strengths: ["Fast learner", "Structured thinker", "Reliable teammate"],',
-    '  workStyle: "Comfortable working solo, but I enjoy building with a team",',
-    `  availability: "${profile.availabilityStatus}",`,
-    '  mindset: "Think clearly, ship consistently, improve relentlessly."',
+    "  education: [",
+    '    "Computer Engineering, System Development, NTNU Trondheim, 2023-2026",',
+    '    "Industrial Chemistry and Biotechnology, NTNU Trondheim, 2020-2022"',
+    "  ],",
+    "  experience: [",
+    '    "Technical lab assistant, Solor, 2017-2019",',
+    '    "Student host, Sit Trondheim, 2020-2023",',
+    '    "Fundraiser, Norwegian Red Cross, 2023,"',
+    '    "Hands-on university projects, NTNU, 2023-2026"',
+    "  ],",
+    "  strengths: [",
+    '    "Structured work",',
+    '    "Clear communication",',
+    '    "Analytical problem solving",',
+    '    "Reliable under pressure"',
+    "  ],",
+    '  currentFocus: "Backend, fullstack, APIs and system integration",',
+    `  availability: "${profile.availabilityStatus}"`,
     "};",
 ];
 
-const TYPE_SPEED = 22;
+const TYPE_SPEED = 17;
 const LINE_DELAY = 240;
 const MAX_TILT = 3;
 
@@ -42,7 +64,7 @@ const codeContainerVariants = {
     visible: {
         transition: {
             delayChildren: 0.35,
-            staggerChildren: 0.09,
+            staggerChildren: 0.06,
         },
     },
 };
@@ -64,6 +86,8 @@ const codeLineVariants = {
     },
 };
 
+const CODE_PANEL_MIN_LINES = 24;
+
 export default function About() {
     const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
         threshold: 0.28,
@@ -72,6 +96,14 @@ export default function About() {
     const [lineIndex, setLineIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
     const [typedLines, setTypedLines] = useState([]);
+    const paddedCodeLines = useMemo(() => {
+        const fillerCount = Math.max(0, CODE_PANEL_MIN_LINES - codeLines.length);
+
+        return [
+            ...codeLines,
+            ...Array.from({ length: fillerCount }, () => ""),
+        ];
+    }, []);
 
     useEffect(() => {
         if (hasStarted && typedLines.length === 0) {
@@ -122,9 +154,8 @@ export default function About() {
                 <span className="about-kicker">About me</span>
                 <h2 className="about-title">More than just code.</h2>
                 <p className="about-intro">
-                    I care about understanding the problem behind the code — how people work,
-                    how systems connect, and how small technical decisions can make a product
-                    easier to use, maintain and trust.
+                    I care about understanding real workflows and building
+                    practical solutions people can actually use every day.
                 </p>
             </motion.div>
 
@@ -170,9 +201,7 @@ export default function About() {
                                     >
                                         {line}
                                         {isLastLine && hasStarted && (
-                                            <span className="about-terminal-cursor">
-                                                |
-                                            </span>
+                                            <span className="about-terminal-cursor">|</span>
                                         )}
                                     </div>
                                 );
@@ -212,14 +241,14 @@ export default function About() {
                             initial="hidden"
                             animate={hasStarted ? "visible" : "hidden"}
                         >
-                            {codeLines.map((line, index) => (
+                            {paddedCodeLines.map((line, index) => (
                                 <motion.div
-                                    key={line}
+                                    key={`${index}-${line}`}
                                     className="about-code-line"
                                     variants={codeLineVariants}
                                 >
                                     <span className="about-line-number">{index + 1}</span>
-                                    <span>{line}</span>
+                                    <span>{line || " "}</span>
                                 </motion.div>
                             ))}
                         </motion.div>
