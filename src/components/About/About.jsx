@@ -55,7 +55,7 @@ const codeLines = [
     "};",
 ];
 
-const TYPE_SPEED = 22;
+const TYPE_SPEED = 17;
 const LINE_DELAY = 240;
 const MAX_TILT = 3;
 
