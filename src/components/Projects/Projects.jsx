@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { motion } from "motion/react";
 import { FaExternalLinkAlt, FaGithub } from "react-icons/fa";
 import ExternalLink from "../common/ExternalLink";
+import { useTiltCard } from "../../hooks/useTiltCard";
 import {
     ALL_STACK_ID,
     getStackLabel,
@@ -10,6 +11,8 @@ import {
 import { projects } from "../../data/projects";
 import { getProjectsForStack } from "../../utils/projectFilters";
 import "./Projects.css";
+
+const MAX_TILT = 2.4;
 
 const capsulePlacements = [
     { x: "0rem", y: "0rem", rotate: "-1.2deg" },
@@ -37,9 +40,13 @@ function ProjectCard({
     style,
     activeStackLabel,
     isVisible = true,
+    onTiltMove,
+    onTiltLeave,
 }) {
     return (
-        <article
+        <ExternalLink
+            href={project.githubUrl}
+            aria-label={`Open ${project.title} on GitHub`}
             className={
                 isVisible
                     ? "project-capsule"
@@ -49,6 +56,8 @@ function ProjectCard({
             data-evidence-scope={
                 activeStackLabel === "All" ? "evidence" : activeStackLabel
             }
+            onMouseMove={onTiltMove}
+            onMouseLeave={onTiltLeave}
         >
             <div className="project-capsule-header">
                 <span className="project-index">{String(index + 1).padStart(2, "0")}</span>
@@ -66,15 +75,12 @@ function ProjectCard({
 
             <p className="project-summary">{project.summary}</p>
 
-            <ExternalLink
-                href={project.githubUrl}
-                aria-label={`Open ${project.title} on GitHub`}
-            >
+            <span className="project-link" aria-hidden="true">
                 <FaGithub />
                 <span>GitHub</span>
                 <FaExternalLinkAlt className="project-link-arrow" />
-            </ExternalLink>
-        </article>
+            </span>
+        </ExternalLink>
     );
 }
 
@@ -82,8 +88,8 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
     const selectedStack = isValidStackId(activeStack) ? activeStack : ALL_STACK_ID;
     const selectedStackLabel = getStackLabel(selectedStack);
     const isShowingAll = selectedStack === ALL_STACK_ID;
-
     const activeAccentRgb = "255, 255, 255";
+    const { handleTiltMove, handleTiltLeave } = useTiltCard({ maxTilt: MAX_TILT });
 
     const matchingProjects = useMemo(() => {
         return getProjectsForStack(projects, selectedStack);
@@ -157,8 +163,7 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
                     transition={{ duration: 0.5, ease: "easeOut" }}
                 >
                     {projects.map((project, index) => {
-                        const isVisible =
-                            isShowingAll || matchingProjectIds.has(project.id);
+                        const isVisible = isShowingAll || matchingProjectIds.has(project.id);
 
                         return (
                             <ProjectCard
@@ -168,6 +173,8 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
                                 activeStackLabel={selectedStackLabel}
                                 isVisible={isVisible}
                                 style={getCapsuleStyle(index)}
+                                onTiltMove={handleTiltMove}
+                                onTiltLeave={handleTiltLeave}
                             />
                         );
                     })}

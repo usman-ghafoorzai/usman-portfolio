@@ -34,7 +34,7 @@ vec3 normalizedPosition(float x, float y, float z) {
     return vec3((x * 2.0 - 1.0) * aspect, y * 2.0 - 1.0, z);
 }
 
-float blobSdf(vec3 p, vec3 center, float radius, float seed) {
+float blobSdf(vec3 p, vec3 center, float radius, float seed, float flowBias) {
     vec3 localP = p - center;
     float t = uTime;
 
@@ -43,7 +43,7 @@ float blobSdf(vec3 p, vec3 center, float radius, float seed) {
     vec2 flowDir = flowSpeed > 0.0001 ? flowVec / flowSpeed : vec2(0.0, 1.0);
     vec2 flowNormal = vec2(-flowDir.y, flowDir.x);
 
-    float flowAmount = (0.35 + uFlowIntensity * 0.85) * (0.6 + uPointerMix * 0.4);
+    float flowAmount = (0.35 + uFlowIntensity * 0.85) * (0.6 + uPointerMix * 0.4) * flowBias;
 
     float rippleA =
         sin(dot(localP.xy, vec2(7.8, 6.2) + flowDir * 3.2) - t * 2.0 + seed) *
@@ -55,6 +55,11 @@ float blobSdf(vec3 p, vec3 center, float radius, float seed) {
 
     localP.xy += flowDir * rippleA * 0.9;
     localP.xy += flowNormal * rippleB * 0.65;
+
+    float liquidWarpX = sin(localP.y * 8.8 - t * 1.9 + seed * 0.6) * 0.0085 * flowAmount;
+    float liquidWarpY = cos(localP.x * 7.2 + t * 1.7 + seed * 0.5) * 0.0065 * flowAmount;
+    localP.x += liquidWarpX;
+    localP.y += liquidWarpY;
 
     float streamStretch = dot(localP.xy, flowDir) * uFlowIntensity * 0.16;
     localP.xy += flowDir * streamStretch;
@@ -85,23 +90,26 @@ float sceneMap(vec3 p) {
     vec3 pointerPos = normalizedPosition(uPointer.x, uPointer.y, 0.0);
 
     if (uMobileMode > 0.5) {
-        vec3 core = normalizedPosition(
-            0.66 + sin(t * 0.16) * 0.03,
-            0.74 + cos(t * 0.13) * 0.035,
+        vec3 blobA = normalizedPosition(
+            0.34 + sin(t * 0.15) * 0.075 + cos(t * 0.1) * 0.02,
+            0.76 + cos(t * 0.13) * 0.055 + sin(t * 0.17) * 0.016,
             0.01
         );
 
-        vec3 lobe = core + vec3(
-            -0.2 + sin(t * 0.21) * 0.01,
-            -0.12 + cos(t * 0.17) * 0.01,
+        vec3 blobB = normalizedPosition(
+            0.74 + cos(t * 0.17) * 0.07 + sin(t * 0.11) * 0.022,
+            0.63 + sin(t * 0.12) * 0.06 + cos(t * 0.15) * 0.018,
             -0.01
         );
 
-        core = applyPointerInfluence(core, pointerPos, 0.1);
-        lobe = applyPointerInfluence(lobe, pointerPos, 0.07);
+        blobA = applyPointerInfluence(blobA, pointerPos, 0.06);
+        blobB = applyPointerInfluence(blobB, pointerPos, 0.06);
 
-        d = smoothMin(d, blobSdf(p, core, 0.23 + sin(t * 0.24) * 0.01, 2.6), 0.24);
-        d = smoothMin(d, blobSdf(p, lobe, 0.15 + cos(t * 0.28) * 0.01, 3.2), 0.2);
+        float a = blobSdf(p, blobA, 0.2 + sin(t * 0.23) * 0.012, 2.6, 1.35);
+        float b = blobSdf(p, blobB, 0.175 + cos(t * 0.26) * 0.01, 3.4, 1.28);
+
+        d = min(d, a);
+        d = min(d, b);
 
         return d;
     }
@@ -130,9 +138,9 @@ float sceneMap(vec3 p) {
     p2 = applyPointerInfluence(p2, pointerPos, 0.2);
     p3 = applyPointerInfluence(p3, pointerPos, 0.18);
 
-    d = smoothMin(d, blobSdf(p, p1, 0.21 + cos(t * 0.24) * 0.01, 2.4), blend);
-    d = smoothMin(d, blobSdf(p, p2, 0.245 + sin(t * 0.22) * 0.012, 3.6), blend);
-    d = smoothMin(d, blobSdf(p, p3, 0.19 + sin(t * 0.28) * 0.01, 4.8), blend);
+    d = smoothMin(d, blobSdf(p, p1, 0.21 + cos(t * 0.24) * 0.01, 2.4, 1.0), blend);
+    d = smoothMin(d, blobSdf(p, p2, 0.245 + sin(t * 0.22) * 0.012, 3.6, 1.45), blend);
+    d = smoothMin(d, blobSdf(p, p3, 0.19 + sin(t * 0.28) * 0.01, 4.8, 1.08), blend);
 
     return d;
 }
@@ -210,9 +218,11 @@ void main() {
     color += violet * pointerHighlight * 0.36;
     color += vec3(0.29, 0.08, 0.62) * innerMix * 0.12;
     color += amethyst * fluidSheen * (0.05 + uFlowIntensity * 0.06);
+    color += vec3(0.6, 0.2, 0.95) * (0.085 + fluidSheen * 0.055) * uMobileMode;
 
     float alpha = 0.46 + diffuse * 0.08 + fresnel * 0.24 + highlight * 0.09 + pointerLight * 0.09;
     alpha += fluidSheen * uFlowIntensity * 0.04;
+    alpha += 0.06 * uMobileMode;
     alpha = clamp(alpha, 0.42, 0.83);
 
     gl_FragColor = vec4(color, alpha);
@@ -247,7 +257,7 @@ function MetaballPlane({ mobileMode = false }) {
 
     useEffect(() => {
         uniforms.uMobileMode.value = mobileMode ? 1.0 : 0.0;
-        uniforms.uPointerMix.value = mobileMode ? 0.5 : 1.0;
+        uniforms.uPointerMix.value = mobileMode ? 0.0 : 1.0;
 
         if (mobileMode) {
             targetPointer.current.set(0.66, 0.74);
@@ -255,8 +265,8 @@ function MetaballPlane({ mobileMode = false }) {
             previousPointer.current.set(0.66, 0.74);
             uniforms.uPointer.value.set(0.66, 0.74);
             uniforms.uPointerVelocity.value.set(0, 0);
-            flowIntensity.current = 0.22;
-            uniforms.uFlowIntensity.value = 0.22;
+            flowIntensity.current = 0.34;
+            uniforms.uFlowIntensity.value = 0.34;
         } else {
             flowIntensity.current = 0.08;
             uniforms.uFlowIntensity.value = 0.08;
@@ -290,8 +300,14 @@ function MetaballPlane({ mobileMode = false }) {
         uniforms.uTime.value += Math.min(delta, 0.033);
 
         if (mobileMode) {
-            const idleX = 0.66 + Math.sin(uniforms.uTime.value * 0.16) * 0.018;
-            const idleY = 0.74 + Math.cos(uniforms.uTime.value * 0.13) * 0.022;
+            const idleX =
+                0.65 +
+                Math.sin(uniforms.uTime.value * 0.17) * 0.045 +
+                Math.cos(uniforms.uTime.value * 0.1) * 0.012;
+            const idleY =
+                0.71 +
+                Math.cos(uniforms.uTime.value * 0.14) * 0.048 +
+                Math.sin(uniforms.uTime.value * 0.12) * 0.012;
             targetPointer.current.set(idleX, idleY);
         }
 
@@ -316,7 +332,7 @@ function MetaballPlane({ mobileMode = false }) {
         uniforms.uPointerVelocity.value.copy(currentVelocity.current);
 
         const speed = currentVelocity.current.length();
-        const baseFlow = mobileMode ? 0.2 : 0.1;
+        const baseFlow = mobileMode ? 0.28 : 0.1;
         const targetFlow = Math.max(baseFlow, Math.min(speed * 38.0, 1.0));
         const flowLerp = mobileMode
             ? 1 - Math.exp(-delta * 1.8)

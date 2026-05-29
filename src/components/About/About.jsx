@@ -11,25 +11,40 @@ const terminalLines = [
     profile.name,
     "",
     "> cat story.txt",
-    "Newly Computer Engineering graduate from NTNU.",
-    "I enjoy turning messy problems into structured, working systems.",
+    "Newly graduated Computer Engineer from NTNU Trondheim.",
+    "I like understanding how things work, why they break and how they can be made easier to use.",
+    "For me, good software starts with understanding the problem, the workflow and the people around it.",
     "",
     "> beyond_code",
-    "Curious by nature. Practical by mindset.",
-    "I like collaborating, learning fast and building things people can actually use.",
+    "I care about building things people can actually use.",
+    "That usually means solutions that make everyday work a little easier, clearer or more reliable.",
+    "I like working close to real problems, not just isolated code.",
     "",
     "> current_focus",
-    "Backend, fullstack and integration work — especially where data, APIs and real workflows meet.",
+    "Backend, fullstack and integration work.",
+    "I am especially interested in APIs, data flow and systems that connect real workflows.",
 ];
 
 const codeLines = [
     "const developer = {",
     `  name: "${profile.name}",`,
-    '  profile: "Curious, hard-working and practical",',
-    '  strengths: ["Fast learner", "Structured thinker", "Reliable teammate"],',
-    '  workStyle: "Comfortable working solo, but I enjoy building with a team",',
-    `  availability: "${profile.availabilityStatus}",`,
-    '  mindset: "Think clearly, ship consistently, improve relentlessly."',
+    "  education: [",
+    '    "Computer Engineering, System Development, NTNU Trondheim, 2023-2026",',
+    '    "Industrial Chemistry and Biotechnology, NTNU Trondheim, 2020-2022"',
+    "  ],",
+    "  experience: [",
+    '    "Technical lab assistant, Solor, 2017-2019",',
+    '    "Student host, Sit Trondheim, 2020-2023",',
+    '    "Fundraiser, Norwegian Red Cross, 2023"',
+    "  ],",
+    "  strengths: [",
+    '    "Structured work",',
+    '    "Clear communication",',
+    '    "Analytical problem solving",',
+    '    "Reliable under pressure"',
+    "  ],",
+    '  currentFocus: "Backend, fullstack, APIs and system integration",',
+    `  availability: "${profile.availabilityStatus}"`,
     "};",
 ];
 
@@ -122,9 +137,8 @@ export default function About() {
                 <span className="about-kicker">About me</span>
                 <h2 className="about-title">More than just code.</h2>
                 <p className="about-intro">
-                    I care about understanding the problem behind the code — how people work,
-                    how systems connect, and how small technical decisions can make a product
-                    easier to use, maintain and trust.
+                    I care about understanding real workflows and building
+                    practical solutions people can actually use every day.
                 </p>
             </motion.div>
 
@@ -170,9 +184,7 @@ export default function About() {
                                     >
                                         {line}
                                         {isLastLine && hasStarted && (
-                                            <span className="about-terminal-cursor">
-                                                |
-                                            </span>
+                                            <span className="about-terminal-cursor">|</span>
                                         )}
                                     </div>
                                 );
@@ -214,7 +226,7 @@ export default function About() {
                         >
                             {codeLines.map((line, index) => (
                                 <motion.div
-                                    key={line}
+                                    key={`${index}-${line}`}
                                     className="about-code-line"
                                     variants={codeLineVariants}
                                 >
