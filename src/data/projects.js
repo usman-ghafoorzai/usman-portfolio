@@ -80,8 +80,9 @@ export const projects = [
         iconKey: "mobile",
         accentRgb: "45, 212, 191",
         featured: false,
-        stacks: ["frontend", "systems-mobile", "workflow"],
+        stacks: ["frontend", "mobile", "workflow"],
         stackEvidencePriority: {
+            mobile: 1,
             "systems-mobile": 1,
         },
         summary:
@@ -102,7 +103,7 @@ export const projects = [
         iconKey: "backend",
         accentRgb: "104, 211, 145",
         featured: false,
-        stacks: ["backend", "integration", "systems-mobile"],
+        stacks: ["backend", "integration"],
         stackEvidencePriority: {
             integration: 2,
         },
@@ -124,7 +125,7 @@ export const projects = [
         iconKey: "database",
         accentRgb: "96, 165, 250",
         featured: false,
-        stacks: ["backend", "systems-mobile", "workflow"],
+        stacks: ["backend", "systems", "workflow"],
         summary:
             "Java coursework covering algorithms, data structures, reports and assignment implementations from IDATT2101 at NTNU.",
         evidence: [
@@ -143,8 +144,9 @@ export const projects = [
         iconKey: "tools",
         accentRgb: "45, 212, 191",
         featured: false,
-        stacks: ["systems-mobile", "integration", "workflow"],
+        stacks: ["systems", "workflow"],
         stackEvidencePriority: {
+            systems: 1,
             "systems-mobile": 2,
         },
         summary:

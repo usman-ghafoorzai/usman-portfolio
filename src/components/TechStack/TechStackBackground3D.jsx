@@ -91,22 +91,22 @@ float sceneMap(vec3 p) {
 
     if (uMobileMode > 0.5) {
         vec3 blobA = normalizedPosition(
-            0.08,
-            0.9,
+            0.24 + sin(t * 0.2) * 0.045,
+            0.84 + cos(t * 0.24) * 0.03,
             0.01
         );
 
         vec3 blobB = normalizedPosition(
-            0.95,
-            0.6,
+            0.86 + cos(t * 0.18 + 1.1) * 0.04,
+            0.6 + sin(t * 0.22 + 0.7) * 0.032,
             -0.01
         );
 
         blobA = applyPointerInfluence(blobA, pointerPos, 0.0);
         blobB = applyPointerInfluence(blobB, pointerPos, 0.0);
 
-        float a = blobSdf(p, blobA, 0.088, 2.6, 0.82);
-        float b = blobSdf(p, blobB, 0.084, 3.4, 0.8);
+        float a = blobSdf(p, blobA, 0.086, 2.6, 0.82);
+        float b = blobSdf(p, blobB, 0.083, 3.4, 0.8);
 
         d = min(d, a);
         d = min(d, b);
@@ -219,13 +219,15 @@ void main() {
     color += vec3(0.29, 0.08, 0.62) * innerMix * 0.12;
     color += amethyst * fluidSheen * (0.05 + uFlowIntensity * 0.06);
     color += vec3(0.6, 0.2, 0.95) * (0.07 + fluidSheen * 0.05) * uMobileMode;
-    float mobilePulse = 0.5 + 0.5 * sin(uTime * 1.7);
-    color += vec3(0.28, 0.08, 0.56) * mobilePulse * 0.12 * uMobileMode;
+    float mobilePulsePrimary = 0.5 + 0.5 * sin(uTime * 1.85);
+    float mobilePulseSecondary = 0.5 + 0.5 * sin(uTime * 1.35 + 1.6);
+    color += vec3(0.28, 0.08, 0.56) * mobilePulsePrimary * 0.16 * uMobileMode;
+    color += vec3(0.72, 0.32, 1.0) * mobilePulseSecondary * 0.045 * uMobileMode;
 
     float alpha = 0.46 + diffuse * 0.08 + fresnel * 0.24 + highlight * 0.09 + pointerLight * 0.09;
     alpha += fluidSheen * uFlowIntensity * 0.04;
-    alpha += 0.03 * uMobileMode;
-    alpha += mobilePulse * 0.035 * uMobileMode;
+    alpha += 0.035 * uMobileMode;
+    alpha += mobilePulsePrimary * 0.045 * uMobileMode;
     alpha = clamp(alpha, 0.38, 0.8);
 
     gl_FragColor = vec4(color, alpha);

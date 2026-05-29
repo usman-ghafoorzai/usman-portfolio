@@ -280,11 +280,11 @@
 .project-tech-list span {
     padding: 0.3rem 0.44rem;
 
-    border: 1px solid rgba(255, 255, 255, 0.078);
+    border: 1px solid rgba(var(--project-accent-rgb, 255, 255, 255), 0.24);
     border-radius: 999px;
 
-    color: rgba(255, 255, 255, 0.54);
-    background: rgba(255, 255, 255, 0.028);
+    color: rgba(var(--project-accent-rgb, 255, 255, 255), 0.92);
+    background: rgba(var(--project-accent-rgb, 255, 255, 255), 0.11);
 
     font-family: var(--font-mono, "SFMono-Regular"), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.62rem;
@@ -395,7 +395,7 @@
 }
 
 .project-tech-list span {
-    color: rgba(255, 255, 255, 0.52);
-    border-color: rgba(255, 255, 255, 0.075);
-    background: rgba(255, 255, 255, 0.03);
+    color: rgba(var(--project-accent-rgb, 255, 255, 255), 0.92);
+    border-color: rgba(var(--project-accent-rgb, 255, 255, 255), 0.24);
+    background: rgba(var(--project-accent-rgb, 255, 255, 255), 0.11);
 }
