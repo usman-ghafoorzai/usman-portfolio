@@ -43,6 +43,11 @@ function ProjectCard({
     onTiltMove,
     onTiltLeave,
 }) {
+    const capsuleStyle = {
+        ...style,
+        "--project-accent-rgb": project.accentRgb ?? "255, 255, 255",
+    };
+
     return (
         <ExternalLink
             href={project.githubUrl}
@@ -52,7 +57,7 @@ function ProjectCard({
                     ? "project-capsule"
                     : "project-capsule project-capsule--hidden"
             }
-            style={style}
+            style={capsuleStyle}
             data-evidence-scope={
                 activeStackLabel === "All" ? "evidence" : activeStackLabel
             }

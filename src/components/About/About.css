@@ -220,7 +220,20 @@
 }
 
 .about-terminal-body {
+    --about-terminal-padding: 1.4rem;
+    position: relative;
     min-height: calc(26rem - 3.1rem);
+    padding: var(--about-terminal-padding);
+}
+
+.about-terminal-body-reserve {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.about-terminal-body-live {
+    position: absolute;
+    inset: var(--about-terminal-padding);
 }
 
 .about-terminal-line {
@@ -327,6 +340,10 @@
     .about-terminal-body,
     .about-code-body {
         padding: 1rem;
+    }
+
+    .about-terminal-body {
+        --about-terminal-padding: 1rem;
     }
 
     .about-code-line {

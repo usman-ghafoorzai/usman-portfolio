@@ -66,10 +66,9 @@ export const stackGroups = [
         iconKey: "mobile",
         accentRgb: "45, 212, 191",
         items: [
-            { label: "C++", iconKey: "cpp" },
-            { label: "Kotlin", iconKey: "kotlin" },
-            { label: "Mobile Apps", iconKey: "mobile" },
-            { label: "Java", iconKey: "java" },
+            { label: "C++", iconKey: "cpp", stackId: "systems" },
+            { label: "Kotlin", iconKey: "kotlin", stackId: "mobile" },
+            { label: "Mobile Apps", iconKey: "mobile", stackId: "mobile" },
         ],
     },
     {
@@ -98,6 +97,14 @@ export const stackFilters = [
         id: stack.id,
         label: stack.label,
     })),
+    {
+        id: "mobile",
+        label: "Mobile",
+    },
+    {
+        id: "systems",
+        label: "Systems",
+    },
 ];
 
 export function getStackLabel(stackId) {

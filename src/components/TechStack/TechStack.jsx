@@ -68,11 +68,13 @@ const floatingTechItems = stackGroups.flatMap((group, groupIndex) =>
             typeof item === "string"
                 ? label.toLowerCase().replaceAll(" ", "-")
                 : item.iconKey;
+        const stackId = typeof item === "string" ? group.id : item.stackId ?? group.id;
 
         return {
             label,
             iconKey,
             groupId: group.id,
+            stackId,
             groupLabel: group.label,
             groupIndex,
             itemIndex,
@@ -452,9 +454,9 @@ export default function TechStack({ onStackSelect }) {
                                     }`}
                                     style={getTokenStyle(item, index)}
                                     disabled={!selectionReady}
-                                    onClick={() => handleStackSelect(item.groupId)}
-                                    onKeyDown={(event) => handleStackKeyDown(event, item.groupId)}
-                                    aria-label={`View projects related to ${item.groupLabel}`}
+                                    onClick={() => handleStackSelect(item.stackId)}
+                                    onKeyDown={(event) => handleStackKeyDown(event, item.stackId)}
+                                    aria-label={`View projects related to ${item.label}`}
                                 >
                                     {textIcon ? (
                                         <span className="tech-cloud-text-icon">

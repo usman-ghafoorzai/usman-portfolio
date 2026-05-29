@@ -57,7 +57,10 @@ const codeLines = [
 
 const TYPE_SPEED = 17;
 const LINE_DELAY = 240;
+const MOBILE_TYPE_SPEED = 11;
+const MOBILE_LINE_DELAY = 170;
 const MAX_TILT = 3;
+const MOBILE_MEDIA_QUERY = "(max-width: 760px)";
 
 const codeContainerVariants = {
     hidden: {},
@@ -88,6 +91,14 @@ const codeLineVariants = {
 
 const CODE_PANEL_MIN_LINES = 24;
 
+function getTerminalLineClassName(line) {
+    if (line.startsWith(">")) {
+        return "about-terminal-line about-terminal-command";
+    }
+
+    return "about-terminal-line";
+}
+
 export default function About() {
     const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
         threshold: 0.28,
@@ -96,6 +107,12 @@ export default function About() {
     const [lineIndex, setLineIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
     const [typedLines, setTypedLines] = useState([]);
+    const [hasFallbackStarted, setHasFallbackStarted] = useState(false);
+    const [isMobileTyping, setIsMobileTyping] = useState(() => {
+        if (typeof window === "undefined") return false;
+        return window.matchMedia(MOBILE_MEDIA_QUERY).matches;
+    });
+    const shouldStart = hasStarted || hasFallbackStarted;
     const paddedCodeLines = useMemo(() => {
         const fillerCount = Math.max(0, CODE_PANEL_MIN_LINES - codeLines.length);
 
@@ -106,16 +123,43 @@ export default function About() {
     }, []);
 
     useEffect(() => {
-        if (hasStarted && typedLines.length === 0) {
-            setTypedLines([""]);
-        }
-    }, [hasStarted, typedLines.length]);
+        const timeoutId = setTimeout(() => {
+            setHasFallbackStarted(true);
+        }, 1200);
+
+        return () => clearTimeout(timeoutId);
+    }, []);
 
     useEffect(() => {
-        if (!hasStarted) return;
+        if (typeof window === "undefined") return undefined;
+
+        const mediaQuery = window.matchMedia(MOBILE_MEDIA_QUERY);
+        const updateTypingMode = () => setIsMobileTyping(mediaQuery.matches);
+
+        updateTypingMode();
+
+        if (mediaQuery.addEventListener) {
+            mediaQuery.addEventListener("change", updateTypingMode);
+            return () => mediaQuery.removeEventListener("change", updateTypingMode);
+        }
+
+        mediaQuery.addListener(updateTypingMode);
+        return () => mediaQuery.removeListener(updateTypingMode);
+    }, []);
+
+    useEffect(() => {
+        if (shouldStart && typedLines.length === 0) {
+            setTypedLines([""]);
+        }
+    }, [shouldStart, typedLines.length]);
+
+    useEffect(() => {
+        if (!shouldStart) return;
         if (typedLines.length === 0) return;
         if (lineIndex >= terminalLines.length) return;
         const currentLine = terminalLines[lineIndex];
+        const typeSpeed = isMobileTyping ? MOBILE_TYPE_SPEED : TYPE_SPEED;
+        const lineDelay = isMobileTyping ? MOBILE_LINE_DELAY : LINE_DELAY;
         let timeoutId;
 
         if (charIndex <= currentLine.length) {
@@ -127,7 +171,7 @@ export default function About() {
                 });
 
                 setCharIndex((currentIndex) => currentIndex + 1);
-            }, charIndex === 0 ? LINE_DELAY : TYPE_SPEED);
+            }, charIndex === 0 ? lineDelay : typeSpeed);
         } else {
             timeoutId = setTimeout(() => {
                 if (lineIndex < terminalLines.length - 1) {
@@ -136,11 +180,11 @@ export default function About() {
 
                 setLineIndex((currentIndex) => currentIndex + 1);
                 setCharIndex(0);
-            }, LINE_DELAY);
+            }, lineDelay);
         }
 
         return () => clearTimeout(timeoutId);
-    }, [hasStarted, typedLines.length, lineIndex, charIndex]);
+    }, [shouldStart, typedLines.length, lineIndex, charIndex, isMobileTyping]);
 
     return (
         <section ref={sectionRef} id="about" className="about-section">
@@ -186,26 +230,37 @@ export default function About() {
                         </div>
 
                         <div className="about-terminal-body">
-                            {typedLines.map((line, index) => {
-                                const isCommand = line.startsWith(">");
-                                const isLastLine = index === typedLines.length - 1;
-
-                                return (
+                            <div className="about-terminal-body-reserve" aria-hidden="true">
+                                {terminalLines.map((line, index) => (
                                     <div
-                                        key={index}
-                                        className={
-                                            isCommand
-                                                ? "about-terminal-line about-terminal-command"
-                                                : "about-terminal-line"
-                                        }
+                                        key={`reserve-${index}`}
+                                        className={getTerminalLineClassName(line)}
                                     >
                                         {line}
-                                        {isLastLine && hasStarted && (
+                                        {index === terminalLines.length - 1 && (
                                             <span className="about-terminal-cursor">|</span>
                                         )}
                                     </div>
-                                );
-                            })}
+                                ))}
+                            </div>
+
+                            <div className="about-terminal-body-live">
+                                {typedLines.map((line, index) => {
+                                    const isLastLine = index === typedLines.length - 1;
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className={getTerminalLineClassName(line)}
+                                        >
+                                            {line}
+                                            {isLastLine && shouldStart && (
+                                                <span className="about-terminal-cursor">|</span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
                 </motion.div>
@@ -239,7 +294,7 @@ export default function About() {
                             className="about-code-body"
                             variants={codeContainerVariants}
                             initial="hidden"
-                            animate={hasStarted ? "visible" : "hidden"}
+                            animate={shouldStart ? "visible" : "hidden"}
                         >
                             {paddedCodeLines.map((line, index) => (
                                 <motion.div
