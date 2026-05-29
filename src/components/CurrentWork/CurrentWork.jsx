@@ -15,6 +15,13 @@ const terminalLines = [
     "",
     "> status",
     `${profile.availabilityStatus}.`,
+    "",
+    "> exploring_client_work",
+    "Website concept for Cherrygloss Oslo, a beauty and nail salon in Oslo",
+    "Early conversations around a clean, modern site for services, booking flow and visual brand presence.",
+    "",
+    "> focus",
+    "Mobile-first layout, clear service presentation and a polished brand experience.",
 ];
 
 const TYPE_SPEED = 22;

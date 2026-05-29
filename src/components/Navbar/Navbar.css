@@ -321,7 +321,9 @@
     }
 
     .navbar-brand-name {
-        max-width: 10rem;
+        max-width: clamp(10.8rem, 56vw, 13.5rem);
+        font-size: 0.8rem;
+        letter-spacing: 0.03em;
         overflow: hidden;
         text-overflow: ellipsis;
     }

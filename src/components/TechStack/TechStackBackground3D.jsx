@@ -91,22 +91,22 @@ float sceneMap(vec3 p) {
 
     if (uMobileMode > 0.5) {
         vec3 blobA = normalizedPosition(
-            0.34 + sin(t * 0.15) * 0.075 + cos(t * 0.1) * 0.02,
-            0.76 + cos(t * 0.13) * 0.055 + sin(t * 0.17) * 0.016,
+            0.08 + sin(t * 0.52) * 0.06 + cos(t * 0.71) * 0.016,
+            0.9 + cos(t * 0.46) * 0.05 + sin(t * 0.62) * 0.016,
             0.01
         );
 
         vec3 blobB = normalizedPosition(
-            0.74 + cos(t * 0.17) * 0.07 + sin(t * 0.11) * 0.022,
-            0.63 + sin(t * 0.12) * 0.06 + cos(t * 0.15) * 0.018,
+            0.95 + cos(t * 0.48) * 0.064 + sin(t * 0.64) * 0.016,
+            0.6 + sin(t * 0.42) * 0.052 + cos(t * 0.57) * 0.016,
             -0.01
         );
 
-        blobA = applyPointerInfluence(blobA, pointerPos, 0.06);
-        blobB = applyPointerInfluence(blobB, pointerPos, 0.06);
+        blobA = applyPointerInfluence(blobA, pointerPos, 0.03);
+        blobB = applyPointerInfluence(blobB, pointerPos, 0.03);
 
-        float a = blobSdf(p, blobA, 0.2 + sin(t * 0.23) * 0.012, 2.6, 1.35);
-        float b = blobSdf(p, blobB, 0.175 + cos(t * 0.26) * 0.01, 3.4, 1.28);
+        float a = blobSdf(p, blobA, 0.086 + sin(t * 0.67) * 0.006, 2.6, 1.24);
+        float b = blobSdf(p, blobB, 0.082 + cos(t * 0.63) * 0.006, 3.4, 1.2);
 
         d = min(d, a);
         d = min(d, b);
@@ -218,12 +218,12 @@ void main() {
     color += violet * pointerHighlight * 0.36;
     color += vec3(0.29, 0.08, 0.62) * innerMix * 0.12;
     color += amethyst * fluidSheen * (0.05 + uFlowIntensity * 0.06);
-    color += vec3(0.6, 0.2, 0.95) * (0.085 + fluidSheen * 0.055) * uMobileMode;
+    color += vec3(0.6, 0.2, 0.95) * (0.07 + fluidSheen * 0.05) * uMobileMode;
 
     float alpha = 0.46 + diffuse * 0.08 + fresnel * 0.24 + highlight * 0.09 + pointerLight * 0.09;
     alpha += fluidSheen * uFlowIntensity * 0.04;
-    alpha += 0.06 * uMobileMode;
-    alpha = clamp(alpha, 0.42, 0.83);
+    alpha += 0.03 * uMobileMode;
+    alpha = clamp(alpha, 0.38, 0.8);
 
     gl_FragColor = vec4(color, alpha);
 }
@@ -257,16 +257,16 @@ function MetaballPlane({ mobileMode = false }) {
 
     useEffect(() => {
         uniforms.uMobileMode.value = mobileMode ? 1.0 : 0.0;
-        uniforms.uPointerMix.value = mobileMode ? 0.0 : 1.0;
+        uniforms.uPointerMix.value = mobileMode ? 0.34 : 1.0;
 
         if (mobileMode) {
-            targetPointer.current.set(0.66, 0.74);
-            currentPointer.current.set(0.66, 0.74);
-            previousPointer.current.set(0.66, 0.74);
-            uniforms.uPointer.value.set(0.66, 0.74);
+            targetPointer.current.set(0.5, 0.82);
+            currentPointer.current.set(0.5, 0.82);
+            previousPointer.current.set(0.5, 0.82);
+            uniforms.uPointer.value.set(0.5, 0.82);
             uniforms.uPointerVelocity.value.set(0, 0);
-            flowIntensity.current = 0.34;
-            uniforms.uFlowIntensity.value = 0.34;
+            flowIntensity.current = 0.52;
+            uniforms.uFlowIntensity.value = 0.52;
         } else {
             flowIntensity.current = 0.08;
             uniforms.uFlowIntensity.value = 0.08;
@@ -301,18 +301,18 @@ function MetaballPlane({ mobileMode = false }) {
 
         if (mobileMode) {
             const idleX =
-                0.65 +
-                Math.sin(uniforms.uTime.value * 0.17) * 0.045 +
-                Math.cos(uniforms.uTime.value * 0.1) * 0.012;
+                0.5 +
+                Math.sin(uniforms.uTime.value * 0.62) * 0.066 +
+                Math.cos(uniforms.uTime.value * 0.37) * 0.018;
             const idleY =
-                0.71 +
-                Math.cos(uniforms.uTime.value * 0.14) * 0.048 +
-                Math.sin(uniforms.uTime.value * 0.12) * 0.012;
+                0.82 +
+                Math.cos(uniforms.uTime.value * 0.53) * 0.072 +
+                Math.sin(uniforms.uTime.value * 0.31) * 0.018;
             targetPointer.current.set(idleX, idleY);
         }
 
         const followStrength = mobileMode
-            ? 1 - Math.exp(-delta * 2.2)
+            ? 1 - Math.exp(-delta * 3.4)
             : 1 - Math.exp(-delta * 6.2);
 
         currentPointer.current.lerp(targetPointer.current, followStrength);
@@ -325,17 +325,17 @@ function MetaballPlane({ mobileMode = false }) {
         previousPointer.current.copy(currentPointer.current);
 
         const velocityLerp = mobileMode
-            ? 1 - Math.exp(-delta * 2.8)
+            ? 1 - Math.exp(-delta * 3.6)
             : 1 - Math.exp(-delta * 7.0);
 
         currentVelocity.current.lerp(frameVelocity.current, velocityLerp);
         uniforms.uPointerVelocity.value.copy(currentVelocity.current);
 
         const speed = currentVelocity.current.length();
-        const baseFlow = mobileMode ? 0.28 : 0.1;
-        const targetFlow = Math.max(baseFlow, Math.min(speed * 38.0, 1.0));
+        const baseFlow = mobileMode ? 0.34 : 0.1;
+        const targetFlow = Math.max(baseFlow, Math.min(speed * 40.0, 1.0));
         const flowLerp = mobileMode
-            ? 1 - Math.exp(-delta * 1.8)
+            ? 1 - Math.exp(-delta * 2.5)
             : 1 - Math.exp(-delta * 5.2);
 
         flowIntensity.current += (targetFlow - flowIntensity.current) * flowLerp;
