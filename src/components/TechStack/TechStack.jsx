@@ -85,7 +85,7 @@ const MAX_TILT = 7;
 const COMMAND_TYPE_SPEED = 28;
 const STATUS_TYPE_SPEED = 58;
 const SELECT_PROMPT_TYPE_SPEED = 32;
-const SCAN_DURATION_MS = 9200;
+const SCAN_DURATION_MS = 7200;
 const STATUS_START_THRESHOLD = 0.1;
 
 function handleTiltMove(event) {
