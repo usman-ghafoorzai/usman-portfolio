@@ -41,7 +41,9 @@ export default function Navbar() {
                 aria-label="Main navigation"
             >
                 <a href="#home" className="navbar-brand" aria-label="Go to home">
-                    <span className="navbar-brand-mark">UG</span>
+                    <span className="navbar-brand-mark" aria-hidden="true">
+                        <img src="/logo.svg" alt="" className="navbar-brand-mark-image" />
+                    </span>
                     <span className="navbar-brand-name">{profile.name}</span>
                 </a>
 
