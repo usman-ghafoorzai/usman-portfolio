@@ -17,7 +17,7 @@ const footerLinks = [
     },
     {
         label: "Email",
-        href: profile.links.email,
+        href: `mailto:${profile.email}`,
         icon: FaEnvelope,
     },
 ];

@@ -9,6 +9,8 @@ import {
     isValidStackId,
 } from "../../data/stacks";
 import { projects } from "../../data/projects";
+import { getTechnologyLabel } from "../../data/technologies";
+import { projectAccentRgbById } from "./projectVisualConfig";
 import { getProjectsForStack } from "../../utils/projectFilters";
 import "./Projects.css";
 
@@ -45,12 +47,12 @@ function ProjectCard({
 }) {
     const capsuleStyle = {
         ...style,
-        "--project-accent-rgb": project.accentRgb ?? "255, 255, 255",
+        "--project-accent-rgb": projectAccentRgbById[project.id] ?? "255, 255, 255",
     };
 
     return (
         <ExternalLink
-            href={project.githubUrl}
+            href={project.links.github}
             aria-label={`Open ${project.title} on GitHub`}
             className={
                 isVisible
@@ -73,7 +75,7 @@ function ProjectCard({
             <h3>{project.title}</h3>
 
             <div className="project-tech-list">
-                {project.tech.slice(0, 5).map((item) => (
+                {project.technologyIds.slice(0, 5).map(getTechnologyLabel).map((item) => (
                     <span key={item}>{item}</span>
                 ))}
             </div>

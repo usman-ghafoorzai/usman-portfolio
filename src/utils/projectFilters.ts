@@ -1,25 +1,28 @@
-import { ALL_STACK_ID } from "../data/stacks";
+import type { Project } from "../domain/project";
+import { ALL_STACK_ID, getStackCapabilityIds } from "../data/stacks";
+import type { StackFilterId } from "../data/stacks";
 
-type StackPriorities = {
-    stackEvidencePriority?: Partial<Record<string, number>>;
-};
-
-export function getProjectsForStack<T extends StackPriorities, K extends string>(
-    projects: T[],
-    stackId: K,
-): T[] {
+export function getProjectsForStack<T extends Pick<Project, "capabilityEvidence">>(
+    projects: readonly T[],
+    stackId: StackFilterId,
+): readonly T[] {
     if (stackId === ALL_STACK_ID) return projects;
 
+    const capabilityIds = getStackCapabilityIds(stackId);
+
     return projects
-        .filter((project): project is T & { stackEvidencePriority: Record<K, number> } => {
-            const priority = project.stackEvidencePriority?.[stackId];
-            return Number.isFinite(priority);
-        })
-        .sort((firstProject, secondProject) => {
-            return (
-                firstProject.stackEvidencePriority[stackId] -
-                secondProject.stackEvidencePriority[stackId]
-            );
-        })
-        .slice(0, 2);
+        .map((project) => ({
+            project,
+            priority: project.capabilityEvidence.reduce(
+                (strongest, evidence) => capabilityIds.includes(evidence.capabilityId)
+                    ? Math.min(strongest, evidence.priority)
+                    : strongest,
+                Infinity,
+            ),
+        }))
+        .filter(({ priority }) => Number.isFinite(priority))
+        // Stable sorting preserves source order for equally strong evidence.
+        .sort((first, second) => first.priority - second.priority)
+        .slice(0, 2)
+        .map(({ project }) => project);
 }

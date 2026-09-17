@@ -19,6 +19,7 @@ import {
     FaTerminal,
 } from "react-icons/fa";
 import { stackGroups } from "../../data/stacks";
+import { getTechnologyLabel } from "../../data/technologies";
 import { clamp, easeOutCubic } from "../../utils/math";
 import { useTypewriter } from "../../hooks/useTypewriter";
 import TechStackBackground3D from "./TechStackBackground3D";
@@ -63,12 +64,9 @@ const techItemTextIconMap = {
 
 const floatingTechItems = stackGroups.flatMap((group, groupIndex) =>
     group.items.map((item, itemIndex) => {
-        const label = typeof item === "string" ? item : item.label;
-        const iconKey =
-            typeof item === "string"
-                ? label.toLowerCase().replaceAll(" ", "-")
-                : item.iconKey;
-        const stackId = typeof item === "string" ? group.id : item.stackId ?? group.id;
+        const label = getTechnologyLabel(item.technologyId);
+        const iconKey = item.iconKey;
+        const stackId = item.stackId ?? group.id;
 
         return {
             label,
