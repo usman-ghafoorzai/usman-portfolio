@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
     FaBolt,
@@ -19,7 +19,7 @@ import {
     FaTerminal,
 } from "react-icons/fa";
 import { stackGroups } from "../../data/stacks";
-import { getTechnologyLabel } from "../../data/technologies";
+import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import { clamp, easeOutCubic } from "../../utils/math";
 import { useTypewriter } from "../../hooks/useTypewriter";
 import TechStackBackground3D from "./TechStackBackground3D";
@@ -61,25 +61,6 @@ const techItemTextIconMap = {
     swagger: "SW",
     jest: "J",
 };
-
-const floatingTechItems = stackGroups.flatMap((group, groupIndex) =>
-    group.items.map((item, itemIndex) => {
-        const label = getTechnologyLabel(item.technologyId);
-        const iconKey = item.iconKey;
-        const stackId = item.stackId ?? group.id;
-
-        return {
-            label,
-            iconKey,
-            groupId: group.id,
-            stackId,
-            groupLabel: group.label,
-            groupIndex,
-            itemIndex,
-            accentRgb: group.accentRgb,
-        };
-    })
-);
 
 const MAX_TILT = 7;
 const COMMAND_TYPE_SPEED = 28;
@@ -131,6 +112,30 @@ function TypedStatus({ text, isActive }) {
 }
 
 export default function TechStack({ onStackSelect }) {
+    const { technologies } = usePortfolioContent();
+    const floatingTechItems = useMemo(() => {
+        const technologyLabels = new Map(
+            technologies.map((technology) => [technology.id, technology.label]),
+        );
+        return stackGroups.flatMap((group, groupIndex) =>
+            group.items.map((item, itemIndex) => {
+                const label = technologyLabels.get(item.technologyId) ?? item.technologyId;
+                const iconKey = item.iconKey;
+                const stackId = item.stackId ?? group.id;
+
+                return {
+                    label,
+                    iconKey,
+                    groupId: group.id,
+                    stackId,
+                    groupLabel: group.label,
+                    groupIndex,
+                    itemIndex,
+                    accentRgb: group.accentRgb,
+                };
+            })
+        );
+    }, [technologies]);
     const sectionRef = useRef(null);
 
     const [hasStarted, setHasStarted] = useState(false);

@@ -1,59 +1,63 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { FaCode, FaTerminal } from "react-icons/fa";
-import { profile } from "../../data/profile";
+import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import { useInViewOnce } from "../../hooks/useInViewOnce";
 import { useTiltCard } from "../../hooks/useTiltCard";
 import "./About.css";
 
-const terminalLines = [
-    "> whoami",
-    profile.name,
-    "",
-    "> cat story.txt",
-    "Newly graduated Computer Engineer from NTNU Trondheim.",
-    "I like understanding how things work, why they break and how they can be made easier to use.",
-    "For me, good software starts with understanding the problem, the workflow and the people around it.",
-    "",
-    "> beyond_code",
-    "I care about building things people can actually use.",
-    "That usually means solutions that make everyday work a little easier, clearer or more reliable.",
-    "I like working close to real problems, not just isolated code.",
-    "",
-    "> background",
-    "Practical coursework at NTNU Trondheim gave me hands-on experience with full-stack development, APIs, databases, mobile apps and team-based software projects.",
-    "Working as a student host taught me communication, responsibility and how to create inclusive environments.",
-    "Fundraising for the Norwegian Red Cross taught me direct dialogue and how to represent meaningful work.",
-    "Technical lab work taught me structured data handling, quality assurance and careful process routines.",
-    "",
-    "> current_focus",
-    "Backend, fullstack and integration work.",
-    "I am especially interested in APIs, data flow and systems that connect real workflows.",
-];
+function createTerminalLines(profile) {
+    return [
+        "> whoami",
+        profile.name,
+        "",
+        "> cat story.txt",
+        "Newly graduated Computer Engineer from NTNU Trondheim.",
+        "I like understanding how things work, why they break and how they can be made easier to use.",
+        "For me, good software starts with understanding the problem, the workflow and the people around it.",
+        "",
+        "> beyond_code",
+        "I care about building things people can actually use.",
+        "That usually means solutions that make everyday work a little easier, clearer or more reliable.",
+        "I like working close to real problems, not just isolated code.",
+        "",
+        "> background",
+        "Practical coursework at NTNU Trondheim gave me hands-on experience with full-stack development, APIs, databases, mobile apps and team-based software projects.",
+        "Working as a student host taught me communication, responsibility and how to create inclusive environments.",
+        "Fundraising for the Norwegian Red Cross taught me direct dialogue and how to represent meaningful work.",
+        "Technical lab work taught me structured data handling, quality assurance and careful process routines.",
+        "",
+        "> current_focus",
+        "Backend, fullstack and integration work.",
+        "I am especially interested in APIs, data flow and systems that connect real workflows.",
+    ];
+}
 
-const codeLines = [
-    "const developer = {",
-    `  name: "${profile.name}",`,
-    "  education: [",
-    '    "Computer Engineering, System Development, NTNU Trondheim, 2023-2026",',
-    '    "Industrial Chemistry and Biotechnology, NTNU Trondheim, 2020-2022"',
-    "  ],",
-    "  experience: [",
-    '    "Technical lab assistant, Solor, 2017-2019",',
-    '    "Student host, Sit Trondheim, 2020-2023",',
-    '    "Fundraiser, Norwegian Red Cross, 2023,"',
-    '    "Hands-on university projects, NTNU, 2023-2026"',
-    "  ],",
-    "  strengths: [",
-    '    "Structured work",',
-    '    "Clear communication",',
-    '    "Analytical problem solving",',
-    '    "Reliable under pressure"',
-    "  ],",
-    '  currentFocus: "Backend, fullstack, APIs and system integration",',
-    `  availability: "${profile.availabilityStatus}"`,
-    "};",
-];
+function createCodeLines(profile) {
+    return [
+        "const developer = {",
+        `  name: "${profile.name}",`,
+        "  education: [",
+        '    "Computer Engineering, System Development, NTNU Trondheim, 2023-2026",',
+        '    "Industrial Chemistry and Biotechnology, NTNU Trondheim, 2020-2022"',
+        "  ],",
+        "  experience: [",
+        '    "Technical lab assistant, Solor, 2017-2019",',
+        '    "Student host, Sit Trondheim, 2020-2023",',
+        '    "Fundraiser, Norwegian Red Cross, 2023,"',
+        '    "Hands-on university projects, NTNU, 2023-2026"',
+        "  ],",
+        "  strengths: [",
+        '    "Structured work",',
+        '    "Clear communication",',
+        '    "Analytical problem solving",',
+        '    "Reliable under pressure"',
+        "  ],",
+        '  currentFocus: "Backend, fullstack, APIs and system integration",',
+        `  availability: "${profile.availabilityStatus}"`,
+        "};",
+    ];
+}
 
 const TYPE_SPEED = 17;
 const LINE_DELAY = 240;
@@ -100,6 +104,8 @@ function getTerminalLineClassName(line) {
 }
 
 export default function About() {
+    const { profile } = usePortfolioContent();
+    const terminalLines = useMemo(() => createTerminalLines(profile), [profile]);
     const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
         threshold: 0.28,
     });
@@ -114,13 +120,14 @@ export default function About() {
     });
     const shouldStart = hasStarted || hasFallbackStarted;
     const paddedCodeLines = useMemo(() => {
+        const codeLines = createCodeLines(profile);
         const fillerCount = Math.max(0, CODE_PANEL_MIN_LINES - codeLines.length);
 
         return [
             ...codeLines,
             ...Array.from({ length: fillerCount }, () => ""),
         ];
-    }, []);
+    }, [profile]);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -184,7 +191,7 @@ export default function About() {
         }
 
         return () => clearTimeout(timeoutId);
-    }, [shouldStart, typedLines.length, lineIndex, charIndex, isMobileTyping]);
+    }, [shouldStart, typedLines.length, lineIndex, charIndex, isMobileTyping, terminalLines]);
 
     return (
         <section ref={sectionRef} id="about" className="about-section">

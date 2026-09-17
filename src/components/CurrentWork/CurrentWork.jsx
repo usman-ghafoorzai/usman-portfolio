@@ -1,28 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { FaTerminal } from "react-icons/fa";
-import { profile } from "../../data/profile";
+import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import { useInViewOnce } from "../../hooks/useInViewOnce";
 import "./CurrentWork.css";
 
-const terminalLines = [
-    "> currently_working_on",
-    "Portfolio v2",
-    "",
-    "> build_log",
-    "Building a polished developer portfolio with interactive project evidence,",
-    "smooth technical UI and a clearer link between skills, projects and real work.",
-    "",
-    "> status",
-    `${profile.availabilityStatus}.`,
-    "",
-    "> exploring_client_work",
-    "Website concept for Cherrygloss Oslo, a beauty and nail salon in Oslo",
-    "Early conversations around a clean, modern site for services, booking flow and visual brand presence.",
-    "",
-    "> focus",
-    "Mobile-first layout, clear service presentation and a polished brand experience.",
-];
+function createTerminalLines(profile) {
+    return [
+        "> currently_working_on",
+        "Portfolio v2",
+        "",
+        "> build_log",
+        "Building a polished developer portfolio with interactive project evidence,",
+        "smooth technical UI and a clearer link between skills, projects and real work.",
+        "",
+        "> status",
+        `${profile.availabilityStatus}.`,
+        "",
+        "> exploring_client_work",
+        "Website concept for Cherrygloss Oslo, a beauty and nail salon in Oslo",
+        "Early conversations around a clean, modern site for services, booking flow and visual brand presence.",
+        "",
+        "> focus",
+        "Mobile-first layout, clear service presentation and a polished brand experience.",
+    ];
+}
 
 const TYPE_SPEED = 22;
 const LINE_DELAY = 240;
@@ -54,6 +56,8 @@ function handleTiltLeave(event) {
 }
 
 export default function CurrentWork() {
+    const { profile } = usePortfolioContent();
+    const terminalLines = useMemo(() => createTerminalLines(profile), [profile]);
     const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
         threshold: 0.35,
     });
@@ -96,7 +100,7 @@ export default function CurrentWork() {
         }
 
         return () => clearTimeout(timeoutId);
-    }, [hasStarted, typedLines.length, lineIndex, charIndex]);
+    }, [hasStarted, typedLines.length, lineIndex, charIndex, terminalLines]);
 
     return (
         <section ref={sectionRef} id="current-work" className="current-work-section">

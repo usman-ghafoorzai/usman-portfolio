@@ -8,8 +8,7 @@ import {
     getStackLabel,
     isValidStackId,
 } from "../../data/stacks";
-import { projects } from "../../data/projects";
-import { getTechnologyLabel } from "../../data/technologies";
+import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import { projectAccentRgbById } from "./projectVisualConfig";
 import { getProjectsForStack } from "../../utils/projectFilters";
 import "./Projects.css";
@@ -38,6 +37,7 @@ function getCapsuleStyle(index) {
 
 function ProjectCard({
     project,
+    technologyLabels,
     index,
     style,
     activeStackLabel,
@@ -75,7 +75,7 @@ function ProjectCard({
             <h3>{project.title}</h3>
 
             <div className="project-tech-list">
-                {project.technologyIds.slice(0, 5).map(getTechnologyLabel).map((item) => (
+                {project.technologyIds.slice(0, 5).map((id) => technologyLabels.get(id) ?? id).map((item) => (
                     <span key={item}>{item}</span>
                 ))}
             </div>
@@ -92,6 +92,11 @@ function ProjectCard({
 }
 
 export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) {
+    const { projects, technologies } = usePortfolioContent();
+    const technologyLabels = useMemo(
+        () => new Map(technologies.map((technology) => [technology.id, technology.label])),
+        [technologies],
+    );
     const selectedStack = isValidStackId(activeStack) ? activeStack : ALL_STACK_ID;
     const selectedStackLabel = getStackLabel(selectedStack);
     const isShowingAll = selectedStack === ALL_STACK_ID;
@@ -100,7 +105,7 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
 
     const matchingProjects = useMemo(() => {
         return getProjectsForStack(projects, selectedStack);
-    }, [selectedStack]);
+    }, [projects, selectedStack]);
 
     const matchingProjectIds = useMemo(() => {
         return new Set(matchingProjects.map((project) => project.id));
@@ -176,6 +181,7 @@ export default function Projects({ activeStack = ALL_STACK_ID, onStackChange }) 
                             <ProjectCard
                                 key={project.id}
                                 project={project}
+                                technologyLabels={technologyLabels}
                                 index={index}
                                 activeStackLabel={selectedStackLabel}
                                 isVisible={isVisible}
