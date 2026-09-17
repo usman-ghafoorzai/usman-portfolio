@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import {
     FaBolt,
@@ -21,6 +21,9 @@ import {
 import { stackGroups } from "../../data/stacks";
 import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import { clamp, easeOutCubic } from "../../utils/math";
+import { useInViewOnce } from "../../hooks/useInViewOnce";
+import { useTiltCard } from "../../hooks/useTiltCard";
+import { getStackCardProgress, getStackCardState, getTokenRevealProgress } from "./techStackProgress";
 import { useTypewriter } from "../../hooks/useTypewriter";
 import TechStackBackground3D from "./TechStackBackground3D";
 import { floatingTechPlacements } from "./techStackVisualConfig";
@@ -69,31 +72,6 @@ const SELECT_PROMPT_TYPE_SPEED = 32;
 const SCAN_DURATION_MS = 7200;
 const STATUS_START_THRESHOLD = 0.1;
 
-function handleTiltMove(event) {
-    const card = event.currentTarget;
-    const rect = card.getBoundingClientRect();
-
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    const rotateY = ((x / rect.width) - 0.5) * MAX_TILT * 2;
-    const rotateX = -((y / rect.height) - 0.5) * MAX_TILT * 2;
-
-    card.style.setProperty("--tilt-rotate-x", `${rotateX}deg`);
-    card.style.setProperty("--tilt-rotate-y", `${rotateY}deg`);
-    card.style.setProperty("--tilt-glow-x", `${x}px`);
-    card.style.setProperty("--tilt-glow-y", `${y}px`);
-}
-
-function handleTiltLeave(event) {
-    const card = event.currentTarget;
-
-    card.style.setProperty("--tilt-rotate-x", "0deg");
-    card.style.setProperty("--tilt-rotate-y", "0deg");
-    card.style.setProperty("--tilt-glow-x", "50%");
-    card.style.setProperty("--tilt-glow-y", "50%");
-}
-
 function TypedStatus({ text, isActive }) {
     const typedText = useTypewriter({
         text,
@@ -136,9 +114,9 @@ export default function TechStack({ onStackSelect }) {
             })
         );
     }, [technologies]);
-    const sectionRef = useRef(null);
+    const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({ threshold: 0.28 });
+    const { handleTiltMove, handleTiltLeave } = useTiltCard({ maxTilt: MAX_TILT });
 
-    const [hasStarted, setHasStarted] = useState(false);
     const [typedCommand, setTypedCommand] = useState("");
     const [typedSelectPrompt, setTypedSelectPrompt] = useState("");
     const [scanProgress, setScanProgress] = useState(0);
@@ -153,23 +131,7 @@ export default function TechStack({ onStackSelect }) {
     const isThreeJSDisabled = import.meta.env.VITE_DISABLE_THREEJS === "true";
 
     function getCardProgress(index) {
-        if (!commandComplete) return 0;
-
-        const totalCards = stackGroups.length;
-        const start = index / totalCards;
-        const end = (index + 1) / totalCards;
-        const localProgress = (scanProgress - start) / (end - start);
-
-        return clamp(localProgress);
-    }
-
-    function getCardState(index) {
-        const cardProgress = getCardProgress(index);
-
-        if (!commandComplete || cardProgress <= 0) return "pending";
-        if (cardProgress >= 1) return "ready";
-
-        return "loading";
+        return getStackCardProgress(commandComplete, scanProgress, index, stackGroups.length);
     }
 
     function getRowStyle(index) {
@@ -186,10 +148,7 @@ export default function TechStack({ onStackSelect }) {
             floatingTechPlacements[index % floatingTechPlacements.length];
 
         const groupProgress = getCardProgress(item.groupIndex);
-        const staggerOffset = item.itemIndex * 0.08;
-        const localProgress = clamp(
-            (groupProgress - staggerOffset) / (1 - Math.min(staggerOffset, 0.72))
-        );
+        const localProgress = getTokenRevealProgress(groupProgress, item.itemIndex);
         const easedProgress = easeOutCubic(localProgress);
 
         return {
@@ -215,26 +174,6 @@ export default function TechStack({ onStackSelect }) {
         event.preventDefault();
         handleStackSelect(stackId);
     }
-
-    useEffect(() => {
-        const sectionElement = sectionRef.current;
-
-        if (!sectionElement) return;
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setHasStarted(true);
-                    observer.disconnect();
-                }
-            },
-            { threshold: 0.28 }
-        );
-
-        observer.observe(sectionElement);
-
-        return () => observer.disconnect();
-    }, []);
 
     useEffect(() => {
         if (typeof window === "undefined") return undefined;
@@ -389,7 +328,7 @@ export default function TechStack({ onStackSelect }) {
                                 <div className="tech-scan-list">
                                     {stackGroups.map((group, index) => {
                                         const cardProgress = getCardProgress(index);
-                                        const cardState = getCardState(index);
+                                        const cardState = getStackCardState(commandComplete, cardProgress);
                                         const statusIsActive =
                                             cardProgress > STATUS_START_THRESHOLD ||
                                             cardState === "ready";
