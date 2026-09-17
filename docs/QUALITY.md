@@ -62,7 +62,6 @@ Current automated tests cover pure project filtering logic in `src/utils/project
 - Gates run in order: `npm ci`, lint, typecheck, tests, build. A failed gate fails the job; there is no install fallback or `continue-on-error`.
 - Existing lint errors therefore stop the job before later gates until the separate component cleanup is complete.
 - The token has only `contents: read`; checkout does not persist credentials. Official action release tags were resolved to full commit SHAs.
-- Dependency audit findings and exact baseline/final results are recorded in `ENGINEERING_FOUNDATION.md`.
 
 ## Manual QA Checklist
 - Hero typing works.

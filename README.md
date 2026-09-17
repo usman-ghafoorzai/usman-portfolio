@@ -57,7 +57,6 @@ npm run preview
 - TypeScript 6.0 provides the strict foundation for incremental migration. `vite.config.ts` is checked now; existing application JS/JSX remains unchecked by TypeScript until migrated. ESLint continues checking both languages.
 - Pure project filtering logic is covered by lightweight automated tests.
 - GitHub Actions gates installation, lint, typecheck, tests and production build on pushes and pull requests. The existing lint errors currently block CI; they are not suppressed.
-- See `docs/ENGINEERING_FOUNDATION.md` for the baseline, validation results and dependency security findings.
 
 ## Links
 - GitHub: [https://github.com/usman-ghafoorzai](https://github.com/usman-ghafoorzai)
