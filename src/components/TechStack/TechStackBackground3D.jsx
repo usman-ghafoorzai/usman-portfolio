@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Vector2 } from "three";
 
 const vertexShader = `
@@ -236,6 +236,7 @@ void main() {
 
 function MetaballPlane({ mobileMode = false }) {
     const { gl } = useThree();
+    const materialRef = useRef(null);
 
     const targetPointer = useRef(new Vector2(0.62, 0.42));
     const currentPointer = useRef(new Vector2(0.62, 0.42));
@@ -244,7 +245,7 @@ function MetaballPlane({ mobileMode = false }) {
     const currentVelocity = useRef(new Vector2(0, 0));
     const flowIntensity = useRef(0.08);
 
-    const [uniforms] = useState(() => ({
+    const initialUniforms = useMemo(() => ({
         uTime: { value: 0 },
         uResolution: {
             value: new Vector2(gl.domElement.width, gl.domElement.height),
@@ -258,9 +259,13 @@ function MetaballPlane({ mobileMode = false }) {
         uPointerMix: { value: 1.0 },
         uMobileMode: { value: 0.0 },
         uFlowIntensity: { value: 0.08 },
-    }));
+    }), [gl]);
 
     useEffect(() => {
+        const material = materialRef.current;
+        if (!material) return;
+        const uniforms = material.uniforms;
+
         uniforms.uMobileMode.value = mobileMode ? 1.0 : 0.0;
         uniforms.uPointerMix.value = mobileMode ? 0.0 : 1.0;
 
@@ -276,7 +281,7 @@ function MetaballPlane({ mobileMode = false }) {
             flowIntensity.current = 0.08;
             uniforms.uFlowIntensity.value = 0.08;
         }
-    }, [mobileMode, uniforms]);
+    }, [mobileMode]);
 
     useEffect(() => {
         if (mobileMode) return undefined;
@@ -302,6 +307,10 @@ function MetaballPlane({ mobileMode = false }) {
     }, [mobileMode]);
 
     useFrame((_state, delta) => {
+        const material = materialRef.current;
+        if (!material) return;
+        const uniforms = material.uniforms;
+
         uniforms.uTime.value += Math.min(delta, 0.033);
 
         if (mobileMode) {
@@ -353,9 +362,10 @@ function MetaballPlane({ mobileMode = false }) {
         <mesh>
             <planeGeometry args={[2, 2]} />
             <rawShaderMaterial
+                ref={materialRef}
                 vertexShader={vertexShader}
                 fragmentShader={fragmentShader}
-                uniforms={uniforms}
+                uniforms={initialUniforms}
                 transparent
                 depthWrite={false}
             />
