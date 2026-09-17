@@ -112,7 +112,7 @@ export default function About() {
     const { handleTiltMove, handleTiltLeave } = useTiltCard({ maxTilt: MAX_TILT });
     const [lineIndex, setLineIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
-    const [typedLines, setTypedLines] = useState([]);
+    const [typedLines, setTypedLines] = useState([""]);
     const [hasFallbackStarted, setHasFallbackStarted] = useState(false);
     const [isMobileTyping, setIsMobileTyping] = useState(() => {
         if (typeof window === "undefined") return false;
@@ -153,12 +153,6 @@ export default function About() {
         mediaQuery.addListener(updateTypingMode);
         return () => mediaQuery.removeListener(updateTypingMode);
     }, []);
-
-    useEffect(() => {
-        if (shouldStart && typedLines.length === 0) {
-            setTypedLines([""]);
-        }
-    }, [shouldStart, typedLines.length]);
 
     useEffect(() => {
         if (!shouldStart) return;

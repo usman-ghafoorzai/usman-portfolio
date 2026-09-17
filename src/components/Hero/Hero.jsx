@@ -40,15 +40,16 @@ export default function Hero() {
 
         if (isDeleting && typedText.length > 0) {
             timeoutId = setTimeout(() => {
-                setTypedText(currentWord.slice(0, typedText.length - 1));
-            }, DELETE_SPEED);
-        }
+                const nextText = currentWord.slice(0, typedText.length - 1);
+                setTypedText(nextText);
 
-        if (isDeleting && typedText.length === 0) {
-            setIsDeleting(false);
-            setWordIndex((currentIndex) => {
-                return (currentIndex + 1) % rotatingWords.length;
-            });
+                if (nextText.length === 0) {
+                    setIsDeleting(false);
+                    setWordIndex((currentIndex) => {
+                        return (currentIndex + 1) % rotatingWords.length;
+                    });
+                }
+            }, DELETE_SPEED);
         }
 
         return () => clearTimeout(timeoutId);

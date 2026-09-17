@@ -63,13 +63,7 @@ export default function CurrentWork() {
     });
     const [lineIndex, setLineIndex] = useState(0);
     const [charIndex, setCharIndex] = useState(0);
-    const [typedLines, setTypedLines] = useState([]);
-
-    useEffect(() => {
-        if (hasStarted && typedLines.length === 0) {
-            setTypedLines([""]);
-        }
-    }, [hasStarted, typedLines.length]);
+    const [typedLines, setTypedLines] = useState([""]);
 
     useEffect(() => {
         if (!hasStarted) return;

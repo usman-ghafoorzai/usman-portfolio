@@ -286,17 +286,13 @@ export default function TechStack({ onStackSelect }) {
             }
         }
 
-        setScanProgress(0);
         animationFrameId = requestAnimationFrame(updateProgress);
 
         return () => cancelAnimationFrame(animationFrameId);
     }, [commandComplete]);
 
     useEffect(() => {
-        if (!selectionReady) {
-            setTypedSelectPrompt("");
-            return;
-        }
+        if (!selectionReady) return;
 
         if (typedSelectPrompt.length >= selectPrompt.length) return;
 
