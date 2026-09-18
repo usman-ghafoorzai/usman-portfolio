@@ -4,6 +4,7 @@ import { FaCode, FaTerminal } from "react-icons/fa";
 import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import { useInViewOnce } from "../../hooks/useInViewOnce";
 import { useTiltCard } from "../../hooks/useTiltCard";
+import { useTerminalTypewriter } from "../../hooks/useTerminalTypewriter";
 import "./About.css";
 
 function createTerminalLines(profile) {
@@ -110,15 +111,20 @@ export default function About() {
         threshold: 0.28,
     });
     const { handleTiltMove, handleTiltLeave } = useTiltCard({ maxTilt: MAX_TILT });
-    const [lineIndex, setLineIndex] = useState(0);
-    const [charIndex, setCharIndex] = useState(0);
-    const [typedLines, setTypedLines] = useState([""]);
     const [hasFallbackStarted, setHasFallbackStarted] = useState(false);
     const [isMobileTyping, setIsMobileTyping] = useState(() => {
         if (typeof window === "undefined") return false;
         return window.matchMedia(MOBILE_MEDIA_QUERY).matches;
     });
     const shouldStart = hasStarted || hasFallbackStarted;
+    const typeSpeed = isMobileTyping ? MOBILE_TYPE_SPEED : TYPE_SPEED;
+    const lineDelay = isMobileTyping ? MOBILE_LINE_DELAY : LINE_DELAY;
+    const typedLines = useTerminalTypewriter({
+        lines: terminalLines,
+        isActive: shouldStart,
+        typeSpeed,
+        lineDelay,
+    });
     const paddedCodeLines = useMemo(() => {
         const codeLines = createCodeLines(profile);
         const fillerCount = Math.max(0, CODE_PANEL_MIN_LINES - codeLines.length);
@@ -153,39 +159,6 @@ export default function About() {
         mediaQuery.addListener(updateTypingMode);
         return () => mediaQuery.removeListener(updateTypingMode);
     }, []);
-
-    useEffect(() => {
-        if (!shouldStart) return;
-        if (typedLines.length === 0) return;
-        if (lineIndex >= terminalLines.length) return;
-        const currentLine = terminalLines[lineIndex];
-        const typeSpeed = isMobileTyping ? MOBILE_TYPE_SPEED : TYPE_SPEED;
-        const lineDelay = isMobileTyping ? MOBILE_LINE_DELAY : LINE_DELAY;
-        let timeoutId;
-
-        if (charIndex <= currentLine.length) {
-            timeoutId = setTimeout(() => {
-                setTypedLines((currentLines) => {
-                    const nextLines = [...currentLines];
-                    nextLines[lineIndex] = currentLine.slice(0, charIndex);
-                    return nextLines;
-                });
-
-                setCharIndex((currentIndex) => currentIndex + 1);
-            }, charIndex === 0 ? lineDelay : typeSpeed);
-        } else {
-            timeoutId = setTimeout(() => {
-                if (lineIndex < terminalLines.length - 1) {
-                    setTypedLines((currentLines) => [...currentLines, ""]);
-                }
-
-                setLineIndex((currentIndex) => currentIndex + 1);
-                setCharIndex(0);
-            }, lineDelay);
-        }
-
-        return () => clearTimeout(timeoutId);
-    }, [shouldStart, typedLines.length, lineIndex, charIndex, isMobileTyping, terminalLines]);
 
     return (
         <section ref={sectionRef} id="about" className="about-section">

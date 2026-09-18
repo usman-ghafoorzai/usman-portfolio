@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { motion } from "motion/react";
 import { FaTerminal } from "react-icons/fa";
 import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import { useInViewOnce } from "../../hooks/useInViewOnce";
+import { useTerminalTypewriter } from "../../hooks/useTerminalTypewriter";
 import "./CurrentWork.css";
 
 function createTerminalLines(profile) {
@@ -61,40 +62,12 @@ export default function CurrentWork() {
     const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
         threshold: 0.35,
     });
-    const [lineIndex, setLineIndex] = useState(0);
-    const [charIndex, setCharIndex] = useState(0);
-    const [typedLines, setTypedLines] = useState([""]);
-
-    useEffect(() => {
-        if (!hasStarted) return;
-        if (typedLines.length === 0) return;
-        if (lineIndex >= terminalLines.length) return;
-        const currentLine = terminalLines[lineIndex];
-        let timeoutId;
-
-        if (charIndex <= currentLine.length) {
-            timeoutId = setTimeout(() => {
-                setTypedLines((currentLines) => {
-                    const nextLines = [...currentLines];
-                    nextLines[lineIndex] = currentLine.slice(0, charIndex);
-                    return nextLines;
-                });
-
-                setCharIndex((currentIndex) => currentIndex + 1);
-            }, charIndex === 0 ? LINE_DELAY : TYPE_SPEED);
-        } else {
-            timeoutId = setTimeout(() => {
-                if (lineIndex < terminalLines.length - 1) {
-                    setTypedLines((currentLines) => [...currentLines, ""]);
-                }
-
-                setLineIndex((currentIndex) => currentIndex + 1);
-                setCharIndex(0);
-            }, LINE_DELAY);
-        }
-
-        return () => clearTimeout(timeoutId);
-    }, [hasStarted, typedLines.length, lineIndex, charIndex, terminalLines]);
+    const typedLines = useTerminalTypewriter({
+        lines: terminalLines,
+        isActive: hasStarted,
+        typeSpeed: TYPE_SPEED,
+        lineDelay: LINE_DELAY,
+    });
 
     return (
         <section ref={sectionRef} id="current-work" className="current-work-section">
