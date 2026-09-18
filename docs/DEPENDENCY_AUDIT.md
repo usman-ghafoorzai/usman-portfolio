@@ -76,3 +76,9 @@ The initial dependency-tree check found extraneous WASM helper packages; the cle
 Step 8B retained Tailwind because its Preflight reset is active, despite no utility-class usage being found. The CSS entry now imports only that reset, processed by the first-party Vite plugin. This avoids activating previously unprocessed theme defaults and preserves existing font fallbacks.
 
 The two `@theme` warnings and one `@tailwind` warning disappeared; generated CSS contains neither directive nor unresolved `--theme(...)` calls. The >500 kB JavaScript chunk warning remains intentionally unchanged. Desktop and mobile browser smoke checks covered Navbar, Hero, About, TechStack, Projects, CurrentWork and Footer, with no console errors. Sampled typography, spacing and colors matched the pre-change computed styles in both viewports.
+
+## Cross-platform lockfile correction — Step 8D
+
+Linux CI subsequently exposed missing optional peer metadata after the Windows dependency installation: top-level `@emnapi/core` and `@emnapi/runtime` 1.11.3 were absent. The earlier successful Windows checks did not establish lockfile portability. Using an isolated Ubuntu/WSL checkout with no `node_modules`, Node 24.20.0 and npm 11.19.0 (matching CI), `npm install --package-lock-only --ignore-scripts` repaired the existing lock seed. npm restored those entries, bundled Tailwind WASM metadata and normalized peer flags; package.json and all existing resolved versions stayed unchanged.
+
+A subsequent clean Linux `npm ci`, both audits (zero vulnerabilities), `npm ls --all`, lint, typecheck, all 51 tests and build passed without modifying the repaired lockfile. No dependency upgrade or advisory-analysis change was needed.
