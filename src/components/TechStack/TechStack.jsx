@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { FaCode, FaDocker } from "react-icons/fa";
 import { stackGroups } from "../../data/stacks";
@@ -6,10 +6,11 @@ import { usePortfolioContent } from "../../app/providers/portfolio-content-conte
 import { clamp } from "../../utils/math";
 import { useInViewOnce } from "../../hooks/useInViewOnce";
 import { useTiltCard } from "../../hooks/useTiltCard";
-import TechStackBackground3D from "./TechStackBackground3D";
 import TechStackTerminal from "./TechStackTerminal";
 import TechStackCloud from "./TechStackCloud";
 import "./TechStack.css";
+
+const TechStackBackground3D = lazy(() => import("./TechStackBackground3D"));
 
 const scanCommand = "> run stack-scan --source cv --profile usman";
 const selectPrompt = "> pick one stack to inspect project evidence";
@@ -151,14 +152,16 @@ export default function TechStack({ onStackSelect }) {
                 </motion.div>
 
                 <div className="tech-layout">
-                    {!isThreeJSDisabled && (
+                    {!isThreeJSDisabled && hasStarted && (
                         <div
                             className={`tech-layout-blob-layer ${
                                 isMobileBlobLayout ? "tech-layout-blob-layer--mobile" : ""
                             }`}
                             aria-hidden="true"
                         >
-                            <TechStackBackground3D mobileMode={isMobileBlobLayout} />
+                            <Suspense fallback={null}>
+                                <TechStackBackground3D mobileMode={isMobileBlobLayout} />
+                            </Suspense>
                         </div>
                     )}
 
