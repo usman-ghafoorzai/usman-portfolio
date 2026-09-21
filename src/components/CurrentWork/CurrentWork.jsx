@@ -6,24 +6,22 @@ import { useInViewOnce } from "../../hooks/useInViewOnce";
 import { useTerminalTypewriter } from "../../hooks/useTerminalTypewriter";
 import "./CurrentWork.css";
 
-function createTerminalLines(profile) {
+function createTerminalLines(profile, currentWork) {
     return [
         "> currently_working_on",
-        "Portfolio v2",
+        currentWork.primaryWork,
         "",
         "> build_log",
-        "Building a polished developer portfolio with interactive project evidence,",
-        "smooth technical UI and a clearer link between skills, projects and real work.",
+        ...currentWork.buildLog,
         "",
         "> status",
         `${profile.availabilityStatus}.`,
         "",
         "> exploring_client_work",
-        "Website concept for Cherrygloss Oslo, a beauty and nail salon in Oslo",
-        "Early conversations around a clean, modern site for services, booking flow and visual brand presence.",
+        ...currentWork.clientWork,
         "",
         "> focus",
-        "Mobile-first layout, clear service presentation and a polished brand experience.",
+        ...currentWork.focus,
     ];
 }
 
@@ -57,8 +55,9 @@ function handleTiltLeave(event) {
 }
 
 export default function CurrentWork() {
-    const { profile } = usePortfolioContent();
-    const terminalLines = useMemo(() => createTerminalLines(profile), [profile]);
+    const { profile, siteContent } = usePortfolioContent();
+    const { currentWork } = siteContent;
+    const terminalLines = useMemo(() => createTerminalLines(profile, currentWork), [profile, currentWork]);
     const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
         threshold: 0.35,
     });

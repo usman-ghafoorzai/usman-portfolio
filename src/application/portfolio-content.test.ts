@@ -3,7 +3,7 @@ import type { PortfolioContentGateway } from "../content/portfolio-content-gatew
 import type { PortfolioContent } from "./portfolio-content";
 import { loadPortfolioContent } from "./portfolio-content";
 
-it("loads the five gateway values into the content snapshot", async () => {
+it("loads the six gateway values into the content snapshot", async () => {
     const content: PortfolioContent = {
         profile: {
             name: "Test Developer",
@@ -12,6 +12,15 @@ it("loads the five gateway values into the content snapshot", async () => {
             availabilityStatus: "Available",
             links: { github: "https://example.com/github", linkedin: "https://example.com/linkedin" },
         },
+        siteContent: {
+            hero: { roles: ["Snapshot role"] },
+            about: {
+                label: "About", heading: "Snapshot heading", intro: "Snapshot intro",
+                story: ["Story"], beyondCode: [], currentFocus: [],
+                currentFocusSummary: "Focus", strengths: [], education: [],
+            },
+            currentWork: { primaryWork: "Snapshot work", buildLog: [], clientWork: [], focus: [] },
+        },
         projects: [],
         experiences: [],
         technologies: [],
@@ -19,6 +28,7 @@ it("loads the five gateway values into the content snapshot", async () => {
     };
     const gateway: PortfolioContentGateway = {
         async getProfile() { return content.profile; },
+        async getSiteContent() { return content.siteContent; },
         async getProjects() { return content.projects; },
         async getExperiences() { return content.experiences; },
         async getTechnologies() { return content.technologies; },
@@ -29,6 +39,7 @@ it("loads the five gateway values into the content snapshot", async () => {
     const snapshot = await loadPortfolioContent(gateway);
 
     expect(snapshot.profile).toBe(content.profile);
+    expect(snapshot.siteContent).toBe(content.siteContent);
     expect(snapshot.projects).toBe(content.projects);
     expect(snapshot.experiences).toBe(content.experiences);
     expect(snapshot.technologies).toBe(content.technologies);

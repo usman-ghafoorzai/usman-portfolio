@@ -3,9 +3,11 @@ import type { Experience } from "../domain/experience";
 import type { Profile } from "../domain/profile";
 import type { Project } from "../domain/project";
 import type { Technology } from "../domain/technology";
+import type { SiteContent } from "../domain/site-content";
 
 export interface PortfolioContentGateway {
     getProfile(): Promise<Profile>;
+    getSiteContent(): Promise<SiteContent>;
     getProjects(): Promise<readonly Project[]>;
     getProjectBySlug(slug: string): Promise<Project | null>;
     getExperiences(): Promise<readonly Experience[]>;

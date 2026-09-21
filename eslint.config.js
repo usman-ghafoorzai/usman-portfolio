@@ -8,7 +8,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 // Match repository-relative imports at any depth without restricting unrelated packages.
 const sourcePrefix = '^(?:(?:\\.{1,2}/)+(?:src/)?|src/)'
 const canonicalFixtures = {
-  regex: `${sourcePrefix}data/(?:profile|projects|technologies|capabilities|experiences)(?:\\.[cm]?[jt]sx?)?$`,
+  regex: `${sourcePrefix}data/(?:profile|siteContent|projects|technologies|capabilities|experiences)(?:\\.[cm]?[jt]sx?)?$`,
   message: 'Consume canonical content through usePortfolioContent / the application content boundary, not local fixtures.',
 }
 const contentInfrastructure = {

@@ -24,6 +24,37 @@ export function portfolioContentGatewayContract(
             expect(new Set(projects.map(project => project.id)).size).toBe(projects.length);
         });
 
+        it("resolves semantic site content with roles and essential section content", async () => {
+            const { hero, about, currentWork } = await gateway.getSiteContent();
+            expect(hero.roles.length).toBeGreaterThan(0);
+            for (const role of hero.roles) expect(role.trim()).not.toBe("");
+            for (const text of [about.label, about.heading, about.intro, about.currentFocusSummary, currentWork.primaryWork]) {
+                expect(text.trim()).not.toBe("");
+            }
+            for (const paragraphs of [about.story, about.beyondCode, about.currentFocus, about.strengths, currentWork.buildLog]) {
+                expect(paragraphs.length).toBeGreaterThan(0);
+                for (const paragraph of paragraphs) expect(paragraph.trim()).not.toBe("");
+            }
+        });
+
+        it("returns structured education with unique ids and valid year ranges", async () => {
+            const { about } = await gateway.getSiteContent();
+            expect(new Set(about.education.map(entry => entry.id)).size).toBe(about.education.length);
+            for (const entry of about.education) {
+                expect(entry.id.trim()).not.toBe("");
+                expect(entry.institution.trim()).not.toBe("");
+                expect(entry.program.trim()).not.toBe("");
+                expect(Number.isInteger(entry.startYear)).toBe(true);
+                expect(Number.isInteger(entry.endYear)).toBe(true);
+                expect(entry.endYear).toBeGreaterThanOrEqual(entry.startYear);
+            }
+        });
+
+        it("returns unique experience ids", async () => {
+            const experiences = await gateway.getExperiences();
+            expect(new Set(experiences.map(experience => experience.id)).size).toBe(experiences.length);
+        });
+
         it("returns unique project slugs", async () => {
             const projects = await gateway.getProjects();
             expect(new Set(projects.map(project => project.slug)).size).toBe(projects.length);

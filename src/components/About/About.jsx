@@ -7,55 +7,56 @@ import { useTiltCard } from "../../hooks/useTiltCard";
 import { useTerminalTypewriter } from "../../hooks/useTerminalTypewriter";
 import "./About.css";
 
-function createTerminalLines(profile) {
+function createTerminalLines(profile, about, experiences) {
     return [
         "> whoami",
         profile.name,
         "",
         "> cat story.txt",
-        "Newly graduated Computer Engineer from NTNU Trondheim.",
-        "I like understanding how things work, why they break and how they can be made easier to use.",
-        "For me, good software starts with understanding the problem, the workflow and the people around it.",
+        ...about.story,
         "",
         "> beyond_code",
-        "I care about building things people can actually use.",
-        "That usually means solutions that make everyday work a little easier, clearer or more reliable.",
-        "I like working close to real problems, not just isolated code.",
+        ...about.beyondCode,
         "",
         "> background",
-        "Practical coursework at NTNU Trondheim gave me hands-on experience with full-stack development, APIs, databases, mobile apps and team-based software projects.",
-        "Working as a student host taught me communication, responsibility and how to create inclusive environments.",
-        "Fundraising for the Norwegian Red Cross taught me direct dialogue and how to represent meaningful work.",
-        "Technical lab work taught me structured data handling, quality assurance and careful process routines.",
+        ...[...experiences].sort((a, b) =>
+            (b.endDate ?? "9999").localeCompare(a.endDate ?? "9999")
+            || a.startDate.localeCompare(b.startDate),
+        ).map(experience => experience.summary),
         "",
         "> current_focus",
-        "Backend, fullstack and integration work.",
-        "I am especially interested in APIs, data flow and systems that connect real workflows.",
+        ...about.currentFocus,
     ];
 }
 
-function createCodeLines(profile) {
+function quotedArrayLines(values) {
+    return values.map((value, index) =>
+        `    ${JSON.stringify(value)}${index < values.length - 1 ? "," : ""}`,
+    );
+}
+
+function createCodeLines(profile, about, experiences) {
     return [
         "const developer = {",
-        `  name: "${profile.name}",`,
+        `  name: ${JSON.stringify(profile.name)},`,
         "  education: [",
-        '    "Computer Engineering, System Development, NTNU Trondheim, 2023-2026",',
-        '    "Industrial Chemistry and Biotechnology, NTNU Trondheim, 2020-2022"',
+        ...quotedArrayLines(about.education.map(entry =>
+            `${entry.program}, ${entry.institution}, ${entry.startYear}-${entry.endYear}`,
+        )),
         "  ],",
         "  experience: [",
-        '    "Technical lab assistant, Solor, 2017-2019",',
-        '    "Student host, Sit Trondheim, 2020-2023",',
-        '    "Fundraiser, Norwegian Red Cross, 2023,"',
-        '    "Hands-on university projects, NTNU, 2023-2026"',
+        ...quotedArrayLines(experiences.map(experience => {
+            const startYear = experience.startDate.slice(0, 4);
+            const endYear = experience.endDate?.slice(0, 4) ?? "Present";
+            const dates = startYear === endYear ? startYear : `${startYear}-${endYear}`;
+            return `${experience.role}, ${experience.organization}, ${dates}`;
+        })),
         "  ],",
         "  strengths: [",
-        '    "Structured work",',
-        '    "Clear communication",',
-        '    "Analytical problem solving",',
-        '    "Reliable under pressure"',
+        ...quotedArrayLines(about.strengths),
         "  ],",
-        '  currentFocus: "Backend, fullstack, APIs and system integration",',
-        `  availability: "${profile.availabilityStatus}"`,
+        `  currentFocus: ${JSON.stringify(about.currentFocusSummary)},`,
+        `  availability: ${JSON.stringify(profile.availabilityStatus)}`,
         "};",
     ];
 }
@@ -105,8 +106,9 @@ function getTerminalLineClassName(line) {
 }
 
 export default function About() {
-    const { profile } = usePortfolioContent();
-    const terminalLines = useMemo(() => createTerminalLines(profile), [profile]);
+    const { profile, siteContent, experiences } = usePortfolioContent();
+    const { about } = siteContent;
+    const terminalLines = useMemo(() => createTerminalLines(profile, about, experiences), [profile, about, experiences]);
     const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
         threshold: 0.28,
     });
@@ -126,14 +128,14 @@ export default function About() {
         lineDelay,
     });
     const paddedCodeLines = useMemo(() => {
-        const codeLines = createCodeLines(profile);
+        const codeLines = createCodeLines(profile, about, experiences);
         const fillerCount = Math.max(0, CODE_PANEL_MIN_LINES - codeLines.length);
 
         return [
             ...codeLines,
             ...Array.from({ length: fillerCount }, () => ""),
         ];
-    }, [profile]);
+    }, [profile, about, experiences]);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -169,11 +171,10 @@ export default function About() {
                 viewport={{ once: true, amount: 0.45 }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
             >
-                <span className="about-kicker">About me</span>
-                <h2 className="about-title">More than just code.</h2>
+                <span className="about-kicker">{about.label}</span>
+                <h2 className="about-title">{about.heading}</h2>
                 <p className="about-intro">
-                    I care about understanding real workflows and building
-                    practical solutions people can actually use every day.
+                    {about.intro}
                 </p>
             </motion.div>
 

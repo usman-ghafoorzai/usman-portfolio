@@ -1,22 +1,16 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { IoChevronDown } from "react-icons/io5";
+import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import "./Hero.css";
 
 const TYPE_SPEED = 80;
 const DELETE_SPEED = 25;
 const HOLD_DELAY = 1500;
 
-const rotatingWords = [
-    "Backend Developer",
-    "Frontend Developer",
-    "Computer Engineer",
-    "Full-Stack Developer",
-    "Software Graduate",
-    "Open for Contract Work",
-];
-
 export default function Hero() {
+    const { siteContent } = usePortfolioContent();
+    const rotatingWords = siteContent.hero.roles;
     const [wordIndex, setWordIndex] = useState(0);
     const [typedText, setTypedText] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
@@ -53,7 +47,7 @@ export default function Hero() {
         }
 
         return () => clearTimeout(timeoutId);
-    }, [typedText, isDeleting, wordIndex]);
+    }, [typedText, isDeleting, wordIndex, rotatingWords]);
 
     function scrollToNextSection() {
         const aboutSection = document.getElementById("about");

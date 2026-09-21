@@ -11,6 +11,15 @@ const styles = readFileSync("src/components/Projects/Projects.css", "utf8");
 
 const content: ComponentProps<typeof PortfolioContentProvider>["content"] = {
     profile: { name: "Test Developer", professionalTitle: "Engineer", email: "test@example.com", availabilityStatus: "Available", links: { github: "https://example.com", linkedin: "https://example.com" } },
+    siteContent: {
+        hero: { roles: ["Test role"] },
+        about: {
+            label: "About", heading: "Test heading", intro: "Test intro",
+            story: [], beyondCode: [], currentFocus: [], currentFocusSummary: "Focus",
+            strengths: [], education: [],
+        },
+        currentWork: { primaryWork: "Test work", buildLog: [], clientWork: [], focus: [] },
+    },
     technologies: [{ id: "test-tech", label: "Snapshot Technology" }],
     capabilityAreas: [],
     experiences: [],
