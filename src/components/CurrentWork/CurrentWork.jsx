@@ -1,28 +1,31 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { motion } from "motion/react";
 import { FaTerminal } from "react-icons/fa";
-import { profile } from "../../data/profile";
+import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import { useInViewOnce } from "../../hooks/useInViewOnce";
+import { useTerminalTypewriter } from "../../hooks/useTerminalTypewriter";
 import "./CurrentWork.css";
 
-const terminalLines = [
-    "> currently_working_on",
-    "Portfolio v2",
-    "",
-    "> build_log",
-    "Building a polished developer portfolio with interactive project evidence,",
-    "smooth technical UI and a clearer link between skills, projects and real work.",
-    "",
-    "> status",
-    `${profile.availabilityStatus}.`,
-    "",
-    "> exploring_client_work",
-    "Website concept for Cherrygloss Oslo, a beauty and nail salon in Oslo",
-    "Early conversations around a clean, modern site for services, booking flow and visual brand presence.",
-    "",
-    "> focus",
-    "Mobile-first layout, clear service presentation and a polished brand experience.",
-];
+function createTerminalLines(profile) {
+    return [
+        "> currently_working_on",
+        "Portfolio v2",
+        "",
+        "> build_log",
+        "Building a polished developer portfolio with interactive project evidence,",
+        "smooth technical UI and a clearer link between skills, projects and real work.",
+        "",
+        "> status",
+        `${profile.availabilityStatus}.`,
+        "",
+        "> exploring_client_work",
+        "Website concept for Cherrygloss Oslo, a beauty and nail salon in Oslo",
+        "Early conversations around a clean, modern site for services, booking flow and visual brand presence.",
+        "",
+        "> focus",
+        "Mobile-first layout, clear service presentation and a polished brand experience.",
+    ];
+}
 
 const TYPE_SPEED = 22;
 const LINE_DELAY = 240;
@@ -54,49 +57,17 @@ function handleTiltLeave(event) {
 }
 
 export default function CurrentWork() {
+    const { profile } = usePortfolioContent();
+    const terminalLines = useMemo(() => createTerminalLines(profile), [profile]);
     const { ref: sectionRef, hasEnteredView: hasStarted } = useInViewOnce({
         threshold: 0.35,
     });
-    const [lineIndex, setLineIndex] = useState(0);
-    const [charIndex, setCharIndex] = useState(0);
-    const [typedLines, setTypedLines] = useState([]);
-
-    useEffect(() => {
-        if (hasStarted && typedLines.length === 0) {
-            setTypedLines([""]);
-        }
-    }, [hasStarted, typedLines.length]);
-
-    useEffect(() => {
-        if (!hasStarted) return;
-        if (typedLines.length === 0) return;
-        if (lineIndex >= terminalLines.length) return;
-        const currentLine = terminalLines[lineIndex];
-        let timeoutId;
-
-        if (charIndex <= currentLine.length) {
-            timeoutId = setTimeout(() => {
-                setTypedLines((currentLines) => {
-                    const nextLines = [...currentLines];
-                    nextLines[lineIndex] = currentLine.slice(0, charIndex);
-                    return nextLines;
-                });
-
-                setCharIndex((currentIndex) => currentIndex + 1);
-            }, charIndex === 0 ? LINE_DELAY : TYPE_SPEED);
-        } else {
-            timeoutId = setTimeout(() => {
-                if (lineIndex < terminalLines.length - 1) {
-                    setTypedLines((currentLines) => [...currentLines, ""]);
-                }
-
-                setLineIndex((currentIndex) => currentIndex + 1);
-                setCharIndex(0);
-            }, LINE_DELAY);
-        }
-
-        return () => clearTimeout(timeoutId);
-    }, [hasStarted, typedLines.length, lineIndex, charIndex]);
+    const typedLines = useTerminalTypewriter({
+        lines: terminalLines,
+        isActive: hasStarted,
+        typeSpeed: TYPE_SPEED,
+        lineDelay: LINE_DELAY,
+    });
 
     return (
         <section ref={sectionRef} id="current-work" className="current-work-section">

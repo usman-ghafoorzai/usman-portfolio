@@ -1,4 +1,5 @@
-@import "tailwindcss";
+/* The site uses Tailwind's base reset, not its theme or utility classes. */
+@import "tailwindcss/preflight.css" layer(base);
 @import "@fontsource/jetbrains-mono/400.css";
 @import "@fontsource/jetbrains-mono/500.css";
 @import "@fontsource/jetbrains-mono/600.css";

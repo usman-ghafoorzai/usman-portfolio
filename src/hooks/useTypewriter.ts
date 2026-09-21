@@ -1,22 +1,17 @@
 import { useEffect, useState } from "react";
 
+type TypewriterOptions = {
+    text: string;
+    isActive: boolean;
+    speed: number;
+};
+
 export function useTypewriter({
     text,
     isActive,
     speed,
-    resetWhenInactive = true,
-}) {
+}: TypewriterOptions): string {
     const [typedText, setTypedText] = useState("");
-
-    useEffect(() => {
-        if (!isActive && resetWhenInactive) {
-            const timeoutId = setTimeout(() => {
-                setTypedText("");
-            }, 0);
-
-            return () => clearTimeout(timeoutId);
-        }
-    }, [isActive, resetWhenInactive, text]);
 
     useEffect(() => {
         if (!isActive) return;

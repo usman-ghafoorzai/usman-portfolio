@@ -1,4 +1,11 @@
-export const floatingTechPlacements = [
+type FloatingTechPlacement = {
+    x: `${number}%`;
+    y: `${number}%`;
+    rotate: `${number}deg`;
+    delay: `${number}s`;
+};
+
+export const floatingTechPlacements: FloatingTechPlacement[] = [
     { x: "12%", y: "12%", rotate: "-5deg", delay: "-0.2s" },
     { x: "34%", y: "8%", rotate: "3deg", delay: "-1.1s" },
     { x: "56%", y: "13%", rotate: "-2deg", delay: "-2.4s" },

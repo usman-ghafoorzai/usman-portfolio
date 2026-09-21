@@ -1,5 +1,11 @@
-export function useTiltCard({ maxTilt = 7 } = {}) {
-    function handleTiltMove(event) {
+import type { MouseEvent } from "react";
+
+type TiltCardOptions = {
+    maxTilt?: number;
+};
+
+export function useTiltCard({ maxTilt = 7 }: TiltCardOptions = {}) {
+    function handleTiltMove(event: MouseEvent<HTMLElement>) {
         const card = event.currentTarget;
         const rect = card.getBoundingClientRect();
 
@@ -15,7 +21,7 @@ export function useTiltCard({ maxTilt = 7 } = {}) {
         card.style.setProperty("--tilt-glow-y", `${y}px`);
     }
 
-    function handleTiltLeave(event) {
+    function handleTiltLeave(event: MouseEvent<HTMLElement>) {
         const card = event.currentTarget;
 
         card.style.setProperty("--tilt-rotate-x", "0deg");

@@ -1,28 +1,28 @@
 import { motion } from "motion/react";
 import { FaEnvelope, FaGithub, FaLinkedinIn } from "react-icons/fa";
-import { profile } from "../../data/profile";
+import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import ExternalLink from "../common/ExternalLink";
 import "./Footer.css";
 
-const footerLinks = [
-    {
-        label: "GitHub",
-        href: profile.links.github,
-        icon: FaGithub,
-    },
-    {
-        label: "LinkedIn",
-        href: profile.links.linkedin,
-        icon: FaLinkedinIn,
-    },
-    {
-        label: "Email",
-        href: profile.links.email,
-        icon: FaEnvelope,
-    },
-];
-
 export default function Footer() {
+    const { profile } = usePortfolioContent();
+    const footerLinks = [
+        {
+            label: "GitHub",
+            href: profile.links.github,
+            icon: FaGithub,
+        },
+        {
+            label: "LinkedIn",
+            href: profile.links.linkedin,
+            icon: FaLinkedinIn,
+        },
+        {
+            label: "Email",
+            href: `mailto:${profile.email}`,
+            icon: FaEnvelope,
+        },
+    ];
     return (
         <footer id="contact" className="footer-section">
             <motion.div

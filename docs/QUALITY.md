@@ -1,47 +1,48 @@
 # Quality
 
-## Build Status
-Primary validation command:
+## Verified Phase 1 handoff
 
-```bash
+Approved baseline: `388784c4fe94d5ade5d47c8b1e16489d5763d9ac`.
+
+| Check | Result |
+| --- | --- |
+| ESLint | 0 errors, 0 warnings |
+| TypeScript | PASS |
+| Tests | 51/51 PASS |
+| Production build | PASS |
+| GitHub Actions | Green |
+| npm audit at handoff | 0 known vulnerabilities |
+
+The former React lint violations have been resolved. The audit result is historical, not a new advisory check; see [Dependency audit](DEPENDENCY_AUDIT.md) for scope and the cross-platform lockfile correction.
+
+## Quality gate and CI
+
+Use Node 24. GitHub Actions runs on push and pull request, using SHA-pinned checkout v7.0.1 and setup-node v7.0.0 actions, read-only contents permissions, and this sequence:
+
+```sh
+npm ci
+npm run lint
+npm run typecheck
+npm run test
 npm run build
 ```
 
-Expected result: successful production build.
+For an installed working tree, the quality gate is the four `npm run` commands above. Lint is not bypassed or suppressed to make CI pass.
 
-## Lint Status
-Lint is available through:
+## TypeScript and architecture checks
 
-```bash
-npm run lint
-```
+`npm run typecheck` runs `tsc -b` over the project references with no emitted application JavaScript. Vite handles production transpilation and bundling; a successful build does not replace the typecheck.
 
-Some strict lint rules currently flag animation-heavy hooks and Three.js uniform mutation patterns. These areas are intentionally kept stable to avoid behavior drift in interactive sections.
+The architectural core uses strict TypeScript, including `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`. Existing JSX remains part of an intentional staged migration through `allowJs: true` and `checkJs: false`; this does not mean the entire UI is typechecked. ESLint checks both JavaScript and TypeScript and enforces the domain, gateway, application and UI import boundaries described in [Architecture](ARCHITECTURE.md).
 
-## Automated Tests
-```bash
-npm run test
-```
+## Tests
 
-Current automated tests cover pure project filtering logic in `src/utils/projectFilters.js`.
+The 51 tests cover pure project filtering, the local content gateway and application loading, TechStack progress, and React behavior for the TechStack cloud, Projects and terminal typing. React behavior tests use Testing Library and jsdom; pure tests use the Node environment. These tests complement the production browser/request checks recorded at the Phase 1 handoff.
 
-## Deployment Readiness
-- Production build should pass with `npm run build`.
-- Lightweight automated tests should pass with `npm run test`.
-- Basic security headers are configured for deployment.
-- CSP is intentionally left for a later, separately tested hardening pass.
+## Understood build output
 
-## Continuous Integration
-- GitHub Actions runs automated tests and production build on push and pull requests.
-- Lint is currently documented but not enforced in CI until animation-sensitive lint issues are cleaned up safely.
+Tailwind uses Preflight only; the earlier unprocessed Tailwind directive warnings are resolved. The build intentionally retains the >500 kB warning for the approximately 891 kB deferred Three.js/React Three Fiber chunk. The initial JavaScript entry is approximately 388 kB minified. This warning is distinct from ESLint's zero-warning result. See [Performance](PERFORMANCE.md) for the measured assets and activation checks.
 
-## Manual QA Checklist
-- Hero typing works.
-- About terminal starts in viewport.
-- TechStack scan completes.
-- Tech tokens select projects.
-- Projects filter without layout shift.
-- Show all resets.
-- CurrentWork terminal starts in viewport.
-- Footer links work.
-- Mobile layout works.
+## Manual checks for future behavior changes
+
+When UI behavior changes, check desktop and mobile layouts, typing sequences, viewport activation, TechStack selection, project filtering/show-all, CurrentWork and external links. For changes to 3D loading, verify the request begins after activation and the disable flag prevents it. These are follow-up checks for relevant changes, not checks performed by this documentation-only update.

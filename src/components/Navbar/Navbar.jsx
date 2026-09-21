@@ -8,7 +8,7 @@ import {
     FaUser,
 } from "react-icons/fa";
 import ExternalLink from "../common/ExternalLink";
-import { profile } from "../../data/profile";
+import { usePortfolioContent } from "../../app/providers/portfolio-content-context";
 import "./Navbar.css";
 
 const navItems = [
@@ -18,6 +18,7 @@ const navItems = [
 ];
 
 export default function Navbar() {
+    const { profile } = usePortfolioContent();
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {

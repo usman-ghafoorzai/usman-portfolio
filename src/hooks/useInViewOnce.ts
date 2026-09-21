@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useInViewOnce({ threshold = 0.3 } = {}) {
-    const ref = useRef(null);
+type InViewOnceOptions = {
+    threshold?: number | number[];
+};
+
+export function useInViewOnce<T extends Element = HTMLElement>(
+    { threshold = 0.3 }: InViewOnceOptions = {},
+) {
+    const ref = useRef<T | null>(null);
     const [hasEnteredView, setHasEnteredView] = useState(false);
 
     useEffect(() => {
@@ -11,7 +17,7 @@ export function useInViewOnce({ threshold = 0.3 } = {}) {
 
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting) {
+                if (entry?.isIntersecting) {
                     setHasEnteredView(true);
                     observer.disconnect();
                 }
