@@ -42,7 +42,7 @@ const portUiLayers = {
 }
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'studio/**']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [
