@@ -1,9 +1,25 @@
 # Quality
 
-## Build Status
-Quality commands (Node 24 LTS):
+## Verified Phase 1 handoff
 
-```bash
+Approved baseline: `388784c4fe94d5ade5d47c8b1e16489d5763d9ac`.
+
+| Check | Result |
+| --- | --- |
+| ESLint | 0 errors, 0 warnings |
+| TypeScript | PASS |
+| Tests | 51/51 PASS |
+| Production build | PASS |
+| GitHub Actions | Green |
+| npm audit at handoff | 0 known vulnerabilities |
+
+The former React lint violations have been resolved. The audit result is historical, not a new advisory check; see [Dependency audit](DEPENDENCY_AUDIT.md) for scope and the cross-platform lockfile correction.
+
+## Quality gate and CI
+
+Use Node 24. GitHub Actions runs on push and pull request, using SHA-pinned checkout v7.0.1 and setup-node v7.0.0 actions, read-only contents permissions, and this sequence:
+
+```sh
 npm ci
 npm run lint
 npm run typecheck
@@ -11,65 +27,22 @@ npm run test
 npm run build
 ```
 
-Typecheck, all 5 tests and the production build pass. Lint currently fails on the 9 baseline errors below. Build warnings about two `@theme` directives, one `@tailwind` directive and the large JavaScript chunk predate the TypeScript foundation.
+For an installed working tree, the quality gate is the four `npm run` commands above. Lint is not bypassed or suppressed to make CI pass.
 
-## Lint Status
-Lint is available through:
+## TypeScript and architecture checks
 
-```bash
-npm run lint
-```
+`npm run typecheck` runs `tsc -b` over the project references with no emitted application JavaScript. Vite handles production transpilation and bundling; a successful build does not replace the typecheck.
 
-Some strict lint rules currently flag animation-heavy hooks and Three.js uniform mutation patterns. These areas are intentionally kept stable to avoid behavior drift in interactive sections.
+The architectural core uses strict TypeScript, including `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`. Existing JSX remains part of an intentional staged migration through `allowJs: true` and `checkJs: false`; this does not mean the entire UI is typechecked. ESLint checks both JavaScript and TypeScript and enforces the domain, gateway, application and UI import boundaries described in [Architecture](ARCHITECTURE.md).
 
-Known baseline (9 errors, 0 warnings; no rule exceptions):
+## Tests
 
-| File | Lines | Rule |
-| --- | --- | --- |
-| `src/components/About/About.jsx` | 152 | `react-hooks/set-state-in-effect` |
-| `src/components/CurrentWork/CurrentWork.jsx` | 66 | `react-hooks/set-state-in-effect` |
-| `src/components/Hero/Hero.jsx` | 48 | `react-hooks/set-state-in-effect` |
-| `src/components/TechStack/TechStack.jsx` | 286, 294 | `react-hooks/set-state-in-effect` |
-| `src/components/TechStack/TechStackBackground3D.jsx` | 263, 264, 304, 305 | `react-hooks/immutability` |
+The 51 tests cover pure project filtering, the local content gateway and application loading, TechStack progress, and React behavior for the TechStack cloud, Projects and terminal typing. React behavior tests use Testing Library and jsdom; pure tests use the Node environment. These tests complement the production browser/request checks recorded at the Phase 1 handoff.
 
-Keep the Hooks recommended flat preset (including Compiler diagnostics) and React Refresh checks active for JS/JSX and TS/TSX. Refactor state initialization and the imperative R3F uniform boundary separately with animation/interaction validation.
+## Understood build output
 
-## TypeScript Boundary
+Tailwind uses Preflight only; the earlier unprocessed Tailwind directive warnings are resolved. The build intentionally retains the >500 kB warning for the approximately 891 kB deferred Three.js/React Three Fiber chunk. The initial JavaScript entry is approximately 388 kB minified. This warning is distinct from ESLint's zero-warning result. See [Performance](PERFORMANCE.md) for the measured assets and activation checks.
 
-`npm run typecheck` runs `tsc -b` against the root project references. Both application and tooling configurations use `noEmit`; only disposable build metadata is written under `node_modules/.tmp`.
+## Manual checks for future behavior changes
 
-`tsconfig.app.json` includes `src`, browser libraries, the automatic React JSX runtime and Vite client types. `allowJs: true` and `checkJs: false` intentionally admit the legacy JS/JSX application without migrating it in this step. New TS/TSX files are checked strictly, including when they import legacy JavaScript. Inferred JavaScript types are not a substitute for the future leaf-first migration.
-
-`tsconfig.node.json` checks `vite.config.ts` with Node 24 types, separate from browser globals. Both configurations enable `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`, `isolatedModules`, `verbatimModuleSyntax` and bundler module resolution. `skipLibCheck` skips dependency declaration internals, as in Vite's template; it does not disable checking application TypeScript.
-
-Vite still only transpiles: `npm run build` does not replace the explicit typecheck gate.
-
-## Automated Tests
-```bash
-npm run test
-```
-
-Current automated tests cover pure project filtering logic in `src/utils/projectFilters.js`.
-
-## Deployment Readiness
-- Production build should pass with `npm run build`.
-- Lightweight automated tests should pass with `npm run test`.
-- Basic security headers are configured for deployment.
-- CSP is intentionally left for a later, separately tested hardening pass.
-
-## Continuous Integration
-- GitHub Actions uses Node 24 LTS and npm caching on push and pull requests.
-- Gates run in order: `npm ci`, lint, typecheck, tests, build. A failed gate fails the job; there is no install fallback or `continue-on-error`.
-- Existing lint errors therefore stop the job before later gates until the separate component cleanup is complete.
-- The token has only `contents: read`; checkout does not persist credentials. Official action release tags were resolved to full commit SHAs.
-
-## Manual QA Checklist
-- Hero typing works.
-- About terminal starts in viewport.
-- TechStack scan completes.
-- Tech tokens select projects.
-- Projects filter without layout shift.
-- Show all resets.
-- CurrentWork terminal starts in viewport.
-- Footer links work.
-- Mobile layout works.
+When UI behavior changes, check desktop and mobile layouts, typing sequences, viewport activation, TechStack selection, project filtering/show-all, CurrentWork and external links. For changes to 3D loading, verify the request begins after activation and the disable flag prevents it. These are follow-up checks for relevant changes, not checks performed by this documentation-only update.

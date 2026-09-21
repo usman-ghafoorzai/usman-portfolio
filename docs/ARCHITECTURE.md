@@ -1,46 +1,68 @@
 # Architecture
 
-## Overview
-This portfolio uses a component-driven React frontend with data-driven project evidence and curated stack filtering.
+Phase 1 Engineering Foundation is complete. This document describes the implemented baseline; CMS integration has not started.
 
-## Dependency Direction
-The intended dependency direction is:
+## Content flow
 
-`src/data` + `src/utils` + `src/hooks`  
-↓  
-`src/components/common`  
-↓  
-feature components  
-↓  
-`App.jsx`
+```text
+main.tsx (composition root)
+  → loadPortfolioContent(gateway)
+  → PortfolioContent snapshot
+  → PortfolioContentProvider
+  → React feature components (usePortfolioContent)
+```
 
-This keeps data, pure logic and reusable behavior separate from visual section components.
+`src/main.tsx` selects `localPortfolioContentGateway`, awaits the application loader, then mounts React with the loaded snapshot. Adapter selection and startup loading belong to this composition root.
 
-## High-Level Flow
-- `App.jsx` owns high-level section composition and active stack state.
-- `TechStack` emits selected stack through `onStackSelect`.
-- `Projects` receives `activeStack` and filters project evidence.
-- `CurrentWork` and `Footer` render after `Projects` as the closing sequence.
+`loadPortfolioContent` depends on the `PortfolioContentGateway` interface. It loads profile, projects, experiences, technologies and capability areas concurrently and returns a readonly `PortfolioContent` snapshot. The provider receives that snapshot as a prop; it does not select a source or fetch content.
 
-## Data And Logic Boundaries
-- Data lives in `src/data`.
-- Shared reusable hooks live in `src/hooks`.
-- Shared primitives live in `src/components/common`.
-- Pure helpers live in `src/utils`.
-- Visual config for TechStack lives in `src/components/TechStack/techStackVisualConfig.js`.
+## Gateway and source boundary
 
-## Why Project Evidence Is Data-Driven
-Project entries, stack relationships and evidence metadata are centralized in data files. This keeps content updates predictable and avoids coupling UI rendering with hardcoded evidence logic.
+```text
+PortfolioContentGateway
+  → localPortfolioContentGateway today (local fixtures)
+  → future CMS adapter in Phase 2 (not implemented)
+```
 
-## Why Stack Filtering Is Curated
-Stack filtering is curated through `stackEvidencePriority` per project. This allows the portfolio to show the strongest matching evidence (top two projects) for a selected stack instead of only doing broad keyword matching.
+The async gateway exposes profile, project list, project-by-slug, experience, technology and capability-area queries. A missing project slug returns null. The local implementation lives in `src/content/adapters/local/local-portfolio-content-gateway.ts` and reads the canonical fixtures in `src/data`. It is an object implementing the interface, not a class.
 
-## Lint And Animation Stability
-Animation-heavy sections and shader-driven Three.js code use patterns that can trigger strict hook/immutability lint rules. These areas are not blindly refactored because aggressive lint-driven rewrites can change timing, sequencing or rendering behavior.
+A future CMS adapter must supply the domain-facing contract at this boundary. Vendor schemas and clients do not belong in domain contracts or feature UI. No CMS adapter, installation or runtime validation is introduced by this documentation update.
 
-## Future Improvements
-- TypeScript migration for data models.
-- Stricter lint cleanup where behavior can be preserved safely.
-- Animation context for shared timing/feature toggles.
-- Broader tests for data utilities and behavior-sensitive interaction logic.
-- Deployment headers for security and caching.
+## Domain and presentation
+
+`src/domain` defines readonly contracts for capabilities, technologies, projects, profiles and experiences. These contracts have no React or CMS dependency. Technology IDs are strings, allowing content-managed technologies without a fixed union.
+
+Projects reference technologies by ID and capabilities through evidence with priority 1, 2 or 3; lower numbers mean stronger evidence. Canonical content does not contain visual fields such as icon keys or accent colors.
+
+Stack filters and visual configuration remain presentation concerns. In particular, `all` and `systems-mobile` are not capability IDs. `src/data/stacks.ts` holds stack presentation configuration, while `src/components/TechStack/techStackVisualConfig.ts` holds TechStack visual configuration. Their location does not make them canonical content. App coordinates stack selection; components derive the displayed project evidence from the snapshot and presentation mappings.
+
+## Enforced dependency boundaries
+
+ESLint import restrictions enforce the established separation:
+
+- Domain modules cannot import React, fixtures or outer application/UI layers.
+- The gateway contract stays domain-facing and independent of adapters, fixtures and UI.
+- The application loader cannot import React, fixtures or concrete adapters.
+- Feature UI cannot import canonical fixtures, content infrastructure or the application loader; it consumes `usePortfolioContent`.
+- Provider modules cannot import canonical fixtures or content infrastructure.
+- Shared hooks and utilities cannot select concrete adapters.
+
+Presentation configuration remains available to UI. These are import-path restrictions, not runtime validation of content.
+
+## TypeScript and rendering
+
+Strict TypeScript covers the architectural core and migrated utilities, hooks and components. Remaining JSX is an intentional staged migration; `allowJs: true` and `checkJs: false` keep those files compatible while ESLint checks both languages. Vite builds the application; `tsc -b` performs the separate typecheck.
+
+Styling uses custom CSS with Tailwind Preflight only. The decorative Three.js/React Three Fiber background is lazy-loaded after TechStack viewport activation, with a null Suspense fallback so the terminal can continue independently. The existing disable flag prevents activation. Measurements and the accepted deferred-chunk warning are recorded in [Performance](PERFORMANCE.md).
+
+## Decision records
+
+- [001: Strict TypeScript with Vite](adr/001-strict-typescript-with-vite.md)
+- [002: Portfolio content gateway](adr/002-portfolio-content-gateway.md)
+- [003: Separate domain from presentation](adr/003-separate-domain-from-presentation.md)
+- [004: Passive content provider and composition root](adr/004-passive-content-provider-and-composition-root.md)
+- [005: Enforce architecture with ESLint](adr/005-enforce-architecture-with-eslint.md)
+- [006: Defer Three.js progressive enhancement](adr/006-defer-threejs-progressive-enhancement.md)
+- [007: Stop foundation before architecture theater](adr/007-stop-foundation-before-architecture-theater.md)
+
+Phase 2 can build on these boundaries when actual CMS requirements are addressed. No additional architecture is required to complete Phase 1.
