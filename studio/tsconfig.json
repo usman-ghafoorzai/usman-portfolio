@@ -12,6 +12,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["*.ts", "schemaTypes/**/*.ts"],
+  "include": ["*.ts", "schemaTypes/**/*.ts", "scripts/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
