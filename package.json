@@ -17,6 +17,7 @@
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@react-three/fiber": "^9.6.1",
+    "@sanity/client": "^8.6.2",
     "@vercel/analytics": "^2.0.1",
     "motion": "^12.40.0",
     "react": "^19.2.6",
