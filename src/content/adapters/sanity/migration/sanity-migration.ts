@@ -43,7 +43,7 @@ function createDocuments(source: MappedSanityPortfolio) {
         })),
         // Keep every input item until validation: never hide extra or duplicate capabilities.
         ...[...source.capabilityAreas].sort((a, b) => CAPABILITY_AREA_IDS.indexOf(a.id) - CAPABILITY_AREA_IDS.indexOf(b.id)).map(entry => ({
-            _id: `capability.${entry.id}`, _type: "capabilityArea" as const,
+            _id: `capability-${entry.id}`, _type: "capabilityArea" as const,
             stableId: entry.id, label: entry.label, description: entry.description,
         })),
         ...source.projects.map((entry, displayOrder) => ({
@@ -54,7 +54,7 @@ function createDocuments(source: MappedSanityPortfolio) {
             technologies: technologyRefs(entry.technologyIds),
             capabilityEvidence: entry.capabilityEvidence.map(evidence => ({
                 _key: evidence.capabilityId, _type: "evidence" as const,
-                capability: reference(`capability.${evidence.capabilityId}`), priority: evidence.priority,
+                capability: reference(`capability-${evidence.capabilityId}`), priority: evidence.priority,
             })),
             highlights: [...entry.highlights],
             links: { github: entry.links.github, ...(entry.links.live === undefined ? {} : { live: entry.links.live }) },

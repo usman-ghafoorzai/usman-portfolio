@@ -18,7 +18,7 @@ export const structure: StructureResolver = S => S.list().title('Portfolio conte
   S.listItem().id('capabilityAreas').title('Capability Areas').child(
     S.list().title('Capability Areas').items(capabilityIds.map(id =>
       S.listItem().id(id).title(id[0]!.toUpperCase() + id.slice(1)).child(
-        S.document().schemaType('capabilityArea').documentId(`capability.${id}`).initialValueTemplate(`capability-${id}`),
+        S.document().schemaType('capabilityArea').documentId(`capability-${id}`).initialValueTemplate(`capability-${id}`),
       ),
     )),
   ),

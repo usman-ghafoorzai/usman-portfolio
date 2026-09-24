@@ -19,6 +19,18 @@ Content Lake → `@sanity/client` → `SANITY_PORTFOLIO_QUERY` →
 The comparison baseline is `loadPortfolioContent(localPortfolioContentGateway)`.
 There is no second query, validator, mapper, fallback, or production source selection.
 
+## First live verification blocker
+
+The first live verification failed at snapshot validation because project capability
+references dereferenced to null for the unauthenticated client. The fixed
+`capability.<stableId>` document IDs used Sanity sub-paths, which are not publicly
+readable even in a public dataset. The storage-ID correction is
+`capability-<stableId>` for the seven documents and their reference targets; domain
+stableIds, taxonomy, and semantic comparison remain unchanged. Artifact regeneration,
+validation, backup, import, verification, and cleanup of the old dotted-ID documents
+are separate reviewed steps. Live semantic parity has not passed, and the production
+source switch remains deferred.
+
 ## Read configuration and safety
 
 The test requires `SANITY_LIVE_PARITY=1`, `SANITY_LIVE_PROJECT_ID`, and

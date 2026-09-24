@@ -158,13 +158,15 @@ Do not store icon keys, colors, stack membership or visual placements. These rem
 
 | Domain stableId | Fixed published Sanity document ID |
 | --- | --- |
-| `frontend` | `capability.frontend` |
-| `backend` | `capability.backend` |
-| `databases` | `capability.databases` |
-| `integration` | `capability.integration` |
-| `mobile` | `capability.mobile` |
-| `systems` | `capability.systems` |
-| `workflow` | `capability.workflow` |
+| `frontend` | `capability-frontend` |
+| `backend` | `capability-backend` |
+| `databases` | `capability-databases` |
+| `integration` | `capability-integration` |
+| `mobile` | `capability-mobile` |
+| `systems` | `capability-systems` |
+| `workflow` | `capability-workflow` |
+
+These fixed IDs use root paths because the production application performs unauthenticated reads from a public dataset. Sanity IDs containing `.` are sub-path/private IDs and cannot be read by that client. Keep the domain stableIds unchanged; use `capability-<stableId>` for document IDs and reference targets.
 
 Each document requires `stableId`, `label` and `description` strings. stableId must be one of the seven values, match its fixed document identity, and remain immutable/system-owned. Label and description are editor-owned. Project evidence references these documents rather than duplicating labels.
 

@@ -44,7 +44,10 @@ describe("offline portfolio migration", () => {
         expect(documents.some(doc => doc._id.startsWith("drafts."))).toBe(false);
         expect(documents.filter(doc => doc._type === "profile").map(doc => doc._id)).toEqual(["profile"]);
         expect(documents.filter(doc => doc._type === "siteContent").map(doc => doc._id)).toEqual(["siteContent"]);
-        expect(documents.filter(doc => doc._type === "capabilityArea").map(doc => doc._id)).toEqual(CAPABILITY_AREA_IDS.map(id => `capability.${id}`));
+        expect(documents.filter(doc => doc._type === "capabilityArea").map(doc => doc._id)).toEqual(CAPABILITY_AREA_IDS.map(id => `capability-${id}`));
+        for (const doc of documents.filter(doc => doc._type === "capabilityArea")) {
+            expect(doc._id).not.toContain(".");
+        }
         for (const doc of documents) {
             if (doc._type === "technology" || doc._type === "experience" || doc._type === "project") {
                 expect(doc._id).toBe(`${doc._type}-${doc.stableId}`);
@@ -74,7 +77,7 @@ describe("offline portfolio migration", () => {
                 const original = projects.find(entry => entry.id === doc.stableId)!;
                 expect(doc.capabilityEvidence).toEqual(original.capabilityEvidence.map(entry => ({
                     _key: entry.capabilityId, _type: "evidence", priority: entry.priority,
-                    capability: { _type: "reference", _ref: `capability.${entry.capabilityId}` },
+                    capability: { _type: "reference", _ref: `capability-${entry.capabilityId}` },
                 })));
                 expect(new Set(doc.capabilityEvidence.map(entry => entry._key)).size).toBe(doc.capabilityEvidence.length);
                 for (const entry of doc.capabilityEvidence) expect(byId.get(entry.capability._ref)?._type).toBe("capabilityArea");

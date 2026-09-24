@@ -27,8 +27,8 @@ export const project = defineType({
       validation: rule => rule.required().custom((items: {capability?: {_ref?: string}}[] | undefined) => uniqueReferences(items?.map(item => item.capability ?? {}))),
       of: [defineArrayMember({name: 'evidence', type: 'object', fields: [
         defineField({name: 'capability', type: 'reference', to: [{type: 'capabilityArea'}],
-          options: {disableNew: true, filter: '_id in $ids', filterParams: {ids: capabilityIds.map(id => `capability.${id}`)}},
-          validation: rule => rule.required().custom(value => !value?._ref || capabilityIds.some(id => `capability.${id}` === publishedId(value._ref)) || 'Reference one of the seven fixed capabilities.'),
+          options: {disableNew: true, filter: '_id in $ids', filterParams: {ids: capabilityIds.map(id => `capability-${id}`)}},
+          validation: rule => rule.required().custom(value => !value?._ref || capabilityIds.some(id => `capability-${id}` === publishedId(value._ref)) || 'Reference one of the seven fixed capabilities.'),
         }),
         defineField({name: 'priority', type: 'number', description: '1 = strongest evidence; 2 = supporting; 3 = additional.', options: {list: [1, 2, 3]}, validation: rule => rule.required().integer().min(1).max(3)}),
       ]})],

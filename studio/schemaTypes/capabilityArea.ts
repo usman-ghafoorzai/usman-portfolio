@@ -12,7 +12,7 @@ export const capabilityArea = defineType({
       options: {list: [...capabilityIds]},
       validation: rule => rule.required().regex(stableIdPattern).custom((value, context) => {
         if (!capabilityIds.some(id => id === value)) return 'Choose one of the seven code-owned capability IDs.'
-        return publishedId(context.document?._id ?? '') === `capability.${value}` || 'Capability stableId must match its fixed document ID.'
+        return publishedId(context.document?._id ?? '') === `capability-${value}` || 'Capability stableId must match its fixed document ID.'
       }).custom(uniqueStableId),
     }),
     defineField({name: 'label', type: 'string', validation: requiredText}),

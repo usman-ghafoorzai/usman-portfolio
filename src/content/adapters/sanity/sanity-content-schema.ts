@@ -15,7 +15,7 @@ const capabilityId = v.picklist(CAPABILITY_AREA_IDS);
 const technologyReference = v.object({ _id: sourceId, _type: v.literal("technology"), stableId });
 const capabilityReference = v.pipe(
     v.object({ _id: sourceId, _type: v.literal("capabilityArea"), stableId: capabilityId }),
-    v.check(value => value._id === `capability.${value.stableId}`, "Capability source identity mismatch"),
+    v.check(value => value._id === `capability-${value.stableId}`, "Capability source identity mismatch"),
 );
 const education = v.pipe(v.object({
     stableId, institution: text, program: text, startYear: year, endYear: year,
@@ -61,7 +61,7 @@ const snapshotSchema = v.object({
     technologies: v.array(v.object({ ...technologyReference.entries, label: text })),
     capabilityAreas: v.array(v.pipe(v.object({
         _id: sourceId, _type: v.literal("capabilityArea"), stableId: capabilityId, label: text, description: text,
-    }), v.check(value => value._id === `capability.${value.stableId}`, "Capability source identity mismatch"))),
+    }), v.check(value => value._id === `capability-${value.stableId}`, "Capability source identity mismatch"))),
 });
 
 type ParsedSnapshot = v.InferOutput<typeof snapshotSchema>;

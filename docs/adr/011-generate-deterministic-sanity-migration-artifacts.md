@@ -2,7 +2,7 @@
 
 ## Decision
 
-Current local fixtures remain the migration source of truth. Pure tooling creates published singleton IDs `profile` and `siteContent`, fixed `capability.<stableId>` IDs, and `technology-`, `project-` and `experience-` prefixed stable IDs. References use these target IDs; array keys use semantic stable IDs. Project displayOrder is its original fixture index. Experience dates must be exactly four-digit years; ongoing end years and absent locations/live links are omitted.
+Current local fixtures remain the migration source of truth. Pure tooling creates published singleton IDs `profile` and `siteContent`, fixed `capability-<stableId>` IDs, and `technology-`, `project-` and `experience-` prefixed stable IDs. References use these target IDs; array keys use semantic stable IDs. Project displayOrder is its original fixture index. Experience dates must be exactly four-digit years; ongoing end years and absent locations/live links are omitted.
 
 Before serialization, storage checks verify unique document IDs, array keys, strong references and JSON values. A migration-only projection dereferences generated documents and flattens slugs for the existing runtime validator. Tests map that validated result and compare it with actual local semantic content. Top-level technologies intentionally sort by stableId under the approved target contract; parity compares those ID/label pairs independently of declaration order. All other semantic/editorial ordering must match.
 

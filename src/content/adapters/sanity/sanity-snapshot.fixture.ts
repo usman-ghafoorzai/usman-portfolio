@@ -5,7 +5,7 @@ export function sanitySnapshotFixture() {
         _id: `storage-${stableId}`, _type: "technology", stableId, label: stableId,
     }));
     const capabilityAreas = [...CAPABILITY_AREA_IDS].reverse().map(stableId => ({
-        _id: `capability.${stableId}`, _type: "capabilityArea", stableId,
+        _id: `capability-${stableId}`, _type: "capabilityArea", stableId,
         label: stableId, description: `${stableId} description`,
     }));
     const project = (stableId: string, displayOrder: number) => ({
