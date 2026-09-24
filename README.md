@@ -35,7 +35,7 @@ This portfolio presents my developer profile through interactive, project-based 
 
 ## Architecture and Phase Status
 
-Phase 1 Engineering Foundation and Phase 2.6 live CMS parity verification are complete. Phase 2.7 now selects published Sanity content in the application; deployment/browser verification remains a separate step.
+Phase 1 Engineering Foundation and Phase 2.6 live CMS parity verification are complete. Phase 2.7 selects published Sanity content and was verified in a real Vercel Preview browser. Final Production release verification remains separate.
 
 `src/main.tsx` is the composition root: its small bootstrap helper validates configuration and creates the published Sanity client and gateway. It calls `loadPortfolioContent(gateway)` and passes the resulting `PortfolioContent` snapshot to `PortfolioContentProvider` before rendering the UI. Feature components consume that snapshot through `usePortfolioContent`. CMS failures remain bootstrap failures; there is no automatic local fallback.
 
@@ -59,6 +59,10 @@ Both are required public configuration values, not secrets. Vite embeds them at
 dev-server/build time; deployment builds must supply them too. No Sanity token is
 required. Missing or blank configuration fails application bootstrap clearly.
 The independent Sanity Studio remains under `studio/` with its own configuration.
+See [CMS operations](docs/CMS_OPERATIONS.md) for editing, publishing, deployment
+configuration, CORS, troubleshooting, backup/restore and the local fixture policy.
+Failed content bootstrap shows a short accessible message and logs the original
+error for diagnostics; it never silently serves local fixtures.
 
 ```bash
 npm ci

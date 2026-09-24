@@ -1,6 +1,6 @@
 # Architecture
 
-Phase 1 Engineering Foundation and Phase 2.6 live semantic parity are complete. Phase 2.7 selects Sanity at the application composition root. This describes the source implementation, not a verified deployment.
+Phase 1 Engineering Foundation and Phase 2.6 live semantic parity are complete. Phase 2.7 selects Sanity at the application composition root and has been verified in a Vercel Preview browser; final Production release verification remains separate.
 
 ## Content flow
 
@@ -29,6 +29,14 @@ PortfolioContentGateway
 The async gateway exposes profile, site content, project list, project-by-slug, experience, technology and capability-area queries. A missing project slug returns null. The local implementation and fixtures in `src/data` remain available for offline tests and semantic reference; they are not the production content source.
 
 The Sanity adapter fetches `SANITY_PORTFOLIO_QUERY`, validates the snapshot at runtime before mapping, and exposes domain values through the gateway. Vendor shapes and clients stay behind this boundary, outside domain contracts and feature UI. The gateway shares one lazy mapped snapshot across the six getters and cached slug lookups. Production reads published content without a token, using the existing CDN-enabled client and API version. Configuration, transport, and validation failures propagate to the existing bootstrap error handler; there is no silent local fallback.
+
+Bootstrap creates the React root before loading content, but fetching stays outside
+React components. Success mounts the provider with a fully loaded snapshot. On
+configuration, transport, or validation failure, the original error is logged and
+the root renders `BootstrapFailure` without a content provider. Its static Norwegian
+heading and alert give refresh/later guidance without exposing technical details.
+Fail-fast remains in effect: no local fallback or automatic application retry loop.
+See [CMS operations](CMS_OPERATIONS.md) for diagnostics and release procedures.
 
 ## Domain and presentation
 

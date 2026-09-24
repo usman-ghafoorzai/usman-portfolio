@@ -38,3 +38,21 @@ Normal tests remain offline, and live parity remains explicitly opt-in.
 This decision changes source composition only. Browser/deployment verification is
 still required before claiming deployment success. It does not change the dataset,
 Studio schema, CORS, authentication, preview behavior, or hosting configuration.
+
+## Deployment verification outcome — Phase 2.7
+
+The subsequent Vercel Preview browser verification, reported by the project owner,
+required configuring `VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` for Preview
+and creating a new deployment because Vite embeds `VITE_*` values at build time.
+The browser then reached Sanity, but CORS initially blocked the request. The exact
+Vercel origin was added to Sanity CORS with credentials disabled; published content
+subsequently rendered successfully. Phase 2.7 was therefore verified end-to-end in
+Preview. This records completed verification, not a deployment performed during
+the Phase 2.8A handoff. Final Production origin/release checks remain separate.
+
+## Runtime hardening follow-up — Phase 2.8A
+
+The fail-fast decision remains unchanged. Bootstrap now renders a static, accessible
+fatal content-loading message without the provider when loading fails, while logging
+the original error. It does not reveal technical details or fall back to local data.
+See [CMS operations](../CMS_OPERATIONS.md) for the operational handoff.
