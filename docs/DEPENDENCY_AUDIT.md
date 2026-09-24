@@ -155,3 +155,99 @@ The current operational scope limits Studio CI to installation and TypeScript ch
 From `studio/`, ran `npm audit --json`, `npm outdated`, `npm ls --all`, `npm view sanity version`, and targeted `npm explain adm-zip`, `npm explain js-yaml`, `npm explain smol-toml`, `npm explain uuid`. Inspected the Studio manifest/lockfile and used `npm view` on relevant parent dependencies and the listed patched versions. No broad repository or upstream-source analysis was needed.
 
 Studio `npm run typecheck` and repository `git diff --check` pass. No dependency files changed, so no reinstall or root quality-gate rerun was needed. No Sanity build was run because a real project ID/dataset is not configured. CI, schemas and production source remain unchanged; no secrets, cloud project or migrated content were added. Changes are left uncommitted for review.
+
+## Phase 2.8B fresh dependency evidence — 2026-09-24
+
+Measured HEAD `55ea9ff49eae1ffa3299914d565b0980d4dbe6ea` on
+`feat/cms-integration`, initially clean. Windows, Node **24.19.0**, npm **10.9.2**.
+Both projects were independently reinstalled with `npm ci` from their existing
+lockfiles. No update, downgrade, override, forced audit fix or package/lockfile edit
+was performed. Reports were saved under ignored `studio/.sanity/phase28b/`.
+
+### Root application: fresh full and runtime scopes
+
+| Command | Result |
+| --- | --- |
+| `npm ci` | Exit 0; 267 packages added, 268 audited |
+| `npm audit --json` | Exit 0; **0 vulnerabilities** in all severity categories |
+| `npm audit --omit=dev --json` | Exit 0; **0 vulnerabilities** in all severity categories |
+| `npm ls --all --json` | Exit 0; no invalid/missing/extraneous tree problems reported |
+
+These are fresh results, not reused Phase 1 claims. The full result includes
+dev/build/test dependencies; the omit-dev result covers npm's production dependency
+scope. Neither proves all runtime behavior safe or that future advisories cannot
+change. Browser relevance was inspected separately in the production bundle graph:
+the published Sanity client, transport/observable helpers, Valibot and adapter are
+now in the entry; Studio/CLI packages are not part of that frontend graph. No root
+vulnerability remediation is indicated by these reports.
+
+### Studio: fresh result and comparison
+
+| Command | Result |
+| --- | --- |
+| `npm ci` | Exit 0; 898 packages added, 899 audited; deprecated UUID 10 warning |
+| `npm audit --json` | Exit 1; **13 affected packages: 3 high, 10 moderate**, zero low/critical/info |
+| `npm outdated --json` | Exit 1; Sanity 6.15.0 → wanted/latest 6.16.0; other entries below |
+| `npm ls --all --json` | Exit 0; no invalid/missing/extraneous tree problems reported |
+
+Installed Sanity remains **6.15.0**. The affected-package counts and the **same ten
+distinct advisories (five high, five moderate)** match the 2026-09-22 inventory above.
+All ten GHSA IDs still appear in the fresh JSON; no previous finding disappeared.
+Leaf aggregate severities remain high for adm-zip, js-yaml and smol-toml, moderate
+for UUID. The other nine packages inherit moderate findings through their trees.
+Affected-package totals must not be confused with distinct-advisory totals.
+
+| Affected leaf / current path | Current constraint | Patched boundary covering recorded findings | Current remediation status |
+| --- | --- | --- | --- |
+| `adm-zip@0.6.0`: sanity → @sanity/cli → @sanity/workbench-cli → @module-federation/vite → @module-federation/dts-plugin | dts-plugin 2.9.0 pins `0.6.0` | 0.6.1 | Still blocked by exact pin, including latest checked dts-plugin 2.9.1 |
+| `js-yaml@3.13.1`: sanity → @sanity/cli → @vercel/frameworks | frameworks 3.29.0 pins `3.13.1` | 3.15.2 | Still blocked; latest checked frameworks 3.34.0 retains pin |
+| `smol-toml@1.5.2`: sanity → @sanity/cli → @vercel/frameworks | frameworks 3.29.0 pins `1.5.2` | 1.7.1 | Still blocked; latest checked frameworks 3.34.0 retains pin |
+| `uuid@10.0.0`: sanity → @sanity/cli → typeid-js | typeid-js 1.2.0 requires `^10.0.0` | 11.1.1 | Still outside parent range; latest typeid-js remains 1.2.0 |
+
+### Fresh upstream checks: updates exist, but no compatible security fix established
+
+Current registry metadata (`npm view <package> version dependencies --json`) and
+installed manifests establish:
+
+- Sanity **6.16.0** is a normal compatible minor under the existing `^6.0.0` range.
+  It requires `@sanity/cli: ^8.12.0`; installed 6.15.0 requires `^8.10.0` and already
+  resolves to CLI **8.12.0**, also the latest checked CLI. Updating Sanity alone
+  therefore does not remove these vulnerable leaf chains.
+- CLI 8.12.0 still requires workbench `^2.5.2`, frameworks **3.29.0** exactly and
+  typeid-js `^1.2.0`. The installed workbench is **2.5.2**, pinning federation/vite
+  **1.21.6**. Latest compatible workbench **2.7.0** now pins federation/vite
+  **1.22.1**, but that still pins dts-plugin **2.9.0**, which pins adm-zip **0.6.0**.
+  Latest dts-plugin **2.9.1** also retains the vulnerable adm-zip pin.
+- Latest frameworks **3.34.0** is outside the CLI's exact 3.29.0 requirement and
+  still pins js-yaml 3.13.1 and smol-toml 1.5.2 anyway. Latest typeid-js **1.2.0**
+  still requires UUID `^10.0.0`.
+- `npm outdated` additionally reports `@types/node` current/wanted **24.13.6**,
+  latest **26.6.2**, and TypeScript current/wanted **6.0.3**, latest **7.0.2**.
+  These out-of-range major updates do not address the findings.
+
+Compared with September 22, newer compatible Sanity and workbench releases exist,
+but **no normal compatible remediation for the recorded findings was established**.
+This is based on fresh registry dependency constraints, not an assertion that an
+uninstalled candidate tree was audited. No upgrade was applied. A routine move to
+Sanity 6.16.0 or workbench 2.7.0 would be a separate reviewed update, not an evidenced
+security fix. npm still proposes Sanity **5.14.1** as a breaking `fixAvailable`;
+that downgrade remains outside the accepted scope.
+
+### Residual risk and handling
+
+The unchanged Studio findings concern archive extraction/file overwrite and
+allocation, YAML/TOML denial of service/prototype pollution, and UUID buffer writes
+as detailed in the linked advisory inventory above. They are in Studio/CLI tooling,
+not the portfolio browser graph, but developer/CI execution remains relevant.
+Do not treat frontend separation as remediation or process untrusted archives and
+configuration casually. Reachability/exploitability of every vulnerable function
+was not established by this audit. Keep tracking upstream pins and review a future
+compatible fix with a clean install and fresh audits before adoption.
+
+No dataset, CORS, Vercel or deployment operation was performed. No dependency change
+was made; historical audit sections above remain point-in-time records rather than
+being rewritten as current results.
+
+After both clean installs, Node 24 lint, root typecheck, **183 offline tests** (one
+live test skipped), build and Studio typecheck passed. `git diff --check` passed;
+only the performance and dependency-audit documentation is modified.
