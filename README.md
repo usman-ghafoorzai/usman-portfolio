@@ -35,15 +35,15 @@ This portfolio presents my developer profile through interactive, project-based 
 
 ## Architecture and Phase Status
 
-Phase 1 Engineering Foundation is complete. Phase 2 CMS integration has not started.
+Phase 1 Engineering Foundation and Phase 2.6 live CMS parity verification are complete. Phase 2.7 now selects published Sanity content in the application; deployment/browser verification remains a separate step.
 
-`src/main.tsx` is the composition root: it selects the local implementation of `PortfolioContentGateway`, calls `loadPortfolioContent(gateway)`, and passes the resulting `PortfolioContent` snapshot to `PortfolioContentProvider` before rendering the UI. Feature components consume that snapshot through `usePortfolioContent`.
+`src/main.tsx` is the composition root: its small bootstrap helper validates configuration and creates the published Sanity client and gateway. It calls `loadPortfolioContent(gateway)` and passes the resulting `PortfolioContent` snapshot to `PortfolioContentProvider` before rendering the UI. Feature components consume that snapshot through `usePortfolioContent`. CMS failures remain bootstrap failures; there is no automatic local fallback.
 
 - `src/domain`: Readonly portfolio contracts independent of React and content sources.
-- `src/content`: Async gateway contract and the current local adapter, exported as `localPortfolioContentGateway`.
+- `src/content`: Async gateway contract, production Sanity adapter, and local adapter retained for tests/reference.
 - `src/application`: Source-independent loading of the portfolio snapshot.
 - `src/app/providers`: Passive snapshot provider and consumer hook.
-- `src/data`: Local canonical fixtures plus separate stack presentation configuration.
+- `src/data`: Local test/reference fixtures plus separate stack presentation configuration.
 - `src/components`: Feature UI and shared primitives.
 - `src/hooks` and `src/utils`: Reusable behavior and pure helpers.
 
@@ -52,6 +52,13 @@ Presentation choices such as colors, icons and stack grouping remain separate fr
 ## How To Run
 
 Use Node 24 LTS (`.nvmrc`; `package.json` restricts the supported major to 24).
+
+Copy the root `.env.example` to `.env.local` (ignored by Git) and set
+`VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` to the intended public dataset.
+Both are required public configuration values, not secrets. Vite embeds them at
+dev-server/build time; deployment builds must supply them too. No Sanity token is
+required. Missing or blank configuration fails application bootstrap clearly.
+The independent Sanity Studio remains under `studio/` with its own configuration.
 
 ```bash
 npm ci
@@ -65,11 +72,11 @@ npm run preview
 
 ## Quality and Performance
 
-The verified Phase 1 handoff has **0 lint errors / 0 warnings**, passing typecheck, **51/51 tests**, a passing production build and green CI. GitHub Actions uses Node 24 and runs `npm ci → lint → typecheck → test → build` on pushes and pull requests. See [Quality](docs/QUALITY.md).
+The quality commands are unchanged. Normal tests run offline; live Sanity parity is explicitly opt-in, as documented in [ADR 012](docs/adr/012-live-sanity-semantic-parity-verification.md). GitHub Actions uses Node 24 and runs `npm ci → lint → typecheck → test → build` on pushes and pull requests. See [Quality](docs/QUALITY.md) for historical foundation checks.
 
 At the Phase 1 handoff, npm audit reported **0 known vulnerabilities**; this is a point-in-time result documented in [Dependency audit](docs/DEPENDENCY_AUDIT.md).
 
-The measured initial JavaScript entry is approximately **388 kB** minified. The approximately **891 kB** decorative 3D chunk loads after TechStack viewport activation; its >500 kB build warning is understood and intentionally retained. See [Performance](docs/PERFORMANCE.md) for measurements and verification.
+The Phase 2.7 production build emits an approximately **514 kB** minified JavaScript entry with the Sanity client. The approximately **891 kB** decorative 3D chunk loads after TechStack viewport activation. Both exceed Vite's 500 kB warning threshold; this source switch does not change chunking. See [Performance](docs/PERFORMANCE.md) for the earlier foundation measurements and verification.
 
 ## Links
 

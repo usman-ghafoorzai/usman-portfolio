@@ -1,32 +1,34 @@
 # Architecture
 
-Phase 1 Engineering Foundation is complete. This document describes the implemented baseline; CMS integration has not started.
+Phase 1 Engineering Foundation and Phase 2.6 live semantic parity are complete. Phase 2.7 selects Sanity at the application composition root. This describes the source implementation, not a verified deployment.
 
 ## Content flow
 
 ```text
 main.tsx (composition root)
+  → createPublishedSanityClient(config)
+  → createSanityPortfolioContentGateway(client)
   → loadPortfolioContent(gateway)
   → PortfolioContent snapshot
   → PortfolioContentProvider
   → React feature components (usePortfolioContent)
 ```
 
-`src/main.tsx` selects `localPortfolioContentGateway`, awaits the application loader, then mounts React with the loaded snapshot. Adapter selection and startup loading belong to this composition root.
+`src/main.tsx` passes `VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` from `import.meta.env` to the small `src/bootstrap-content.ts` composition helper. It rejects missing, non-string, or blank values before creating the existing published client and Sanity gateway. Main awaits the application loader, then mounts React with the loaded snapshot. Adapter selection and startup loading belong to this composition root; environment reading does not belong inside the adapter. Vite supplies these public values at dev-server/build time.
 
-`loadPortfolioContent` depends on the `PortfolioContentGateway` interface. It loads profile, projects, experiences, technologies and capability areas concurrently and returns a readonly `PortfolioContent` snapshot. The provider receives that snapshot as a prop; it does not select a source or fetch content.
+`loadPortfolioContent` depends on the `PortfolioContentGateway` interface. It loads profile, site content, projects, experiences, technologies and capability areas concurrently and returns a readonly `PortfolioContent` snapshot. The provider receives that snapshot as a prop; it does not select a source or fetch content.
 
 ## Gateway and source boundary
 
 ```text
 PortfolioContentGateway
-  → localPortfolioContentGateway today (local fixtures)
-  → future CMS adapter in Phase 2 (not implemented)
+  → createSanityPortfolioContentGateway(client) in production
+  → localPortfolioContentGateway for tests/reference
 ```
 
-The async gateway exposes profile, project list, project-by-slug, experience, technology and capability-area queries. A missing project slug returns null. The local implementation lives in `src/content/adapters/local/local-portfolio-content-gateway.ts` and reads the canonical fixtures in `src/data`. It is an object implementing the interface, not a class.
+The async gateway exposes profile, site content, project list, project-by-slug, experience, technology and capability-area queries. A missing project slug returns null. The local implementation and fixtures in `src/data` remain available for offline tests and semantic reference; they are not the production content source.
 
-A future CMS adapter must supply the domain-facing contract at this boundary. Vendor schemas and clients do not belong in domain contracts or feature UI. No CMS adapter, installation or runtime validation is introduced by this documentation update.
+The Sanity adapter fetches `SANITY_PORTFOLIO_QUERY`, validates the snapshot at runtime before mapping, and exposes domain values through the gateway. Vendor shapes and clients stay behind this boundary, outside domain contracts and feature UI. The gateway shares one lazy mapped snapshot across the six getters and cached slug lookups. Production reads published content without a token, using the existing CDN-enabled client and API version. Configuration, transport, and validation failures propagate to the existing bootstrap error handler; there is no silent local fallback.
 
 ## Domain and presentation
 
@@ -65,4 +67,9 @@ Styling uses custom CSS with Tailwind Preflight only. The decorative Three.js/Re
 - [006: Defer Three.js progressive enhancement](adr/006-defer-threejs-progressive-enhancement.md)
 - [007: Stop foundation before architecture theater](adr/007-stop-foundation-before-architecture-theater.md)
 
-Phase 2 can build on these boundaries when actual CMS requirements are addressed. No additional architecture is required to complete Phase 1.
+- [008: Validate CMS query results at the boundary](adr/008-validate-cms-query-results-at-the-boundary.md)
+- [009: Read one published Sanity snapshot](adr/009-read-one-published-sanity-snapshot.md)
+- [010: Share one mapped Sanity snapshot](adr/010-share-one-mapped-sanity-snapshot.md)
+- [011: Generate deterministic Sanity migration artifacts](adr/011-generate-deterministic-sanity-migration-artifacts.md)
+- [012: Live Sanity semantic parity verification](adr/012-live-sanity-semantic-parity-verification.md)
+- [013: Switch production content source to Sanity](adr/013-switch-production-content-source-to-sanity.md)
