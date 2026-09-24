@@ -69,9 +69,28 @@ as the current suite size.
 
 Follow [ADR 012](adr/012-live-sanity-semantic-parity-verification.md) to set
 `SANITY_LIVE_PARITY=1`, `SANITY_LIVE_PROJECT_ID`, and `SANITY_LIVE_DATASET`, then run
-`npm test -- sanity-live-parity` and clear the variables afterwards. It is read-only
-and uses published direct-API reads, validating domain parity and one shared fetch.
-Run it deliberately for content-boundary changes, separately from offline gates.
+`npm run test:live-sanity` and clear the variables afterwards. This command selects
+only the existing live parity test; it still skips unless explicitly opted in.
+See [Production health check](CMS_OPERATIONS.md#production-health-check) for the
+PowerShell procedure.
+
+The separate [Sanity live health workflow](../.github/workflows/sanity-live.yml)
+runs manually through GitHub Actions or weekly on Monday at 08:17 UTC. It uses
+Node 24, read-only repository permissions, and public project/dataset identifiers.
+It requires no Sanity or Vercel token or Studio authentication and performs no
+mutations. The normal push/PR workflow is unchanged and its verification remains
+independent of Sanity availability, production content, Vercel and CORS.
+
+The live check proves anonymous published direct-API reads, runtime validation,
+mapping, semantic parity against the golden local reference, expected entity
+counts, and one shared snapshot fetch (`fetchCount === 1`) including cached slug
+lookups. It does not prove browser CORS, deployed build configuration, rendered UI,
+or CDN freshness; browser smoke verification remains a separate release check.
+
+An intentional CMS editorial change can fail this check until the golden local
+reference is deliberately updated and reviewed alongside that content change.
+Investigate unexpected drift; do not weaken parity to make scheduled checks pass.
+Run the check deliberately for content-boundary changes, separately from offline gates.
 Accepted Phase 2.6 outcomes supersede the initial blocker recorded in ADR 012;
 the production source decision is recorded in ADR 013.
 

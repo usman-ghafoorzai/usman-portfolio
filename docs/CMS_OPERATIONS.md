@@ -80,6 +80,36 @@ the existing opt-in [live parity check](adr/012-live-sanity-semantic-parity-veri
 uses the direct API (`useCdn: false`) without changing production defaults. Its
 fixture comparison may legitimately fail after reviewed editorial content changes.
 
+## Production health check
+
+From the repository root with Node 24 and dependencies installed, run the existing
+read-only live parity check against public published production content:
+
+```powershell
+$env:SANITY_LIVE_PARITY="1"
+$env:SANITY_LIVE_PROJECT_ID="19bhyjyc"
+$env:SANITY_LIVE_DATASET="production"
+
+try {
+    npm run test:live-sanity
+} finally {
+    Remove-Item Env:SANITY_LIVE_PARITY -ErrorAction SilentlyContinue
+    Remove-Item Env:SANITY_LIVE_PROJECT_ID -ErrorAction SilentlyContinue
+    Remove-Item Env:SANITY_LIVE_DATASET -ErrorAction SilentlyContinue
+}
+```
+
+In GitHub Actions, select **Sanity live health** and **Run workflow** for a manual
+check. The separate workflow also runs weekly on Monday at 08:17 UTC. It uses
+public configuration, read-only repository permissions, and no Sanity/Vercel token
+or Studio authentication. It never imports, patches, or deletes content.
+
+The check covers validation, mapping, golden-reference semantic parity and one
+shared fetch with cached slug lookups. Deliberate editorial changes require an
+intentional, reviewed local-reference update; do not weaken parity to hide drift.
+A browser smoke check on the target deployment is still required for CORS,
+deployment configuration and visible behavior. Node parity does not verify CORS.
+
 ## Vercel public configuration
 
 Both Preview and Production environments need appropriate `VITE_SANITY_PROJECT_ID`

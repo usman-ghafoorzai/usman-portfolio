@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:live-sanity": "vitest run src/content/adapters/sanity/sanity-live-parity.test.ts"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.2.8",
